@@ -1,0 +1,63 @@
+{
+	"stage_datas": [
+		{
+			"stage_id": 1,
+			"stage_name": "草原",
+			"stage_desc": "生命宿る広大な原っぱ",
+			"stage_id_name": "Grassland",
+			"floor_width": 20,
+			"floor_height": 20,
+			"min_division": 15,
+			"max_enemy_num": 5,
+			"enemy_id_1": 1,
+			"enemy_id_2": 2,
+
+			"enemy_datas": [
+				{
+					"enemy_id": 1,
+					"spawn_rate": 1
+				}
+			]
+		},
+		{
+			"stage_id": 2,
+			"stage_name": "砂漠",
+			"stage_desc": "砂塵舞う大地",
+			"stage_id_name": "Desert",
+			"floor_width": 20,
+			"floor_height": 15,
+			"min_division": 10,
+			"max_enemy_num": 10,
+			"enemy_id_1": 0,
+			"enemy_id_2": 0,
+			"enemy_datas": [
+				{
+					"enemy_id": 2,
+					"spawn_rate": 2
+				}
+			]
+		},
+		{
+			"stage_id": 3,
+			"stage_name": "洞窟",
+			"stage_desc": "仄暗く深い穴",
+			"stage_id_name": "Cave",
+			"floor_width": 20,
+			"floor_height": 20,
+			"min_division": 10,
+			"max_enemy_num": 15,
+			"enemy_id_1": 0,
+			"enemy_id_2": 0,
+			"enemy_datas": [
+				{
+					"enemy_id": 1,
+					"spawn_rate": 1
+				},
+				{
+					"enemy_id": 2,
+					"spawn_rate": 3
+				}
+			]
+		}
+	]
+}
