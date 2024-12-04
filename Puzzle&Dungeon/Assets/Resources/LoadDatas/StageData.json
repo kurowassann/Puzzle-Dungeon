@@ -44,7 +44,7 @@
 			"stage_id_name": "Cave",
 			"floor_width": 20,
 			"floor_height": 20,
-			"min_division": 10,
+			"min_division": 60,
 			"max_enemy_num": 15,
 			"enemy_id_1": 0,
 			"enemy_id_2": 0,

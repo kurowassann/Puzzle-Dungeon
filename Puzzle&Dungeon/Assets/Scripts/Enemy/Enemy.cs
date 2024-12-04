@@ -105,7 +105,7 @@ public class Enemy : CharacterBace
         ResetTrigger(animator, Common.Common.CHARA_ANIMS_MOVE_DIR);
         ResetTrigger(animator, Common.Common.CHARA_ANIMS_END_DIR);
         ResetTrigger(animator, Common.Common.CHARA_ANIMS_ATTACK_DIR);
-        print("aaa" + animationName);
+        //print("aaa" + animationName);
 
         triggerName = SwitchMoveEnd(animationName);
 
@@ -153,7 +153,7 @@ public class Enemy : CharacterBace
         //        break;
         //}
 
-        print("Enemy移動終了時のアニメーション:" + triggerName);
+        //print("Enemy移動終了時のアニメーション:" + triggerName);
 
         return triggerName;
     }
@@ -278,7 +278,7 @@ public class Enemy : CharacterBace
 			default:
 				return;
         }
-        print("敵の行動開始:" + triggerName);
+        //print("敵の行動開始:" + triggerName);
         animator?.SetTrigger(triggerName);
     }
     

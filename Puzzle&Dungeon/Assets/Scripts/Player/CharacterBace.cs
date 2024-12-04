@@ -55,7 +55,7 @@ public class CharacterBace : MonoBehaviour
     {
 		if (isStatusChange)
 		{
-			Debug.Log("移動を開始します");
+			//Debug.Log("移動を開始します");
 			//SetPos();
 			isStatusChange = false;
 		}
@@ -138,7 +138,7 @@ public class CharacterBace : MonoBehaviour
 			case Status.STAY:
 				if (isStatusChange)
 				{
-					Debug.Log("入力待機状態になりました、行動してください");
+					//Debug.Log("入力待機状態になりました、行動してください");
 					isStatusChange = false;
 				}
 				break;
@@ -151,7 +151,7 @@ public class CharacterBace : MonoBehaviour
 			case Status.REAR_GAP:
 				if (isStatusChange)
 				{
-					Debug.Log($"{this.name}行動が終了しました。");
+					//Debug.Log($"{this.name}行動が終了しました。");
 					//master.PlayerAction();
 					isStatusChange = false;
 				}
