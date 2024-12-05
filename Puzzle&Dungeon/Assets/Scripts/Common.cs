@@ -46,6 +46,7 @@ namespace Common
 	{
 		STAY,
 		MOVE,
+        TRUN,
 		ATTACK,
 		REAR_GAP
 	}

@@ -50,6 +50,21 @@ public class CharacterBace : MonoBehaviour
 
 		mAttackTimer = 0;
     }
+	/// <summary>âÒì]èàóù</summary>
+	virtual protected void Trun()
+	{
+        if (isStatusChange)
+        {
+            isStatusChange = false;
+        }
+		else
+		{
+			mGoalPos = transform.position;
+			MoveEnd();
+
+		}
+
+    }
     /// <summary>à⁄ìÆï`âÊèàóù</summary>
     virtual protected void Move()
     {
@@ -61,12 +76,16 @@ public class CharacterBace : MonoBehaviour
 		}
 
 
-		if (mGoalPos == Vector3.zero) { return; }
+		if (mGoalPos == Vector3.zero) 
+		{
+
+			return;
+		}
 
         this.transform.position += mSpeed * Time.deltaTime/Common.Common.MOTION_SPEED;
 
         Vector3 vec = mGoalPos - transform.position;
-        if(mVec != vec.normalized)
+        if(mVec != vec.normalized || mStatus == Status.TRUN)
         {
             MoveEnd();
         }
@@ -144,6 +163,9 @@ public class CharacterBace : MonoBehaviour
 				break;
 			case Status.MOVE:
 				Move();
+				break;
+			case Status.TRUN:
+				Trun();
 				break;
 			case Status.ATTACK:
 				Attack();

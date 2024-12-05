@@ -254,7 +254,7 @@ public class EnemyManager : MonoBehaviour
 
         for (int i = 0;i < vec.Length;i++)
         {
-            print($"検索方向{vec[i]}");
+            //print($"検索方向{vec[i]}");
             //見ようとしているマスが移動可能マスか、まだ計算してないマスか
             point = tpos;
             if (vec[i] == Vector.RIGHT) { point.X++; }//RIGHT
@@ -345,6 +345,12 @@ public class EnemyManager : MonoBehaviour
         for (int i = 0; i < mEnemys.Length; i++)
         {
 			Enemy tenemy = mEnemys[mActionOrder[i]];
+
+            if(i != 0)
+            {
+                tenemy.SetStatus(Status.REAR_GAP);
+                continue;
+            }
 
 
 			//存在しない場合スキップ
@@ -486,6 +492,7 @@ public class EnemyManager : MonoBehaviour
 				{
 					Debug.Log("移動の敵の処理を行います");
 					ChangeAction(Status.MOVE);
+                    ChangeAction(Status.TRUN);
 					isStatus = false;
 				}
 				Move();
