@@ -33,7 +33,6 @@ public class EnemyManager : MonoBehaviour
 	private Status mStatus;
     /// <summary>ステータス変更時一回呼ぶもの</summary>
 	private bool isStatus;
-
     /// <summary>行動を行う順番</summary>
 	private int[] mActionOrder;
 
@@ -54,7 +53,7 @@ public class EnemyManager : MonoBehaviour
             {
                 for (int j = 0; j < mTiles.GetLength(1); j++)
                 {
-                    mTiles[i, j] = new Tile();
+                    mTiles[i, j] = new Tile(master);
                 }
             }
             ResetTiles();
@@ -163,8 +162,6 @@ public class EnemyManager : MonoBehaviour
         }
     }
 	/// <summary>経路探索</summary>
-	/// <param name="i"></param>
-	/// <param name="tpPos"></param>
     private void SeachOne(int i,Point tpPos)
     {
         
@@ -216,7 +213,7 @@ public class EnemyManager : MonoBehaviour
                     continue;
                 }
 
-                if (mTiles[i,j].GetBfore() < mTiles[point.X,point.Y].GetBfore() || point == Point.Empty)
+                if (mTiles[i,j].GetScore() < mTiles[point.X,point.Y].GetScore() || point == Point.Empty)
                 {
                     //Debug.Log($"タイル更新:{i},{j}");
                     point.X = i; point.Y = j;
@@ -227,7 +224,7 @@ public class EnemyManager : MonoBehaviour
         return point;
     }
     /// <summary>四方向チェック</summary>
-    private bool CheckAround(Point tpos, Point tendPos, int tbfore)
+    private bool CheckAround(Point tpos, Point tendPos, float tbfore)
     {
         Point point;
         bool flg;
@@ -256,6 +253,7 @@ public class EnemyManager : MonoBehaviour
 
         for (int i = 0;i < vec.Length;i++)
         {
+            //print($"検索方向{vec[i]}");
             //見ようとしているマスが移動可能マスか、まだ計算してないマスか
             point = tpos;
             if (vec[i] == Vector.RIGHT) { point.X++; }//RIGHT
@@ -281,7 +279,7 @@ public class EnemyManager : MonoBehaviour
     private void FollowRoute(Point tpos, Enemy tenemy, int num)
     {
         num++;
-        if(num == 100)
+        if(num == 800)
         {
             Debug.LogError("経路探索に失敗");
             return;
@@ -347,6 +345,13 @@ public class EnemyManager : MonoBehaviour
         {
 			Enemy tenemy = mEnemys[mActionOrder[i]];
 
+            if(i != 0)
+            {
+                tenemy.SetStatus(Status.REAR_GAP);
+                continue;
+            }
+
+
 			//存在しない場合スキップ
 			if (tenemy.GetActive() == false)
 			{
@@ -363,9 +368,10 @@ public class EnemyManager : MonoBehaviour
 
 
 			first = tenemy.Tracking();
-            z = Mathf.Abs(tenemy.GetPos().X - master.GetPlayer().X) + Mathf.Abs(tenemy.GetPos().Y - master.GetPlayer().Y);
-            if (!first ||z<3)
+            //z = Mathf.Abs(tenemy.GetPos().X - master.GetPlayer().X) + Mathf.Abs(tenemy.GetPos().Y - master.GetPlayer().Y);
+            if (!first)
             {
+                print("1度目の行動が無かったのでルートの再検索を行います");
                 SeachOne(mActionOrder[i], master.GetPlayer());
             }
             second = tenemy.Tracking();
@@ -485,6 +491,7 @@ public class EnemyManager : MonoBehaviour
 				{
 					Debug.Log("移動の敵の処理を行います");
 					ChangeAction(Status.MOVE);
+                    ChangeAction(Status.TRUN);
 					isStatus = false;
 				}
 				Move();
@@ -516,12 +523,15 @@ public class EnemyManager : MonoBehaviour
     //探索情報格納用クラス
     private class Tile
     {
+        /// <summary>マスター情報</summary>
+        private Master master;
+
         //どこから来たか
         private Vector mDir;
         //スコア
-        private int mScore;
+        private float mScore;
         //ここに来るまでの歩数
-        private int mBfore;
+        private float mBfore;
         //自身の状態
         private TileStatus mStatus;
 
@@ -531,9 +541,14 @@ public class EnemyManager : MonoBehaviour
             return mStatus;
         }
         /// <summary>mBforeを返す</summary>
-        public int GetBfore()
+        public float GetBfore()
         {
             return mBfore;
+        }
+        /// <summary>mScoreを返す</summary>
+        public float GetScore()
+        {
+            return mScore;
         }
         /// <summary>mDirを返す</summary>
         public Vector GetDir()
@@ -554,20 +569,21 @@ public class EnemyManager : MonoBehaviour
         }
 
         //初期化処理
-        public Tile()
+        public Tile(Master master)
         {
             Init();
+            this.master = master;
         }
         public void Init()
         {
             mDir =  Vector.NONE;
-            mScore = 0;
-            mBfore = 0;
+            mScore = 0.0f;
+            mBfore = 0.0f;
             mStatus = TileStatus.NONE;
         }
 
         /// <summary>タイルの情報計算</summary>
-        public TileStatus OpenTile(Point tpos, Point tendPos,Vector tdir, int tbfore)
+        public TileStatus OpenTile(Point tpos, Point tendPos,Vector tdir, float tbfore)
         {
             SetTile(TileStatus.OPEN);
             mDir = tdir;
@@ -578,9 +594,29 @@ public class EnemyManager : MonoBehaviour
         }
         
         /// <summary>スタートからゴールまで最短の移動回数</summary>
-        private int CheckLength(Point tstart, Point tgoal)
+        private float CheckLength(Point tstart, Point tgoal)
         {
-            var length = Mathf.Abs(tgoal.Y - tstart.Y) + Mathf.Abs(tgoal.X - tstart.X);
+            float length = Mathf.Abs(tgoal.Y - tstart.Y) + Mathf.Abs(tgoal.X - tstart.X);
+            if (master.CheckTile(tstart) == TileInfo.ENEMY)
+            {
+                print("敵がいるためペナルティ");
+                length += 100.1f;
+            }
+            /*
+            float width = Mathf.Abs(tgoal.X - tstart.X);
+            float height = Mathf.Abs(tgoal.Y - tstart.Y);
+
+            //横方向の検索
+            Point point = tstart;
+            for(int i = 0;i < width;i++)
+            {
+                point.X += i;
+                var tmp = master.CheckTile(point);
+                print($"チェックしたタイル{tmp}");
+            }
+            */
+
+            //float length;
             //Debug.Log(length);
             return length;
         }

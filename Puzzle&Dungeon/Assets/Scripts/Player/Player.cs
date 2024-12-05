@@ -226,9 +226,11 @@ public class Player : CharacterBace
     /// <summary>ƒJƒƒ‰‚ğ’Ç”ö</summary>
     private void SetCam()
     {
+        /*
         float z = Camera.main.transform.position.z;
         Camera.main.transform.position = new Vector3(transform.position.x, transform.position.y, z);
-    }
+ */
+        }
 
     // Update is called once per frame
     override protected void Update()

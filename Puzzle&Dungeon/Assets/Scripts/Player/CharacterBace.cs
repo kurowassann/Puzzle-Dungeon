@@ -50,23 +50,42 @@ public class CharacterBace : MonoBehaviour
 
 		mAttackTimer = 0;
     }
+	/// <summary>回転処理</summary>
+	virtual protected void Trun()
+	{
+        if (isStatusChange)
+        {
+            isStatusChange = false;
+        }
+		else
+		{
+			mGoalPos = transform.position;
+			MoveEnd();
+
+		}
+
+    }
     /// <summary>移動描画処理</summary>
     virtual protected void Move()
     {
 		if (isStatusChange)
 		{
-			Debug.Log("移動を開始します");
+			//Debug.Log("移動を開始します");
 			//SetPos();
 			isStatusChange = false;
 		}
 
 
-		if (mGoalPos == Vector3.zero) { return; }
+		if (mGoalPos == Vector3.zero) 
+		{
+
+			return;
+		}
 
         this.transform.position += mSpeed * Time.deltaTime/Common.Common.MOTION_SPEED;
 
         Vector3 vec = mGoalPos - transform.position;
-        if(mVec != vec.normalized)
+        if(mVec != vec.normalized || mStatus == Status.TRUN)
         {
             MoveEnd();
         }
@@ -138,12 +157,15 @@ public class CharacterBace : MonoBehaviour
 			case Status.STAY:
 				if (isStatusChange)
 				{
-					Debug.Log("入力待機状態になりました、行動してください");
+					//Debug.Log("入力待機状態になりました、行動してください");
 					isStatusChange = false;
 				}
 				break;
 			case Status.MOVE:
 				Move();
+				break;
+			case Status.TRUN:
+				Trun();
 				break;
 			case Status.ATTACK:
 				Attack();
@@ -151,7 +173,7 @@ public class CharacterBace : MonoBehaviour
 			case Status.REAR_GAP:
 				if (isStatusChange)
 				{
-					Debug.Log($"{this.name}行動が終了しました。");
+					//Debug.Log($"{this.name}行動が終了しました。");
 					//master.PlayerAction();
 					isStatusChange = false;
 				}

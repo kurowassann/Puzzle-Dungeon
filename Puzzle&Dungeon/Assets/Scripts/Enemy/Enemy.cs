@@ -20,6 +20,8 @@ public class Enemy : CharacterBace
     protected Status mNextAction;
     /// <summary>移動方向</summary>
     protected Vector mVec;
+    /// <summary>今向いている方向</summary>
+    private Vector mDir;
     /// <summary>プレイヤーまでの経路格納配列</summary>
     protected Common.Vector[] mRoute;
     /// <summary>経路のどこにいるか</summary>
@@ -40,6 +42,7 @@ public class Enemy : CharacterBace
 
         animator = GetComponent<Animator>();
         mVec = Vector.NONE;
+        mDir = Vector.DOWN;
 
         //animator.SetTrigger("Reset");
 
@@ -49,10 +52,12 @@ public class Enemy : CharacterBace
     {
         if (mRoute.Length == mRouteNum)
         {
+            print("ルートの末端です");
             return false;
         }
         if (mNextAction != Status.STAY)
         {
+            print("すでに行動が決まっています。");
             return false;
         }
         Point point = mPoint;
@@ -78,6 +83,13 @@ public class Enemy : CharacterBace
                 break;
         }
 
+        if (mDir != mVec && eName == "Ant")
+        {
+            mNextAction = Status.TRUN;
+            mDir = mVec;
+            //mGoalPos = transform.position;
+            return true;
+        }
 
         if (master.CheckTile(point) == Common.TileInfo.ROUTE)
         {
@@ -105,7 +117,7 @@ public class Enemy : CharacterBace
         ResetTrigger(animator, Common.Common.CHARA_ANIMS_MOVE_DIR);
         ResetTrigger(animator, Common.Common.CHARA_ANIMS_END_DIR);
         ResetTrigger(animator, Common.Common.CHARA_ANIMS_ATTACK_DIR);
-        print("aaa" + animationName);
+        //print("aaa" + animationName);
 
         triggerName = SwitchMoveEnd(animationName);
 
@@ -114,6 +126,7 @@ public class Enemy : CharacterBace
     /// <summary>移動終了アニメーション分岐</summary>
     virtual protected string SwitchMoveEnd(string _animName)
     {
+        //print(_animName);
         string triggerName = "";
 
         if (_animName == "MoveRight@" + eName)
@@ -153,7 +166,7 @@ public class Enemy : CharacterBace
         //        break;
         //}
 
-        print("Enemy移動終了時のアニメーション:" + triggerName);
+        //print("Enemy移動終了時のアニメーション:" + triggerName);
 
         return triggerName;
     }
@@ -262,7 +275,6 @@ public class Enemy : CharacterBace
         mNextAction = tstatus;
     }
     /// <summary>行動の着火</summary>
-    /// <param name="tstatus"></param>
     public override void SetStatus(Status tstatus)
     {
         base.SetStatus(tstatus);
@@ -273,12 +285,13 @@ public class Enemy : CharacterBace
                 triggerName = Common.Common.CHARA_ANIMS_ATTACK_DIR[(int)mVec];
                 break;
             case Status.MOVE:
+            case Status.TRUN:
                 triggerName = Common.Common.CHARA_ANIMS_MOVE_DIR[(int)mVec];
                 break;
 			default:
 				return;
         }
-        print("敵の行動開始:" + triggerName);
+        //print("敵の行動開始:" + triggerName);
         animator?.SetTrigger(triggerName);
     }
     
