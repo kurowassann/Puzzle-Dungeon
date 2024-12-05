@@ -33,7 +33,6 @@ public class EnemyManager : MonoBehaviour
 	private Status mStatus;
     /// <summary>ステータス変更時一回呼ぶもの</summary>
 	private bool isStatus;
-
     /// <summary>行動を行う順番</summary>
 	private int[] mActionOrder;
 
@@ -369,8 +368,8 @@ public class EnemyManager : MonoBehaviour
 
 
 			first = tenemy.Tracking();
-            z = Mathf.Abs(tenemy.GetPos().X - master.GetPlayer().X) + Mathf.Abs(tenemy.GetPos().Y - master.GetPlayer().Y);
-            if (!first ||z<3)
+            //z = Mathf.Abs(tenemy.GetPos().X - master.GetPlayer().X) + Mathf.Abs(tenemy.GetPos().Y - master.GetPlayer().Y);
+            if (!first)
             {
                 print("1度目の行動が無かったのでルートの再検索を行います");
                 SeachOne(mActionOrder[i], master.GetPlayer());

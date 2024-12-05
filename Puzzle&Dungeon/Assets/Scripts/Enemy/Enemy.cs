@@ -52,10 +52,12 @@ public class Enemy : CharacterBace
     {
         if (mRoute.Length == mRouteNum)
         {
+            print("ルートの末端です");
             return false;
         }
         if (mNextAction != Status.STAY)
         {
+            print("すでに行動が決まっています。");
             return false;
         }
         Point point = mPoint;
@@ -81,7 +83,7 @@ public class Enemy : CharacterBace
                 break;
         }
 
-        if(mDir != mVec)
+        if (mDir != mVec && eName == "Ant")
         {
             mNextAction = Status.TRUN;
             mDir = mVec;
@@ -115,7 +117,7 @@ public class Enemy : CharacterBace
         ResetTrigger(animator, Common.Common.CHARA_ANIMS_MOVE_DIR);
         ResetTrigger(animator, Common.Common.CHARA_ANIMS_END_DIR);
         ResetTrigger(animator, Common.Common.CHARA_ANIMS_ATTACK_DIR);
-        print("aaa" + animationName);
+        //print("aaa" + animationName);
 
         triggerName = SwitchMoveEnd(animationName);
 
@@ -273,7 +275,6 @@ public class Enemy : CharacterBace
         mNextAction = tstatus;
     }
     /// <summary>行動の着火</summary>
-    /// <param name="tstatus"></param>
     public override void SetStatus(Status tstatus)
     {
         base.SetStatus(tstatus);
@@ -290,7 +291,7 @@ public class Enemy : CharacterBace
 			default:
 				return;
         }
-        print("敵の行動開始:" + triggerName);
+        //print("敵の行動開始:" + triggerName);
         animator?.SetTrigger(triggerName);
     }
     
