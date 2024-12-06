@@ -8,51 +8,8 @@ using Unity.VisualScripting;
 using Unity.Mathematics;
 
 public class MapGeneretor : MonoBehaviour
-{
-
-
-
-    [Tooltip("1Fの大きさ"), SerializeField]
-    private GameObject BaceMap;
-
-    [Tooltip("ヨコマスの長さ"), SerializeField]
-    private int width;
-    [Tooltip("タテマスの長さ"), SerializeField]
-    private int height;
-
-    /// <summary>ステージごとの最小分割線</summary>
-    private int div;
-
-    [Tooltip("マス目の状態管理"), SerializeField]
-    private string[,] strings;
-
-    [Tooltip("タイル表示用プレファブ"), SerializeField]
-    private GameObject tile;
-
-	/// <summary>グリッド線描画用プレファブ</summary>
-	private GameObject line;
-
-	/// <summary>タイルオブジェクト格納用空のオブジェクト</summary>
-	private Transform tileParent;
-
-	/// <summary>グリッド線格納用空オブジェクト</summary>
-	private Transform lineParent;
-
-    [Tooltip("タイル子オブジェクト"), SerializeField]
-    private GameObject[,] tiles;
-
-    [Tooltip("エリアオブジェクト"), SerializeField]
-    private Area area;
-
-    [Tooltip("部屋管理用配列"), SerializeField]
-    private Lurd[] allRooms;
-
-    [Tooltip("自己生成フラグ"), SerializeField]
-    private bool isStart;
-
-	/// <summary>部屋数のカウント</summary>
-    private int roomNum;
-
+{   
+    //構造体
     /// <summary>四隅のマス目を持つもの</summary>
     public struct Lurd
     {
@@ -78,7 +35,6 @@ public class MapGeneretor : MonoBehaviour
             this.down = td;
         }
     }
-
     /// <summary>1エリアと分割線の四隅</summary>
     public struct AreaDiv
     {
@@ -109,7 +65,6 @@ public class MapGeneretor : MonoBehaviour
             dir = new Direction();
         }
     }
-
 	/// <summary>縦横方向</summary>
     public enum Direction
     {
@@ -119,6 +74,146 @@ public class MapGeneretor : MonoBehaviour
         VER
     };
 
+    //オブジェクト
+    [Tooltip("1Fの大きさ"), SerializeField]
+    private GameObject BaceMap;
+    [Tooltip("ヨコマスの長さ"), SerializeField]
+    private int width;
+    [Tooltip("タテマスの長さ"), SerializeField]
+    private int height;
+    /// <summary>ステージごとの最小分割線</summary>
+    private int div;
+    [Tooltip("マス目の状態管理"), SerializeField]
+    private string[,] strings;
+	/// <summary>タイルオブジェクト格納用空のオブジェクト</summary>
+	private Transform tileParent;
+    [Tooltip("エリアオブジェクト"), SerializeField]
+    private Area area;
+    [Tooltip("タイル子オブジェクト"), SerializeField]
+    private GameObject[,] tiles;
+
+
+    //メンバ変数
+    [Tooltip("自己生成フラグ"), SerializeField]
+    private bool isStart;
+	/// <summary>部屋数のカウント</summary>
+    private int mRoomNum;
+
+
+    //メンバ関数
+    /// <summary>フロア生成</summary>
+	public string[,] Init( int twidth,int theight, int tdiv)
+    {
+        //Debug.Log($"{this.name}:フロア生成開始");
+        //マップの大きさを決める
+        BaceMap = GameObject.Find("MapGen");
+//width = (int)BaceMap.GetComponent<RectTransform>().sizeDelta.x / 100;
+        //height = (int)BaceMap.GetComponent<RectTransform>().sizeDelta.y / 100;
+		
+         width = twidth;
+		height = theight;
+        div = tdiv;
+        //BaceMap.GetComponent<RectTransform>().sizeDelta = new Vector2(width * 100, height * 100);
+		BaceMap.transform.position = new Vector3(0, 0, BaceMap.transform.position.z);
+		
+		//プレファブ格納用オブジェクトを取得
+		tileParent = transform.Find("Tiles");
+
+
+        tiles = new GameObject[width, height];
+        //Debug.Log($"タイル数：{width},{height}");
+
+        strings = new string[width, height]; //1フロアの大きさをマス目に分割
+        for (int i = 0; i < width; i++)　//いったんすべて壁で埋める
+        {
+            for (int j = 0; j < height; j++)
+            {
+                strings[i, j] = "w";
+            }
+        }
+
+        mRoomNum = 0;
+        //エリアの分割
+        allRooms = new Lurd[mRoomNum];
+        area = new Area(new AreaDiv(new Lurd(0, 0, width - 1, height - 1)), this);
+        bool flg = area.CheckDiv();//自己分裂
+        //Debug.Log(flg);
+
+		Debug.Log($"{this.name}:フロア生成終了");
+
+		//タイル生成
+		int x = (int)BaceMap.transform.position.x; //+ Common.Common.FLOOR_WIDTH;
+		int y = (int)BaceMap.transform.position.y; //- Common.Common.FLOOR_HEIGHT;
+		MapDrawing(x, y);
+
+
+		return strings;
+    }        
+    /// <summary>ランダムな部屋のランダムな場所を返す</summary>
+    public Point GetRandomRoom()
+    {
+        Lurd lurd = allRooms[UnityEngine.Random.Range(0, allRooms.Length)];
+        Point point = new Point();
+        point.X = UnityEngine.Random.Range(lurd.left, lurd.right);
+        point.Y = UnityEngine.Random.Range(lurd.up, lurd.down);
+        return point;
+    }
+    /// <summary>部屋追加処理</summary>
+    public void InsertRoom(Lurd troom)
+    {
+        //Debug.Log($"部屋追加　部屋個数:{roomNum+1}");
+        mRoomNum++;
+        Array.Resize(ref allRooms, mRoomNum);
+        allRooms[mRoomNum - 1] = troom;
+    }  
+    /// <summary>スタートからゴールまでの直線描画(デバック)</summary>
+    public void Draw(Lurd stgo)
+    {
+		
+        if(stgo.right < stgo.left)
+        {
+            int tmp = stgo.right;
+            stgo.right = stgo.left;
+            stgo.left = tmp;
+        }
+        if(stgo.down < stgo.up)
+        {
+            int tmp = stgo.down;
+            stgo.down = stgo.up;
+            stgo.up= tmp;
+        }
+
+        if( stgo.left == stgo.right)
+        {
+            stgo.down++;
+        }
+        if(stgo.up == stgo.down) 
+        {
+            stgo.right++;
+        }
+
+        //Debug.Log($"{stgo.left},{stgo.right}");
+
+        for (int i = stgo.left, j = stgo.up; i != stgo.right || j != stgo.down;i++,j++)
+        {
+            //tiles[i, j].SetActive(false);
+            strings[i, j] = " ";
+            if (i >= stgo.right) i--;
+            if (j >= stgo.down) j--;
+        }
+    }
+    /// <summary>部屋の四角形描画(デバッグ)</summary>
+    public void DrawArea(Lurd tlurd)
+    {
+        for (int i = tlurd.left; i <= tlurd.right; i++) 
+        {
+            for(int j = tlurd.up; j <= tlurd.down; j++)
+            {
+                //tiles[i, j].SetActive(false);
+                strings[i, j] = " ";
+            }
+        }
+    }
     /// <summary>フロアの大きさに応じたタイルを敷き詰める</summary>
     private void  MapDrawing(float x, float y)
     {
@@ -157,62 +252,25 @@ public class MapGeneretor : MonoBehaviour
     }
 
 
-	/// <summary>フロア生成</summary>
-	/// <returns></returns>
-	public string[,] Init( int twidth,int theight, int tdiv)
+    //Set関数
+
+
+    //Get関数
+    /// <summary>最低分割幅を返す</summary>
+    public int GetDiv()
     {
-        //Debug.Log($"{this.name}:フロア生成開始");
-        //マップの大きさを決める
-        BaceMap = GameObject.Find("MapGen");
-//width = (int)BaceMap.GetComponent<RectTransform>().sizeDelta.x / 100;
-        //height = (int)BaceMap.GetComponent<RectTransform>().sizeDelta.y / 100;
-		
-         width = twidth;
-		height = theight;
-        div = tdiv;
-        //BaceMap.GetComponent<RectTransform>().sizeDelta = new Vector2(width * 100, height * 100);
-		BaceMap.transform.position = new Vector3(0, 0, BaceMap.transform.position.z);
-		
-		//プレファブ格納用オブジェクトを取得
-		tileParent = transform.Find("Tiles");
-		lineParent = transform.Find("Grid");
-
-
-        tiles = new GameObject[width, height];
-        //Debug.Log($"タイル数：{width},{height}");
-
-        strings = new string[width, height]; //1フロアの大きさをマス目に分割
-        for (int i = 0; i < width; i++)　//いったんすべて壁で埋める
-        {
-            for (int j = 0; j < height; j++)
-            {
-                strings[i, j] = "w";
-            }
-        }
-		//プレファブ指定
-        tile = (GameObject)Resources.Load("Prefabs/Square");
-        line = (GameObject)Resources.Load("Prefabs/Line");
-
-		////グリッド線の描画
-		//DrawGrid();
-
-        roomNum = 0;
-        //エリアの分割
-        allRooms = new Lurd[roomNum];
-        area = new Area(new AreaDiv(new Lurd(0, 0, width - 1, height - 1)), this, null);
-        bool flg = area.CheckDiv();//自己分裂
-        //Debug.Log(flg);
-
-		Debug.Log($"{this.name}:フロア生成終了");
-
-		//タイル生成
-		int x = (int)BaceMap.transform.position.x; //+ Common.Common.FLOOR_WIDTH;
-		int y = (int)BaceMap.transform.position.y; //- Common.Common.FLOOR_HEIGHT;
-		MapDrawing(x, y);
-
-
-		return strings;
+        return div;
     }
+    /// <summary>リクエストされたタイルの座標を返す</summary>
+    public Vector3 GetTilePos(Point tpoint)
+    {
+        return tiles[tpoint.X,tpoint.Y].transform.position;
+    }
+
+
+    [Tooltip("部屋管理用配列"), SerializeField]
+    private Lurd[] allRooms;
+
 
     // Start is called before the first frame update
     void Start()
@@ -223,127 +281,32 @@ public class MapGeneretor : MonoBehaviour
         }
     }
 
-    public int GetDiv()
-    {
-        return div;
-    }
-
-    /// <summary>部屋追加処理</summary>
-    /// <param name="troom"></param>
-    public void InsertRoom(Lurd troom)
-    {
-        //Debug.Log($"部屋追加　部屋個数:{roomNum+1}");
-        roomNum++;
-        Array.Resize(ref allRooms, roomNum);
-        allRooms[roomNum - 1] = troom;
-    }
-
-    /// <summary>ランダムな部屋のランダムな場所を返す</summary>
-    /// <returns></returns>
-    public Point GetRandomRoom()
-    {
-        Lurd lurd = allRooms[UnityEngine.Random.Range(0, allRooms.Length)];
-        Point point = new Point();
-        point.X = UnityEngine.Random.Range(lurd.left, lurd.right);
-        point.Y = UnityEngine.Random.Range(lurd.up, lurd.down);
-        return point;
-    }
-
-    /// <summary>スタートからゴールまでの直線描画(デバック)</summary>
-    public void Draw(Lurd stgo)
-    {
-		
-        if(stgo.right < stgo.left)
-        {
-            int tmp = stgo.right;
-            stgo.right = stgo.left;
-            stgo.left = tmp;
-        }
-        if(stgo.down < stgo.up)
-        {
-            int tmp = stgo.down;
-            stgo.down = stgo.up;
-            stgo.up= tmp;
-        }
-
-        if( stgo.left == stgo.right)
-        {
-            stgo.down++;
-        }
-        if(stgo.up == stgo.down) 
-        {
-            stgo.right++;
-        }
-
-        //Debug.Log($"{stgo.left},{stgo.right}");
-
-        for (int i = stgo.left, j = stgo.up; i != stgo.right || j != stgo.down;i++,j++)
-        {
-            //tiles[i, j].SetActive(false);
-            strings[i, j] = " ";
-            if (i >= stgo.right) i--;
-            if (j >= stgo.down) j--;
-        }
-    }
-
-    /// <summary>部屋の四角形描画(デバッグ)</summary>
-    public void DrawArea(Lurd tlurd)
-    {
-        for (int i = tlurd.left; i <= tlurd.right; i++) 
-        {
-            for(int j = tlurd.up; j <= tlurd.down; j++)
-            {
-                //tiles[i, j].SetActive(false);
-                strings[i, j] = " ";
-            }
-        }
-    }
-
-    /// <summary>リクエストされたタイルの座標を返す</summary>
-    /// <param name="tpoint"></param>
-    /// <returns></returns>
-    public Vector3 GetTilePos(Point tpoint)
-    {
-        return tiles[tpoint.X,tpoint.Y].transform.position;
-    }
-
     //エリア分割用クラス
     private　class Area
     {
-        private Area[] childArea;
-        private int mWidth;
-        private int mHeight;
-
-        private AreaDiv mAd;
-
+        //オブジェクト
+        /// <summary>マップジェネレーター</summary>
         private MapGeneretor mg;
-        private Area parArea;
-
-        private bool isRoom;
+        /// <summary>自身から分割したエリアの情報</summary>
+        private Area[] childArea;
+        /// <summary>部屋の情報</summary>
         private Lurd room;
 
+
+        //メンバ変数
+        /// <summary>横幅</summary>
+        private int mWidth;
+        /// <summary>縦幅</summary>
+        private int mHeight;
+        /// <summary>自身の分割線情報</summary>
+        private AreaDiv mAd;
+        /// <summary>部屋があるかどうか</summary>
+        private bool isRoom;
+        /// <summary>分割地点</summary>
         private int mDiv; 
 
-        /// <summary>コンストラクタ</summary>
-        /// <param name="tad">四隅と分割線</param>
-        /// <param name="tMg"></param>
-        /// <param name="tPar">分割元</param>
-        public Area(AreaDiv tAd, MapGeneretor tMg, Area tPar)
-        {
-            mAd = tAd;
-            //Debug.Log($"左上：{ad.lu}");
-            //Debug.Log($"右下：{ad.rd}");
-            mWidth = mAd.area.right-mAd.area.left;
-            mHeight = mAd.area.down-mAd.area.up;
 
-            childArea = new Area[2];
-            mg = tMg;
-            parArea = tPar;
-            isRoom = false;
-
-            mDiv = mg.GetDiv();
-        }
-
+        //メンバ関数
         /// <summary>分割が可能か確認,タテかヨコか決める</summary>
         public bool CheckDiv()
         {
@@ -376,7 +339,6 @@ public class MapGeneretor : MonoBehaviour
 
             return true;
         }
-
         /// <summary> エリアの分割</summary>
         private void DivAerea(Direction dir)
         {
@@ -424,14 +386,12 @@ public class MapGeneretor : MonoBehaviour
 
 
         }
-
         /// <summary>エリアの生成</summary>
         private Area CreatArea(AreaDiv tad)
         {
             //分割エリアの生成、分割
-            return new Area(tad,mg,this);
+            return new Area(tad,mg);
         }
-        
         /// <summary>分割不能なエリアに部屋を作る</summary>
         private void CreateRoom()
         {
@@ -453,7 +413,6 @@ public class MapGeneretor : MonoBehaviour
             //CreateRoad(this, mAd.division, mAd.dir)
             mg.InsertRoom(room);
         }
-
         /// <summary>分岐点へ向かって道を伸ばす</summary>
         private void CreateRoad(Area[] tarea, Lurd tdiv, Direction tdir)
         {
@@ -485,9 +444,7 @@ public class MapGeneretor : MonoBehaviour
 
             mg.Draw(road[2]);
         }
-
         /// <summary>最下層の部屋を取得</summary>
-        /// <returns></returns>
         private Area GetChildRoom(Point point, Direction dir)
         {
             Area tArea;
@@ -519,12 +476,27 @@ public class MapGeneretor : MonoBehaviour
             return tArea;
         }
 
-        /// <summary></summary>
-        /// <returns></returns>
-        private AreaDiv GetDiv()
+
+        //Set関数
+
+
+        //Get関数
+
+
+        /// <summary>コンストラクタ</summary>
+        public Area(AreaDiv tAd, MapGeneretor tMg)
         {
-            return mAd;
+            mAd = tAd;
+            mWidth = mAd.area.right-mAd.area.left;
+            mHeight = mAd.area.down-mAd.area.up;
+
+            childArea = new Area[2];
+            mg = tMg;
+            isRoom = false;
+
+            mDiv = mg.GetDiv();
         }
+
     }
-    //
+    
 }
