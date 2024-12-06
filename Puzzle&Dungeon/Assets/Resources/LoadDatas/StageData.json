@@ -8,7 +8,7 @@
 			"floor_width": 60,
 			"floor_height": 30,
 			"min_division": 15,
-			"max_enemy_num": 5,
+			"max_enemy_num": 0,
 			"enemy_id_1": 1,
 			"enemy_id_2": 2,
 
