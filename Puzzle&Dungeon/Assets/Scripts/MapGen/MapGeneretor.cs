@@ -9,6 +9,9 @@ using Unity.Mathematics;
 
 public class MapGeneretor : MonoBehaviour
 {
+
+
+
     [Tooltip("1F‚Ì‘å‚«‚³"), SerializeField]
     private GameObject BaceMap;
 
