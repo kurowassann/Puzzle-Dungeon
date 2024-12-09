@@ -50,8 +50,18 @@ namespace Common
 		ATTACK,
 		REAR_GAP
 	}
-    
-    
+
+    public enum NextFloorBonus
+    {
+        HEEL,
+        ATTACK,
+        GUARD,
+        MOVE,
+        NONE,
+    }
+
+
+
     class Common
     {
         /// <summary>ステージの総数</summary>
