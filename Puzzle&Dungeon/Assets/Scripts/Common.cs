@@ -8,6 +8,73 @@ using UnityEngine.SceneManagement;
 
 namespace Common
 {
+    /// <summary>四隅のマス目を持つもの</summary>
+    public struct Lurd
+    {
+        public int left;
+        public int up;
+        public int right;
+        public int down;
+
+        public Lurd Set(int tl, int tu, int tr, int td)
+        {
+            left = tl;
+            up = tu;
+            right = tr;
+            down = td;
+            return this;
+        }
+
+        public Lurd(int tl, int tu, int tr, int td)
+        {
+            this.left = tl;
+            this.up = tu;
+            this.right = tr;
+            this.down = td;
+        }
+    }
+
+    /// <summary>1エリアと分割線の四隅</summary>
+    public struct AreaDiv
+    {
+        public Lurd area;
+        public Lurd division;
+        public Direction dir;
+
+        public void Set(Lurd tArea, Lurd tDiv)
+        {
+            area = tArea;
+            division = tDiv;
+        }
+
+        /// <summary>コンストラクタ</summary>
+        /// <param name="tArea"></param>
+        /// <param name="tDiv"></param>
+        /// <param name="tDir"></param>
+        public AreaDiv(Lurd tArea, Lurd tDiv, Direction tDir)
+        {
+            area = tArea;
+            division = tDiv;
+            dir = tDir;
+        }
+        public AreaDiv(Lurd tArea)
+        {
+            area = tArea;
+            division = new Lurd();
+            dir = new Direction();
+        }
+    }
+
+    /// <summary>縦横方向</summary>
+    public enum Direction
+    {
+        /// <summary>横</summary>
+        HOR,
+        /// <summary>縦</summary>
+        VER
+    };
+
+
     public enum Abc
     {
         PLAYER_HP,
@@ -193,4 +260,7 @@ namespace Common
             return NormalizedFunc(_val, _min2, _max2);
         }
     }
+    
+
+
 }
