@@ -51,13 +51,23 @@ namespace Common
 		REAR_GAP
 	}
 
-    public enum NextFloorBonus
+    public enum AllBonus
     {
-        HEEL,
-        ATTACK,
+        ALLHEEL,
+        HEELUP,
+        ATTACK1UP,
         GUARD,
-        MOVE,
-        NONE,
+        ONEHITATTACK,
+        FLOORCLEAR,
+        ALLENEMYATTACK,
+        HEELDOWN,
+        ATTACK1DOWN,
+        EATTACK1UP,
+        LIFE1DOWN,
+        EHEEL1UP,  // 最後の要素にはカンマなし
+        SPACE_2_CLEAR, // 数字で始まる識別子も修正した例
+        ENEMYROOM,
+        NONE // 最後の要素
     }
 
 
