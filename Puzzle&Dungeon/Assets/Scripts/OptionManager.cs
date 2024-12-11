@@ -17,7 +17,6 @@ public class OptionManager : MonoBehaviour
         SOUND,
         LIGHT,
 
-        SAVE,
         CLOSE_OPT,
         BACK_TITLE,
     }
@@ -238,6 +237,8 @@ public class OptionManager : MonoBehaviour
     /// <returns></returns>
     bool Volumeinput()
     {
+        // 変更する場所
+
         bool ret = false;
         if (Input.GetKeyDown(KeyCode.LeftArrow) || Input.GetKeyDown(KeyCode.A))
         {
@@ -247,6 +248,11 @@ public class OptionManager : MonoBehaviour
                 case SelectableOption.LIGHT:
                     var slider = settingParents[(int)selectedMenu].GetChild((int)SettingObject.SLIDER).GetComponent<Slider>();
                     slider.value -= 1;
+                    // 音量をセット
+                    SetVolume();
+
+                    // 明るさのセット
+                    SetLight();
                     break;
             }
             ret = true;
@@ -259,6 +265,11 @@ public class OptionManager : MonoBehaviour
                 case SelectableOption.LIGHT:
                     var slider = settingParents[(int)selectedMenu].GetChild((int)SettingObject.SLIDER).GetComponent<Slider>();
                     slider.value += 1;
+                    // 音量をセット
+                    SetVolume();
+
+                    // 明るさのセット
+                    SetLight();
                     break;
             }
             ret = true;
@@ -278,14 +289,11 @@ public class OptionManager : MonoBehaviour
             switch (selectedMenu)
             {
                 case SelectableOption.CLOSE_OPT:
-                    //print("保存せずオプションを閉じる処理");
-                    Invoke("CloseOption", 0.1f);
-                    break;
-                case SelectableOption.SAVE:
                     // 設定の保存
                     SaveSettings();
                     break;
                 case SelectableOption.BACK_TITLE:
+
                     // 確認ダイアログを出す
                     Common.Common.LoadScene("TItle");
                     break;
@@ -318,9 +326,6 @@ public class OptionManager : MonoBehaviour
             case SelectableOption.SOUND:
             case SelectableOption.LIGHT:
                 pos = settingParents[(int)selectedMenu].GetChild((int)SettingObject.TYPE).position;
-                break;
-            case SelectableOption.SAVE:
-                pos = saveSettingText.position;
                 break;
             case SelectableOption.CLOSE_OPT:
                 pos = unsaveSettingText.position;
@@ -403,11 +408,6 @@ public class OptionManager : MonoBehaviour
         print("保存前データ:" + txt);
         PlayerPrefs.SetString(Common.Common.KEY_SETTINGS, txt);
         PlayerPrefs.Save();
-        // 音量をセット
-        SetVolume();
-
-        // 明るさのセット
-        SetLight();
 
         // 保存して終了
         Invoke("CloseOption", 0.1f);
