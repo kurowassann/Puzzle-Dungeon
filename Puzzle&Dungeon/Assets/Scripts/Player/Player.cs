@@ -10,7 +10,7 @@ using UnityEngine.Timeline;
 
 public class Player : CharacterBace
 {
-
+    /*
     //オブジェクト
     [Tooltip("スティック"), SerializeField]
     private InputAction inputMover;
@@ -29,12 +29,14 @@ public class Player : CharacterBace
     private Point AttackPoint;
 
 
-    //メンバ関数
+    //メンバ関数 
     /// <summary>初期化処理</summary>
-    public void Init()
+    public override void Init(Master tmas, Point tpoint, int thp, string tstr)
     {
-		um = GameObject.Find("UIManager").GetComponent<UIManager>();
-		um.GeneratePlayerHP(mHp);
+        base.Init(tmas, tpoint, thp, tstr);
+
+        um = GameObject.Find("UIManager").GetComponent<UIManager>();
+        um.GeneratePlayerHP(mHp);
 
         Debug.Log("プレイヤ初期化");
         SetCam();
@@ -196,7 +198,7 @@ public class Player : CharacterBace
                 //Debug.Log(point);
                 if (TI == TileInfo.ROUTE)
                 {
-                    Debug.Log("移動開始");
+                    //Debug.Log("移動開始");
                     SetPos(point);
                     SetStatus(Status.MOVE);
                     // アニメーションの呼び出し
@@ -205,14 +207,14 @@ public class Player : CharacterBace
                 }
                 else if (TI == TileInfo.ENEMY)
                 {
-                    Debug.Log("攻撃");
+                    //Debug.Log("攻撃");
 
                     SetStatus(Status.ATTACK);
                     AttackPoint = point;
                     //master.PlayerAttack(point);
 
                     // アニメーション起動部
-                    print("攻撃します:" + point);
+                    //print("攻撃します:" + point);
                     var triggerName = Common.Common.CHARA_ANIMS_ATTACK_DIR[(int)vec];
                     animator.SetTrigger(triggerName);
                 }
@@ -229,7 +231,7 @@ public class Player : CharacterBace
         /*
         float z = Camera.main.transform.position.z;
         Camera.main.transform.position = new Vector3(transform.position.x, transform.position.y, z);
- */
+ 
         }
 
     // Update is called once per frame
@@ -250,5 +252,5 @@ public class Player : CharacterBace
     private void LateUpdate()
     {
         SetCam();
-    }
+    }*/
 }

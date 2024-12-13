@@ -8,38 +8,98 @@ using UnityEngine.SceneManagement;
 
 namespace Common
 {
+    //4隅列挙
+    public enum Value
+    {
+        LEFT, RIGHT, TOP, BOTTOM
+    }
+
     /// <summary>四隅のマス目を持つもの</summary>
     public struct Lurd
     {
-        public int left;
-        public int up;
-        public int right;
-        public int down;
+        private int left;
+        private int top;
+        private int right;
+        private int bottom;
 
-        public Lurd Set(int tl, int tu, int tr, int td)
+        public Lurd Set(int tl, int tt, int tr, int tb)
         {
             left = tl;
-            up = tu;
+            top = tt;
             right = tr;
-            down = td;
+            bottom = tb;
             return this;
         }
 
-        public Lurd(int tl, int tu, int tr, int td)
+        public void SetValue(Value tvalue,int tnum)
+        {
+
+            switch (tvalue)
+            {
+                case Value.LEFT:
+                    left = tnum;
+                    break;
+                case Value.RIGHT:
+                    right = tnum;
+                    break;
+                case Value.TOP:
+                    top = tnum;
+                    break;
+                case Value.BOTTOM:
+                    bottom = tnum;
+                    break;
+                default:
+                    break;
+            }
+        }
+
+
+        public int GetValue(Value tvalue)
+        {
+            int val;
+            switch (tvalue)
+            {
+                case Value.LEFT:
+                    val = left;
+                    break;
+                case Value.RIGHT:
+                    val = right;
+                    break;
+                case Value.TOP:
+                    val = top;
+                    break;
+                case Value.BOTTOM:
+                    val = bottom;
+                    break;
+                    default:
+                    val = 0;
+                    break;
+            }
+            return val;
+        }
+
+        public Lurd(int tl, int tt, int tr, int tb)
         {
             this.left = tl;
-            this.up = tu;
+            this.top = tt;
             this.right = tr;
-            this.down = td;
+            this.bottom = tb;
         }
+    }
+
+    //エリアか分岐線
+    public enum ArDi
+    {
+        AREA,
+        DIVIDION,
     }
 
     /// <summary>1エリアと分割線の四隅</summary>
     public struct AreaDiv
     {
-        public Lurd area;
-        public Lurd division;
-        public Direction dir;
+        private Lurd area;
+        private Lurd division;
+        private Direction dir;
 
         public void Set(Lurd tArea, Lurd tDiv)
         {
@@ -47,10 +107,46 @@ namespace Common
             division = tDiv;
         }
 
+        public void SetLurd(ArDi val,Lurd tlurd)
+        {
+            switch (val)
+            {
+                case ArDi.AREA:
+                   area = tlurd;
+                    break;
+                case ArDi.DIVIDION:
+                    division = tlurd;
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        public void SetDir(Direction tdir)
+        {
+            dir = tdir;
+        }
+
+
+        public Lurd GetLurd(ArDi val)
+        {
+            Lurd lurd;
+            switch (val)
+            {
+                case ArDi.AREA:
+                    lurd = area;
+                    break;
+                case ArDi.DIVIDION:
+                    lurd = division;
+                    break;
+                default:
+                    lurd = area;
+                    break;
+            }
+            return lurd;
+        }
+
         /// <summary>コンストラクタ</summary>
-        /// <param name="tArea"></param>
-        /// <param name="tDiv"></param>
-        /// <param name="tDir"></param>
         public AreaDiv(Lurd tArea, Lurd tDiv, Direction tDir)
         {
             area = tArea;

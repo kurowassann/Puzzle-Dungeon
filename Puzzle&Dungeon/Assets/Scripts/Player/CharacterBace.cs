@@ -4,7 +4,7 @@ using Common;
 
 public class CharacterBace : MonoBehaviour
 {
-
+	/*
 	//オブジェクト　定数的扱い
     [Tooltip("マスターリクエスト用"), SerializeField]
     protected Master master;
@@ -222,5 +222,5 @@ public class CharacterBace : MonoBehaviour
 		StatusBranch();
     }
     
-
+	*/
 }
