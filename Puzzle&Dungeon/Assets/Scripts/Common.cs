@@ -67,7 +67,7 @@ namespace Common
         EHEEL1UP,  // 最後の要素にはカンマなし
         SPACE_2_CLEAR, // 数字で始まる識別子も修正した例
         ENEMYROOM,
-        NONE // 最後の要素
+        //NONE // 最後の要素
     }
 
 
