@@ -32,7 +32,7 @@ public class MapManager : MonoBehaviour
         cMg = clone.GetComponent<MapGeneretor>();
         if(isStart)
         {
-            cMg.Init(40,40,5);
+            cMg.Init(40,40,15);
         }
 
 
