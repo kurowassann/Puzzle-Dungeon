@@ -17,64 +17,87 @@ using UnityEngine.EventSystems;
 
 public class Room 
 {
-    /*
+    
     //オブジェクト
     /// <summary>管理元</summary>
-    private RoomManager rm;
+    private RoomManager cRm;
     /// <summary>部屋番号</summary>
-    private int mRoomId;
+    private int cRoomId;
     /// <summary>部屋の頂点</summary>
-    private Lurd mLurd;
+    private Lurd cLurd;
     /// <summary>横の長さ</summary>
-    private int mWidth;
+    private int cWidth;
     /// <summary>縦の長さ</summary>
-    private int mHeight;
+    private int cHeight;
     /// <summary>自身のタイル</summary>
-    private List<GameObject> mTiles;
+    private List<GameObject> cTiles;
 
     //メンバ変数
 
 
     //メンバ関数
+    //private
+    //public
     public void OpenTiles()
     {
-
-        /*
-        for(int i = 0;i < mTiles.Count;i++) 
+        for(int i = 0;i < cTiles.Count;i++) 
         {
-            mTiles[i].SetActive(true);
+            cTiles[i].SetActive(true);
         }
     }
 
     //Set関数
+    /// <summary>エリアのオブジェクトを取得</summary>
+    public void SetTiles(List<GameObject> ttiles)
+    {
+        cTiles = ttiles;
+    }
 
     //Get関数
+    /// <summary>ランダムな部屋の位置を渡す</summary>
     public Point GetRandomPoint()
     {
         Point point = new Point();
 
-        point.X = Random.Range(mLurd.left, mLurd.right);
-        point.Y = Random.Range(mLurd.up, mLurd.down);
+        point.X = Random.Range(cLurd.GetValue(Value.LEFT), cLurd.GetValue(Value.RIGHT));
+        point.Y = Random.Range(cLurd.GetValue(Value.TOP), cLurd.GetValue(Value.BOTTOM));
         
         return point;
     }
+    /// <summary>自身を渡す</summary>
+    public Room GetRoom()
+    {
+        return this;
+    }
+    /// <summary>横幅を渡す</summary>
+    public int GetWidth()
+    {
+        return cWidth;
+    }
+    /// <summary>縦幅を返す</summary>
+    public int Height()
+    {
+        return cHeight;
+    }
+    //
+    public int GetValue(Value tvalue)
+    {
+        return cLurd.GetValue(tvalue);
+    }
+
 
 
     ///<summary>コンストラクタ</summary>
-    /// <param name="tlurd"></param>
-    /// <param name="twidth"></param>
-    /// <param name="theight"></param>
-    public Room(Lurd tlurd,int tid,List<GameObject> tgms, RoomManager trm)
+    public Room(Lurd tlurd,int tid, RoomManager trm)
     {
         Debug.Log($"部屋が生成　部屋ID:{tid}");
-        mLurd = tlurd;
-        mRoomId = tid;
-        mWidth = mLurd.right-mLurd.left;
-        mHeight = mLurd.down-mLurd.up;
-        mTiles = tgms;
-        Debug.Log(mTiles[10]);
-        rm = trm;
+        cLurd = tlurd;
+        cRoomId = tid;
+        cWidth = cLurd.GetValue(Value.RIGHT)-cLurd.GetValue(Value.LEFT);
+        cWidth = cLurd.GetValue(Value.BOTTOM) -cLurd.GetValue(Value.TOP);
+        cTiles = new List<GameObject>();
+        cRm = trm;
 
     }
-*/
+
 }

@@ -6,10 +6,9 @@ using UnityEngine;
 
 public class RoomManager 
 {
-    /*
     //オブジェクト
     /// <summary>部屋の管理</summary>
-    private List<Room> mRooms;
+    private List<Room> cRooms;
 
     //メンバ変数
     //現在の部屋数
@@ -18,15 +17,20 @@ public class RoomManager
     //メンバ関数
     private void Init()
     {
-       mRooms = new List<Room>();
+       cRooms = new List<Room>();
         mRoomCount = 0;
     }
     //部屋の追加
-    public void AddRoom(Lurd tlurd, List<GameObject> tgms)
+    public void AddRoom(Lurd tlurd)
     {
-        mRooms.Add(new Room(tlurd,mRoomCount,tgms, this));
+        cRooms.Add(new Room(tlurd,mRoomCount, this));
 
         mRoomCount++;   
+    }
+    //
+    public void OpenOneRoom(int num)
+    {
+        cRooms[num].OpenTiles();
     }
 
     //Set関数
@@ -37,24 +41,32 @@ public class RoomManager
     public Point GetRandomRoom()
     {
         Point point;
-        int num = Random.Range(0, mRooms.Count);
-        point = mRooms[num].GetRandomPoint();
+        int num = Random.Range(0, cRooms.Count);
+        point = cRooms[num].GetRandomPoint();
 
 
         return point;
     }
     /// <summary>プレイヤの生成部屋の表示をONに</summary>
-    /// <param name="num"></param>
-    /// <returns></returns>
     public Point GetRandomRoom(int tnum)
     {
         Point point;
-        int num = Random.Range(0, mRooms.Count);
-        point = mRooms[num].GetRandomPoint();
+        int num = Random.Range(0, cRooms.Count);
+        point = cRooms[num].GetRandomPoint();
 
-        mRooms[num].OpenTiles();
+        cRooms[num].OpenTiles();
 
         return point;
+    }
+    /// <summary>ルームの数を返す</summary>
+    public int GetRoomCount()
+    {
+        return cRooms.Count;
+    }
+    //
+    public Room GetRoom(int num)
+    {
+        return cRooms[num].GetRoom();
     }
 
     public  RoomManager()
@@ -63,5 +75,5 @@ public class RoomManager
 
         Init();
     }
-    */
+    
 }

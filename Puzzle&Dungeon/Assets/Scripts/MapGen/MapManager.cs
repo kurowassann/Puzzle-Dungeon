@@ -18,8 +18,13 @@ public class MapManager : MonoBehaviour
     private RoomManager cRm;
     /// <summary>マップ生成用クラス</summary>
     private MapGeneretor cMg;
+    /// <summary>タイル情報</summary>
+    private string[,] cTiles;
+    /// <summary>タイルのオブジェクト</summary>
+    private GameObject[,] cTileObjects;
 
     //メンバ変数
+    private int mNum;
 
     //メンバ関数
     //private
@@ -35,10 +40,13 @@ public class MapManager : MonoBehaviour
             cMg.Init(40,40,15);
         }
 
+        //生成したマップの情報を受け取る
+        cTiles = cMg.GetStrings();
+        cTileObjects = cMg.GetTileObjects();
+        cRm = cMg.GetRoomManager();
 
 
-        cRm = new RoomManager();
-
+        mNum = 0;
     }
 
 
@@ -51,12 +59,29 @@ public class MapManager : MonoBehaviour
         if(isStart) { Init(); }
     }
 
-    public void Update()
+    public void Update() 
     {
         if(isDebug)
         {
             if(Input.GetKeyDown(KeyCode.Space) ) 
             {
+                if (mNum < cRm.GetRoomCount())
+                {
+                    print($"部屋番号{mNum}を表示します");
+                    cRm.OpenOneRoom(mNum); 
+                    
+                    mNum++;
+                }
+                else
+                {
+                    print($"表示できる部屋は{mNum}で終わりです");
+                }
+
+            }
+
+            if(Input.GetKeyDown(KeyCode.O))
+            {
+                print("マップ全体を表示");
                 cMg.TileOpen();
             }
         }

@@ -22,7 +22,7 @@ public class MapGeneretor : MonoBehaviour
 
     //オブジェクト 定数
     /// <summary>部屋管理クラス</summary>
-    private RoomManager rm;
+    private RoomManager cRm;
     /// <summary>ヨコマスの長さ</summary>
     private int cWidth;
     /// <summary>タテマスの長さ</summary>
@@ -82,13 +82,28 @@ public class MapGeneretor : MonoBehaviour
         }
 
     }
+    //ルームのタイルオブジェクトをまとめる
+    private void RoomSum(Room troom)
+    {
+        List<GameObject> gos = new List<GameObject>();
+
+        for(int i = troom.GetValue(Value.LEFT)-1;i < troom.GetValue(Value.RIGHT)+2;i++)
+        {
+            for(int j = troom.GetValue(Value.TOP)-1;j < troom.GetValue(Value.BOTTOM)+2;j++)
+            {
+                gos.Add(cTiles[i,j]);
+            }
+        }
+
+        troom.SetTiles(gos);
+    }
 
 
     //public
     /// <summary>フロア生成</summary>
-	public string[,] Init(int twidth, int theight, int tdiv)
+	public void Init(int twidth, int theight, int tdiv)
     {
-        //rm = new RoomManager();
+        cRm = new RoomManager();
 
         if (isDebug)//開始コメント
         {
@@ -129,19 +144,26 @@ public class MapGeneretor : MonoBehaviour
         int y = (int)transform.position.y; //- Common.Common.FLOOR_HEIGHT;
         MapDrawing(x, y);
 
+
+        //ルームにタイルを紐づけ
+        for(int i = 0;i < cRm.GetRoomCount();i++)
+        {
+            RoomSum(cRm.GetRoom(i));
+        }
+
         if (isDebug)//生成の終了
         {
             Debug.Log($"{this.name}:フロア生成終了");
         }
 
-        return cStrings;
     }
     /// <summary>部屋追加処理</summary>
     public void InsertRoom(Lurd troom)
     {
         DrawArea(troom);
 
-        List<GameObject> gms = new List<GameObject>();
+        //List<GameObject> gms = new List<GameObject>();
+        /*
         for (int i = 0; i < troom.GetValue(Value.RIGHT); i++)
         {
             for (int j = 0; j < troom.GetValue(Value.BOTTOM); j++)
@@ -150,9 +172,10 @@ public class MapGeneretor : MonoBehaviour
             }
         }
 
+        */
 
 
-        //rm.AddRoom(troom,gms);
+        cRm.AddRoom(troom);
     }
     /// <summary>スタートからゴールまでの直線描画(デバック)</summary>
     public void Draw(Lurd stgo)
@@ -232,7 +255,18 @@ public class MapGeneretor : MonoBehaviour
     /// <summary>部屋のまとまりを渡す</summary>
     public RoomManager GetRoomManager()
     {
-        return rm;
+        return cRm;
+    }
+    /// <summary>タイルの情報を渡す</summary>
+    public String[,] GetStrings()
+    {
+        return cStrings;
+    }
+    /// <summary>タイルのオブジェクトを渡す</summary>
+    /// <returns></returns>
+    public GameObject[,] GetTileObjects()
+    {
+        return cTiles;
     }
     /// <summary>デバック表示のありなし</summary>
     public bool GetDebug()
