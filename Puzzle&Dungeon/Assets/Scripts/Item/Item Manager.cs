@@ -4,15 +4,20 @@ using UnityEngine;
 using Common;
 using Data;
 
-
 public class ItemManager : MonoBehaviour
 {
+
+    public int nextItemType;
+
+
     /// <summary>次の階層にいった際のボーナス抽選</summary>
     public AllBonus LotNextBonus()
     {
         AllBonus Bonus = AllBonus.ENEMYROOM;
 
         //抽選用数値
+        //int num = UnityEngine.Random.Range(0, 100);// 0, 1, 2, 3 のいずれか
+
         int num = UnityEngine.Random.Range(0, 100);// 0, 1, 2, 3 のいずれか
 
         //抽選
