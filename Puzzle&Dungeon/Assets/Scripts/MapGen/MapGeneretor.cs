@@ -23,6 +23,8 @@ public class MapGeneretor : MonoBehaviour
     //オブジェクト 定数
     /// <summary>部屋管理クラス</summary>
     private RoomManager cRm;
+    /// <summary>廊下管理クラス</summary>
+    private AisleManager cAm;
     /// <summary>ヨコマスの長さ</summary>
     private int cWidth;
     /// <summary>タテマスの長さ</summary>
@@ -104,6 +106,7 @@ public class MapGeneretor : MonoBehaviour
 	public void Init(int twidth, int theight, int tdiv)
     {
         cRm = new RoomManager();
+        cAm = new AisleManager();
 
         if (isDebug)//開始コメント
         {
@@ -177,10 +180,21 @@ public class MapGeneretor : MonoBehaviour
 
         cRm.AddRoom(troom);
     }
+    /// <summary>通路の追加</summary>
+    public void InsertAisle(Lurd[] tlurds)
+    {
+        cAm.AddAisle();
+
+        for(int i = 0;i<tlurds.Length;i++)
+        {
+
+            Draw(tlurds[i]);
+        }
+    }
     /// <summary>スタートからゴールまでの直線描画(デバック)</summary>
     public void Draw(Lurd stgo)
     {
-
+        //直線の方向によって値を修正
         if (stgo.GetValue(Value.RIGHT) < stgo.GetValue(Value.LEFT))
         {
             int tmp = stgo.GetValue(Value.RIGHT);
@@ -256,6 +270,11 @@ public class MapGeneretor : MonoBehaviour
     public RoomManager GetRoomManager()
     {
         return cRm;
+    }
+    //
+    public AisleManager GetAisleManager()
+    {
+        return cAm;
     }
     /// <summary>タイルの情報を渡す</summary>
     public String[,] GetStrings()
@@ -447,7 +466,7 @@ public class MapGeneretor : MonoBehaviour
             road[2].SetValue(Value.RIGHT, road[1].GetValue(Value.RIGHT));
             road[2].SetValue(Value.BOTTOM, road[1].GetValue(Value.BOTTOM));
 
-            cMg.Draw(road[2]);
+            cMg.InsertAisle(road[2]);
         }
         /// <summary>最下層の部屋を取得</summary>
         private Area GetChildRoom(Point point, Direction dir)

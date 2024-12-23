@@ -29,8 +29,10 @@ public class Room
     private int cWidth;
     /// <summary>縦の長さ</summary>
     private int cHeight;
-    /// <summary>自身のタイル</summary>
+    /// <summary>自身のタイルオブジェクト</summary>
     private List<GameObject> cTiles;
+    /// <summary>通路につながる座標</summary>
+    private List<Point> cAislePoint;
 
     //メンバ変数
 
@@ -38,6 +40,7 @@ public class Room
     //メンバ関数
     //private
     //public
+    /// <summary>部屋全体を照らす</summary>
     public void OpenTiles()
     {
         for(int i = 0;i < cTiles.Count;i++) 
@@ -79,7 +82,7 @@ public class Room
     {
         return cHeight;
     }
-    //
+    /// <summary>指定された頂点を渡す</summary>
     public int GetValue(Value tvalue)
     {
         return cLurd.GetValue(tvalue);
@@ -97,6 +100,7 @@ public class Room
         cWidth = cLurd.GetValue(Value.BOTTOM) -cLurd.GetValue(Value.TOP);
         cTiles = new List<GameObject>();
         cRm = trm;
+        cAislePoint = new List<Point>();
 
     }
 

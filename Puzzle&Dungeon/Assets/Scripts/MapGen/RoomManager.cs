@@ -15,6 +15,7 @@ public class RoomManager
     private int mRoomCount;
 
     //ƒƒ“ƒoŠÖ”
+    /// <summary>‰Šú‰»ˆ—</summary>
     private void Init()
     {
        cRooms = new List<Room>();
@@ -27,7 +28,7 @@ public class RoomManager
 
         mRoomCount++;   
     }
-    //
+    /// <summary>w’è‚µ‚½•”‰®‚ğÆ‚ç‚·</summary>
     public void OpenOneRoom(int num)
     {
         cRooms[num].OpenTiles();
@@ -63,7 +64,7 @@ public class RoomManager
     {
         return cRooms.Count;
     }
-    //
+    /// <summary>w’è‚³‚ê‚½•”‰®‚ğ•Ô‚·</summary>
     public Room GetRoom(int num)
     {
         return cRooms[num].GetRoom();

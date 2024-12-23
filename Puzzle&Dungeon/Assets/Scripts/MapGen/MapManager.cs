@@ -1,3 +1,4 @@
+using Common;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -16,6 +17,8 @@ public class MapManager : MonoBehaviour
     //オブジェクト
     /// <summary>部屋管理用クラス</summary>
     private RoomManager cRm;
+    /// <summary>廊下管理クラス</summary>
+    private AisleManager cAm;
     /// <summary>マップ生成用クラス</summary>
     private MapGeneretor cMg;
     /// <summary>タイル情報</summary>
@@ -28,6 +31,18 @@ public class MapManager : MonoBehaviour
 
     //メンバ関数
     //private
+    /// <summary>すべてのタイルを表示</summary>
+    private void TileOpen()
+    {
+        for (int i = 0; i < cTileObjects.GetLength(0); i++)
+        {
+            for (int j = 0; j < cTileObjects.GetLength(1); j++)
+            {
+                cTileObjects[i, j].SetActive(true);
+            }
+        }
+    }
+
 
     //public
     public void Init()
@@ -44,11 +59,11 @@ public class MapManager : MonoBehaviour
         cTiles = cMg.GetStrings();
         cTileObjects = cMg.GetTileObjects();
         cRm = cMg.GetRoomManager();
+        cAm = cMg.GetAisleManager();
 
 
         mNum = 0;
     }
-
 
 
     /// <summary>スタート関数</summary>
@@ -82,7 +97,7 @@ public class MapManager : MonoBehaviour
             if(Input.GetKeyDown(KeyCode.O))
             {
                 print("マップ全体を表示");
-                cMg.TileOpen();
+                TileOpen();
             }
         }
     }
