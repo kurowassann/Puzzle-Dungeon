@@ -89,15 +89,70 @@ public class MapGeneretor : MonoBehaviour
     {
         List<GameObject> gos = new List<GameObject>();
 
-        for(int i = troom.GetValue(Value.LEFT)-1;i < troom.GetValue(Value.RIGHT)+2;i++)
+        for(int i = troom.GetValue(Value.LEFT);i < troom.GetValue(Value.RIGHT)+1;i++)
         {
-            for(int j = troom.GetValue(Value.TOP)-1;j < troom.GetValue(Value.BOTTOM)+2;j++)
+            for(int j = troom.GetValue(Value.TOP);j < troom.GetValue(Value.BOTTOM)+1;j++)
             {
                 gos.Add(cTiles[i,j]);
             }
         }
 
         troom.SetTiles(gos);
+    }
+    /// <summary>廊下のタイルオブジェクトをまとめる</summary>
+    private void AisleSum(Aisle taisle)
+    {
+
+        //廊下の直線数ループ
+        for(int i = 0;i < taisle.GetLength();i++)
+        {
+            List<GameObject> gos = new List<GameObject>();
+            Lurd lurd = taisle.GetLurd(i);
+            lurd = LineCorrection(lurd);
+
+            for (int j = lurd.GetValue(Value.LEFT), k = lurd.GetValue(Value.TOP); j != lurd.GetValue(Value.RIGHT) || k != lurd.GetValue(Value.BOTTOM); j++, k++)
+            {
+                //tiles[i, j].SetActive(false);
+                gos.Add(cTiles[j,k]);
+                if (j >= lurd.GetValue(Value.RIGHT)) j--;
+                if (k >= lurd.GetValue(Value.BOTTOM)) k--;
+            }
+
+            taisle.SetTiles(gos);
+
+        }
+
+    }
+    /// <summary>直線描画補正</summary>
+    private　Lurd LineCorrection(Lurd tlurd)
+    {
+        Lurd lurd = tlurd;
+
+        //直線の方向によって値を修正
+        if (lurd.GetValue(Value.RIGHT) < lurd.GetValue(Value.LEFT))
+        {
+            int tmp = lurd.GetValue(Value.RIGHT);
+            lurd.SetValue(Value.RIGHT, lurd.GetValue(Value.LEFT));
+            lurd.SetValue(Value.LEFT, tmp);
+        }
+        if (lurd.GetValue(Value.BOTTOM) < lurd.GetValue(Value.TOP))
+        {
+            int tmp = lurd.GetValue(Value.BOTTOM);
+            lurd.SetValue(Value.BOTTOM, lurd.GetValue(Value.TOP));
+            lurd.SetValue(Value.TOP, tmp);
+        }
+
+        if (lurd.GetValue(Value.LEFT) == lurd.GetValue(Value.RIGHT))
+        {
+            lurd.SetValue(Value.BOTTOM, lurd.GetValue(Value.BOTTOM) + 1);
+        }
+        if (lurd.GetValue(Value.TOP) == lurd.GetValue(Value.BOTTOM))
+        {
+            lurd.SetValue(Value.RIGHT, lurd.GetValue(Value.RIGHT) + 1);
+        }
+
+
+        return lurd;
     }
 
 
@@ -154,6 +209,12 @@ public class MapGeneretor : MonoBehaviour
             RoomSum(cRm.GetRoom(i));
         }
 
+        //廊下にタイルを紐づけ
+        for(int i = 0; i<cAm.GetAisleCount();i++)
+        {
+            AisleSum(cAm.GetAisle(i));
+        }
+
         if (isDebug)//生成の終了
         {
             Debug.Log($"{this.name}:フロア生成終了");
@@ -165,25 +226,12 @@ public class MapGeneretor : MonoBehaviour
     {
         DrawArea(troom);
 
-        //List<GameObject> gms = new List<GameObject>();
-        /*
-        for (int i = 0; i < troom.GetValue(Value.RIGHT); i++)
-        {
-            for (int j = 0; j < troom.GetValue(Value.BOTTOM); j++)
-            {
-                gms.Add(cTiles[i, j]);
-            }
-        }
-
-        */
-
-
         cRm.AddRoom(troom);
     }
     /// <summary>通路の追加</summary>
     public void InsertAisle(Lurd[] tlurds)
     {
-        cAm.AddAisle();
+        cAm.AddAisle(tlurds);
 
         for(int i = 0;i<tlurds.Length;i++)
         {
@@ -195,28 +243,7 @@ public class MapGeneretor : MonoBehaviour
     public void Draw(Lurd stgo)
     {
         //直線の方向によって値を修正
-        if (stgo.GetValue(Value.RIGHT) < stgo.GetValue(Value.LEFT))
-        {
-            int tmp = stgo.GetValue(Value.RIGHT);
-            stgo.SetValue(Value.RIGHT, stgo.GetValue(Value.LEFT));
-            stgo.SetValue(Value.LEFT, tmp);
-        }
-        if (stgo.GetValue(Value.BOTTOM) < stgo.GetValue(Value.TOP))
-        {
-            int tmp = stgo.GetValue(Value.BOTTOM);
-            stgo.SetValue(Value.BOTTOM, stgo.GetValue(Value.TOP));
-            stgo.SetValue(Value.TOP, tmp);
-        }
-
-        if (stgo.GetValue(Value.LEFT) == stgo.GetValue(Value.RIGHT))
-        {
-            stgo.SetValue(Value.BOTTOM, stgo.GetValue(Value.BOTTOM) + 1);
-        }
-        if (stgo.GetValue(Value.TOP) == stgo.GetValue(Value.BOTTOM))
-        {
-            stgo.SetValue(Value.RIGHT, stgo.GetValue(Value.RIGHT) + 1);
-        }
-
+        stgo = LineCorrection(stgo);
         //Debug.Log($"{stgo.left},{stgo.right}");
 
         for (int i = stgo.GetValue(Value.LEFT), j = stgo.GetValue(Value.TOP); i != stgo.GetValue(Value.RIGHT) || j != stgo.GetValue(Value.BOTTOM); i++, j++)
@@ -456,7 +483,7 @@ public class MapGeneretor : MonoBehaviour
                     road[i].SetValue(Value.LEFT, tarea[i].cRoom.GetValue(Value.LEFT));
                     road[i].SetValue(Value.RIGHT, tdiv.GetValue(Value.RIGHT));
                 }
-                cMg.Draw(road[i]);
+                //cMg.Draw(road[i]);
 
             }
 
@@ -466,7 +493,12 @@ public class MapGeneretor : MonoBehaviour
             road[2].SetValue(Value.RIGHT, road[1].GetValue(Value.RIGHT));
             road[2].SetValue(Value.BOTTOM, road[1].GetValue(Value.BOTTOM));
 
-            cMg.InsertAisle(road[2]);
+            //1と2を入れ替える
+            Lurd tmp = road[2];
+            road[2] = road[1];
+            road[1] = tmp;
+
+            cMg.InsertAisle(road);
         }
         /// <summary>最下層の部屋を取得</summary>
         private Area GetChildRoom(Point point, Direction dir)

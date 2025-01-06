@@ -28,6 +28,7 @@ public class MapManager : MonoBehaviour
 
     //メンバ変数
     private int mNum;
+    private int mNum2;
 
     //メンバ関数
     //private
@@ -63,6 +64,7 @@ public class MapManager : MonoBehaviour
 
 
         mNum = 0;
+        mNum2 = 0;
     }
 
 
@@ -77,8 +79,23 @@ public class MapManager : MonoBehaviour
     public void Update() 
     {
         if(isDebug)
-        {
-            if(Input.GetKeyDown(KeyCode.Space) ) 
+        { 
+            if(Input.GetKeyDown(KeyCode.A))
+            {
+                if(mNum2 < cAm.GetAisleCount())
+                {
+                    print($"廊下番号{mNum2}を表示します");
+                    cAm.OpenOneAisle(mNum2);
+                    mNum2++;
+                }
+                else
+                {
+                    print($"表示できる廊下は{mNum2}で終わりです");
+                }
+
+            }
+
+            if (Input.GetKeyDown(KeyCode.Space) ) 
             {
                 if (mNum < cRm.GetRoomCount())
                 {

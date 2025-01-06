@@ -1,3 +1,4 @@
+using Common;
 using System.Collections;
 using System.Collections.Generic;
 using System.Drawing;
@@ -7,12 +8,16 @@ using UnityEngine;
 public class Aisle
 {
     //オブジェクト
+    /// <summary>管理元</summary>
+    private AisleManager cAm;
     /// <summary>通路の座標</summary>
     private List<GameObject> cAisleTiles;
     /// <summary>自身のID</summary>
     private int cAisleId;
     /// <summary>左右の部屋ID</summary>
     private int[] cRoomId;
+    /// <summary>位置情報</summary>
+    private Lurd[] cLurds;
 
     //メンバ変数
 
@@ -22,14 +27,44 @@ public class Aisle
     {
 
     }
+    /// <summary>廊下の表示</summary>
+    public void OpenAllTiles()
+    {
+        for(int i = 0; i < cAisleTiles.Count;i++)
+        {
+            cAisleTiles[i].SetActive(true);
+        }
+    }
 
+    //Set関数
+    //
+    public void SetTiles(List<GameObject> tgos)
+    {
+        for(int i = 0;i < tgos.Count;i++)
+        {
+            cAisleTiles.Add(tgos[i]);
+        }
+    }
+
+    //Get関数
+    public int GetLength()
+    {
+        return cLurds.Length;
+    }
+    //
+    public Lurd GetLurd(int num)
+    {
+        return cLurds[num];
+    }
 
     //コンストラクタ
-    public Aisle(int num) 
+    public Aisle(Lurd[] tlurds,int num,AisleManager tam) 
     {
+        cLurds = tlurds;
         cAisleTiles= new List<GameObject>();
         cAisleId = num;
         cRoomId = new int[2];
+        cAm = tam;
     }
 
 
