@@ -5,28 +5,47 @@ using UnityEngine;
 
 public class BonusManager : MonoBehaviour
 {
-    public GameObject allHeelPrefab;  // ALLHEELに対応するPrefab
-    public GameObject heelUpPrefab;   // HEELUPに対応するPrefab
-    public GameObject attack1UpPrefab; // ATTACK1UPに対応するPrefab
-    public GameObject guardPrefab;    // GUARDに対応するPrefab
-    public GameObject oneHitAttackPrefab; // ONEHITATTACKに対応するPrefab
-    public GameObject floorClearPrefab;  // FLOORCLEARに対応するPrefab
-    public GameObject enemyRoomPrefab;   // ENEMYROOMに対応するPrefab
-    public GameObject heelDownPrefab;  // HEELDOWNに対応するPrefab
-    public GameObject attack1DownPrefab; // ATTACK1DOWNに対応するPrefab
-    public GameObject eAttack1UpPrefab; // EATTACK1UPに対応するPrefab
-    public GameObject life1DownPrefab; // LIFE1DOWNに対応するPrefab
-    public GameObject eHeel1UpPrefab; // EHEEL1UPに対応するPrefab
-    public GameObject space2ClearPrefab; // SPACE_2_CLEARに対応するPrefab
+    [SerializeField]
+    GameObject[] Buff;
 
-    private GameObject currentBonusObject;  // 現在表示中のボーナスオブジェクトを保持する変数
+    [SerializeField]
+    GameObject[] DeBuff;
+    AllBonus bonus = AllBonus.ENEMYROOM;
 
-    /// <summary>次の階層に行った際のボーナス抽選</summary>
-    public AllBonus LotNextBonus()
+   
+
+    //関数1バフかデバフをランダムで選択させる
+    public void BuffOrDebuff()
     {
-        AllBonus bonus = AllBonus.ENEMYROOM;
-
         int num = UnityEngine.Random.Range(0, 100); // 0～99のランダム数値
+
+        switch (num)
+        {
+            case int n when (n < 70):
+                LotNextBonus1();
+                print("バフが選択されました");
+                break;
+            case int n when (n >= 70 && n < 99):
+                LotNextBonus2();
+                print("デバフが選択されました");
+                break;
+            default:
+                break;
+
+        }
+
+        // ボーナスに対応するオブジェクトを表示する
+        ShowBonusObject(bonus);
+        //return bonus;
+
+    }
+
+    //関数2(バフ)の詳細
+    /// <summary>次の階層に行った際のボーナス抽選</summary>
+    public void LotNextBonus1()
+    {
+
+        int num = UnityEngine.Random.Range(0, 70); // 0～70のランダム数値
 
         switch (num)
         {
@@ -51,25 +70,45 @@ public class BonusManager : MonoBehaviour
             case int n when (n >= 65 && n < 70):
                 bonus = AllBonus.ALLENEMYATTACK;
                 break;
-            case int n when (n >= 70 && n < 75):
+            default:
+                break;
+        }
+
+        // ボーナスに対応するオブジェクトを表示する
+        ShowBonusObject(bonus);
+
+
+        //return bonus;
+    }
+
+
+    //関数3(デバフ)の詳細
+    public void LotNextBonus2()
+    {
+
+        int num = UnityEngine.Random.Range(0, 60); // 70～99のランダム数値
+
+        switch (num)
+        {
+            case int n when (n >= 0 && n < 10):
                 bonus = AllBonus.HEELDOWN;
                 break;
-            case int n when (n >= 75 && n < 80):
+            case int n when (n >= 10 && n < 20):
                 bonus = AllBonus.ATTACK1DOWN;
                 break;
-            case int n when (n >= 80 && n < 85):
+            case int n when (n >= 20 && n < 30):
                 bonus = AllBonus.EATTACK1UP;
                 break;
-            case int n when (n >= 85 && n < 90):
+            case int n when (n >= 30 && n < 40):
                 bonus = AllBonus.LIFE1DOWN;
                 break;
-            case int n when (n >= 90 && n < 95):
+            case int n when (n >= 40 && n < 50):
                 bonus = AllBonus.EHEEL1UP;
                 break;
-            case int n when (n >= 95 && n < 97.5):
+            case int n when (n >= 50 && n < 55):
                 bonus = AllBonus.SPACE_2_CLEAR;
                 break;
-            case int n when (n >= 97.5 && n < 99):
+            case int n when (n >= 59 && n < 60):
                 bonus = AllBonus.ENEMYROOM;
                 break;
             default:
@@ -79,67 +118,75 @@ public class BonusManager : MonoBehaviour
         // ボーナスに対応するオブジェクトを表示する
         ShowBonusObject(bonus);
 
-        return bonus;
+
+        //return bonus;
     }
 
     // 抽選結果に基づいてオブジェクトを表示するメソッド
     private void ShowBonusObject(AllBonus bonus)
     {
-        // 以前のボーナスオブジェクトを削除
-        if (currentBonusObject != null)
-        {
-            Destroy(currentBonusObject);
-        }
+      
 
         // 新しいボーナスオブジェクトをインスタンス化して表示
         switch (bonus)
         {
             case AllBonus.ALLHEEL:
-                currentBonusObject = Instantiate(allHeelPrefab);
+                Buff[0].SetActive(true);
                 break;
             case AllBonus.HEELUP:
-                currentBonusObject = Instantiate(heelUpPrefab);
+                Buff[1].SetActive(true);
                 break;
             case AllBonus.ATTACK1UP:
-                currentBonusObject = Instantiate(attack1UpPrefab);
+                Buff[2].SetActive(true);
                 break;
             case AllBonus.GUARD:
-                currentBonusObject = Instantiate(guardPrefab);
+                Buff[3].SetActive(true);
                 break;
             case AllBonus.ONEHITATTACK:
-                currentBonusObject = Instantiate(oneHitAttackPrefab);
+                Buff[4].SetActive(true);
                 break;
             case AllBonus.FLOORCLEAR:
-                currentBonusObject = Instantiate(floorClearPrefab);
+                Buff[5].SetActive(true);
                 break;
             case AllBonus.ENEMYROOM:
-                currentBonusObject = Instantiate(enemyRoomPrefab);
+                Buff[6].SetActive(true);
                 break;
             case AllBonus.HEELDOWN:
-                currentBonusObject = Instantiate(heelDownPrefab);
+                DeBuff[0].SetActive(true);
                 break;
             case AllBonus.ATTACK1DOWN:
-                currentBonusObject = Instantiate(attack1DownPrefab);
+                DeBuff[1].SetActive(true);
                 break;
             case AllBonus.EATTACK1UP:
-                currentBonusObject = Instantiate(eAttack1UpPrefab);
+                DeBuff[2].SetActive(true);
                 break;
             case AllBonus.LIFE1DOWN:
-                currentBonusObject = Instantiate(life1DownPrefab);
+                DeBuff[3].SetActive(true);
                 break;
             case AllBonus.EHEEL1UP:
-                currentBonusObject = Instantiate(eHeel1UpPrefab);
+                DeBuff[4].SetActive(true);
+                break;
+            case AllBonus.EHEEL1UP1:
+                DeBuff[5].SetActive(true);
                 break;
             case AllBonus.SPACE_2_CLEAR:
-                currentBonusObject = Instantiate(space2ClearPrefab);
+                DeBuff[6].SetActive(true);
                 break;
             default:
                 break;
         }
+
     }
 
     public void Lottery()
     {
-        print(LotNextBonus());
+        //UnShowBounusObject(bonus);
+        //print(BuffOrDebuff());
+        //print(LotNextBonus1());
+        //print(LotNextBonus2());
+
+        BuffOrDebuff();
+        print(bonus);
     }
+
 }

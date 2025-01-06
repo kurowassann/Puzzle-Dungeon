@@ -64,7 +64,8 @@ namespace Common
         ATTACK1DOWN,
         EATTACK1UP,
         LIFE1DOWN,
-        EHEEL1UP,  // 最後の要素にはカンマなし
+        EHEEL1UP,
+        EHEEL1UP1,  // 最後の要素にはカンマなし
         SPACE_2_CLEAR, // 数字で始まる識別子も修正した例
         ENEMYROOM
         //NONE // 最後の要素
