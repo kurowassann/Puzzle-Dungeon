@@ -10,42 +10,33 @@ public class BonusManager : MonoBehaviour
 
     [SerializeField]
     GameObject[] DeBuff;
+
     AllBonus bonus = AllBonus.ENEMYROOM;
 
-   
-
-    //関数1バフかデバフをランダムで選択させる
+    // 関数1: バフかデバフをランダムで選択させる
     public void BuffOrDebuff()
     {
         int num = UnityEngine.Random.Range(0, 100); // 0～99のランダム数値
 
-        switch (num)
+        if (num < 70) // バフを選択する確率
         {
-            case int n when (n < 70):
-                LotNextBonus1();
-                print("バフが選択されました");
-                break;
-            case int n when (n >= 70 && n < 99):
-                LotNextBonus2();
-                print("デバフが選択されました");
-                break;
-            default:
-                break;
-
+            LotNextBonus1(); // バフの詳細を決定
+            print("バフが選択されました");
+        }
+        else // デバフを選択する確率
+        {
+            LotNextBonus2(); // デバフの詳細を決定
+            print("デバフが選択されました");
         }
 
         // ボーナスに対応するオブジェクトを表示する
         ShowBonusObject(bonus);
-        //return bonus;
-
     }
 
-    //関数2(バフ)の詳細
-    /// <summary>次の階層に行った際のボーナス抽選</summary>
+    // 関数2: バフの詳細を決定
     public void LotNextBonus1()
     {
-
-        int num = UnityEngine.Random.Range(0, 70); // 0～70のランダム数値
+        int num = UnityEngine.Random.Range(0, 70); // 0～69のランダム数値
 
         switch (num)
         {
@@ -76,21 +67,16 @@ public class BonusManager : MonoBehaviour
 
         // ボーナスに対応するオブジェクトを表示する
         ShowBonusObject(bonus);
-
-
-        //return bonus;
     }
 
-
-    //関数3(デバフ)の詳細
+    // 関数3: デバフの詳細を決定
     public void LotNextBonus2()
     {
-
-        int num = UnityEngine.Random.Range(0, 60); // 70～99のランダム数値
+        int num = UnityEngine.Random.Range(0, 60); // 0～59のランダム数値
 
         switch (num)
         {
-            case int n when (n >= 0 && n < 10):
+            case int n when (n < 10):
                 bonus = AllBonus.HEELDOWN;
                 break;
             case int n when (n >= 10 && n < 20):
@@ -108,8 +94,8 @@ public class BonusManager : MonoBehaviour
             case int n when (n >= 50 && n < 55):
                 bonus = AllBonus.SPACE_2_CLEAR;
                 break;
-            case int n when (n >= 59 && n < 60):
-                bonus = AllBonus.ENEMYROOM;
+            case int n when (n >= 55 && n < 60):
+                bonus = AllBonus.EHEEL1UP1;
                 break;
             default:
                 break;
@@ -117,15 +103,20 @@ public class BonusManager : MonoBehaviour
 
         // ボーナスに対応するオブジェクトを表示する
         ShowBonusObject(bonus);
-
-
-        //return bonus;
     }
 
     // 抽選結果に基づいてオブジェクトを表示するメソッド
     private void ShowBonusObject(AllBonus bonus)
     {
-      
+        // すべてのボーナスオブジェクトを非表示にする
+        /*foreach (GameObject buff in Buff)
+        {
+            buff.SetActive(true);
+        }
+        foreach (GameObject debuff in DeBuff)
+        {
+            debuff.SetActive(false);
+        }*/
 
         // 新しいボーナスオブジェクトをインスタンス化して表示
         switch (bonus)
@@ -175,18 +166,12 @@ public class BonusManager : MonoBehaviour
             default:
                 break;
         }
-
     }
 
     public void Lottery()
     {
-        //UnShowBounusObject(bonus);
-        //print(BuffOrDebuff());
-        //print(LotNextBonus1());
-        //print(LotNextBonus2());
-
-        BuffOrDebuff();
-        print(bonus);
+        BuffOrDebuff(); // バフかデバフを選び、その後に詳細を決定
+        print(bonus); // 選ばれたボーナスの種類を表示
     }
-
 }
+
