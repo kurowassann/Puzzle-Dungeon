@@ -82,6 +82,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2f4c9966db2e903468e45fe6e9df22ff, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  inputMover:
+    m_Name: Input Mover
+    m_Type: 0
+    m_ExpectedControlType: 
+    m_Id: 5088b700-175a-43c1-a6a9-82fe7ceafb7a
+    m_Processors: 
+    m_Interactions: 
+    m_SingletonActionBindings: []
+    m_Flags: 0
+  inputActions: {fileID: -944628639613478452, guid: 3332fe1599286624f887188808a0d8ae, type: 3}
   settingParents:
   - {fileID: 1467371147218174495}
   - {fileID: 7618990344510693569}
