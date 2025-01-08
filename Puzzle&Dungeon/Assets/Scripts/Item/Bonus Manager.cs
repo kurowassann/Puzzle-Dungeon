@@ -1,6 +1,8 @@
 using Common;
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
+using UnityEngine.UI;
 using UnityEngine;
 
 public class BonusManager : MonoBehaviour
@@ -11,7 +13,23 @@ public class BonusManager : MonoBehaviour
     [SerializeField]
     GameObject[] DeBuff;
 
+    [SerializeField]
+    Text[] BuffNumbertext;
+    [SerializeField]
+    Text[] DeBuffNumbertext;
+
+    // バフとデバフのカウント
+    private int[] buffCounts;
+    private int[] debuffCounts;
+
     AllBonus bonus = AllBonus.ENEMYROOM;
+
+    void Start()
+    {
+        // バフとデバフのカウント配列を初期化（Buff と DeBuff の数と一致するように設定）
+        buffCounts = new int[Buff.Length];
+        debuffCounts = new int[DeBuff.Length];
+    }
 
     // 関数1: バフかデバフをランダムで選択させる
     public void BuffOrDebuff()
@@ -30,7 +48,7 @@ public class BonusManager : MonoBehaviour
         }
 
         // ボーナスに対応するオブジェクトを表示する
-        ShowBonusObject(bonus);
+        //ShowBonusObject(bonus);
     }
 
     // 関数2: バフの詳細を決定
@@ -123,45 +141,73 @@ public class BonusManager : MonoBehaviour
         {
             case AllBonus.ALLHEEL:
                 Buff[0].SetActive(true);
+                buffCounts[0]++;  // カウントを増加
+                BuffNumbertext[0].text = buffCounts[0].ToString();  // テキストを更新
                 break;
             case AllBonus.HEELUP:
                 Buff[1].SetActive(true);
+                buffCounts[1]++;  // カウントを増加
+                BuffNumbertext[1].text = buffCounts[1].ToString();  // テキストを更新
                 break;
             case AllBonus.ATTACK1UP:
                 Buff[2].SetActive(true);
+                buffCounts[2]++;  // カウントを増加
+                BuffNumbertext[2].text = buffCounts[2].ToString();  // テキストを更新
                 break;
             case AllBonus.GUARD:
                 Buff[3].SetActive(true);
+                buffCounts[3]++;  // カウントを増加
+                BuffNumbertext[3].text = buffCounts[3].ToString();  // テキストを更新
                 break;
             case AllBonus.ONEHITATTACK:
                 Buff[4].SetActive(true);
+                buffCounts[4]++;  // カウントを増加
+                BuffNumbertext[4].text = buffCounts[4].ToString();  // テキストを更新
                 break;
             case AllBonus.FLOORCLEAR:
                 Buff[5].SetActive(true);
+                buffCounts[5]++;  // カウントを増加
+                BuffNumbertext[5].text = buffCounts[5].ToString();  // テキストを更新
                 break;
             case AllBonus.ENEMYROOM:
                 Buff[6].SetActive(true);
+                buffCounts[6]++;  // カウントを増加
+                BuffNumbertext[6].text = buffCounts[6].ToString();  // テキストを更新
                 break;
             case AllBonus.HEELDOWN:
                 DeBuff[0].SetActive(true);
+                debuffCounts[0]++;
+                DeBuffNumbertext[0].text = debuffCounts[0].ToString();
                 break;
             case AllBonus.ATTACK1DOWN:
                 DeBuff[1].SetActive(true);
+                debuffCounts[1]++;
+                DeBuffNumbertext[1].text = debuffCounts[1].ToString();
                 break;
             case AllBonus.EATTACK1UP:
                 DeBuff[2].SetActive(true);
+                debuffCounts[2]++;
+                DeBuffNumbertext[2].text = debuffCounts[2].ToString();
                 break;
             case AllBonus.LIFE1DOWN:
                 DeBuff[3].SetActive(true);
+                debuffCounts[3]++;
+                DeBuffNumbertext[3].text = debuffCounts[3].ToString();
                 break;
             case AllBonus.EHEEL1UP:
                 DeBuff[4].SetActive(true);
+                debuffCounts[4]++;
+                DeBuffNumbertext[4].text = debuffCounts[4].ToString();
                 break;
             case AllBonus.EHEEL1UP1:
                 DeBuff[5].SetActive(true);
+                debuffCounts[5]++;
+                DeBuffNumbertext[5].text = debuffCounts[5].ToString();
                 break;
             case AllBonus.SPACE_2_CLEAR:
                 DeBuff[6].SetActive(true);
+                debuffCounts[6]++;
+                DeBuffNumbertext[6].text = debuffCounts[6].ToString();
                 break;
             default:
                 break;
@@ -172,6 +218,8 @@ public class BonusManager : MonoBehaviour
     {
         BuffOrDebuff(); // バフかデバフを選び、その後に詳細を決定
         print(bonus); // 選ばれたボーナスの種類を表示
+        print(BuffNumbertext);
+        print(DeBuffNumbertext);
     }
 }
 
