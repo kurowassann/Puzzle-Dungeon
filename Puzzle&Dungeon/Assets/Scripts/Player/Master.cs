@@ -10,15 +10,18 @@ using System;
 
 public class Master : MonoBehaviour
 {
+    /*
     //オブジェクト(定数)
-    [Tooltip("マップ生成リクエスト用"), SerializeField]
-    private MapGeneretor MG;
+    /// <summary> マップ生成リクエスト用</summary> 
+    private MapManager mm;
+    /// <summary>ゲーム進行クラス</summary>
+    private GameManager gm;
+
+
     [Tooltip("タイルの情報"), SerializeField]
     private string[,] tiles;
     [Tooltip("プレイヤ"), SerializeField]
     private Player player;
-    [Tooltip("エネミー管理元"), SerializeField]
-    private EnemyManager EM;
 
     //メンバ変数
     /// <summary>敵の行動が終わったか</summary>
@@ -35,7 +38,7 @@ public class Master : MonoBehaviour
     private bool CheckPlayerAround(Point tpoint)
     {
         float z = Mathf.Abs(tpoint.X - GetPlayer().X) + Mathf.Abs(tpoint.Y - GetPlayer().Y);
-        Debug.Log(z);
+        //Debug.Log(z);
         return (5 < z);
     }
     /// <summary>ゴール位置の生成</summary>
@@ -46,7 +49,7 @@ public class Master : MonoBehaviour
         bool flg = true;
         do//生成位置のかぶりをなくす
         {
-            point = MG.GetRandomRoom();
+            point = rm.GetRandomRoom();
             tile = CheckTile(point);
             Debug.Log(tile);
             flg = CheckPlayerAround(point);
@@ -60,38 +63,21 @@ public class Master : MonoBehaviour
         mGoalPos = point;
 
     }
-    /// <summary>キャラクターの生成、引数で何者か決まる</summary>
-    public void Generate(string tstr, CharacterBace tchara)
+    /// <summary>プレイヤーの生成、引数で何者か決まる</summary>
+    public void GeneratePlayer(Player tplayer)
     {
         Point point;
         TileInfo tile;
         bool flg = true;
         do//生成位置のかぶりをなくす
         {
-            point = MG.GetRandomRoom();
+            point = rm.GetRandomRoom(0);
             tile = CheckTile(point);
             Debug.Log(tile);
-            if (tstr != "p")
-            {
-                flg = CheckPlayerAround(point);
-                if (!flg)
-                {
-                    Debug.Log("近すぎる");
-                    //continue;
-                }
-            }
         } while (!(tile == TileInfo.ROUTE && flg));
         int hp = 1;
-        switch (tstr)
-        {
-            case "p":
                 hp = Common.Common.PULAYER_HP;
-                break;
-            case "e":
-                hp = Common.Common.ENEMY_HP;
-                break;
-        }
-        tchara.Init(this, point, hp, tstr);
+        tplayer.Init(this, point, hp, "p");
         //tiles[point.X, point.Y] = tstr;
     }
     /// <summary>入力先のタイル情報確認</summary>
@@ -129,7 +115,7 @@ public class Master : MonoBehaviour
     /// <summary>プレイヤーの攻撃申請を敵側に流す</summary>
     public void PlayerAttack(Point tpos)
     {
-        EM.Damege(tpos);
+        em.Damege(tpos);
     }
     /// <summary>プレイヤの行動を確認したら敵に行動指示を出す。</summary>
     public void PlayerAction()
@@ -141,8 +127,8 @@ public class Master : MonoBehaviour
             return;
         }
 
-        Debug.Log("敵の行動に移ります");
-        EM.EnemyActionSelect();
+        //Debug.Log("敵の行動に移ります");
+        em.EnemyActionSelect();
     }
     /// <summary>敵からの攻撃指示をプレイヤーに流す</summary>
     public void EnemyAttack()
@@ -202,23 +188,24 @@ public class Master : MonoBehaviour
     {
         //ステージデータ読み取り
         int num = PlayerPrefs.GetInt(Common.Common.KEY_SELECTED_STAGE_ID);
-        print(num);
+        //print(num);
         var data = LoadData.GetGameData(num);
-        print(data);
+        //print(data);
 
-        //各オブジェクト取得
-        MG = GameObject.Find("MapGen").GetComponent<MapGeneretor>();
+        //各必要オブジェクト取得
+        mm = new MapManager();
         player = GameObject.Find("Player").GetComponent<Player>();
-        EM = GameObject.Find("EnemyManager").GetComponent<EnemyManager>();
+        em = GameObject.Find("EnemyManager").GetComponent<EnemyManager>();
 
         //生成されたタイルの情報をもらう
         tiles = MG.Init(data.stage_data.floor_width, data.stage_data.floor_height, data.stage_data.min_division);
+        //rm = MG.GetRoomManager();        
+
 
         //プレイヤの生成
-        Generate("p", player);
-        player.Init();
+        GeneratePlayer(player);
         //敵の生成
-        EM.Init(this, data);
+        em.Init(this, data);
 
         //ゴールの生成
         CreateGoal();
@@ -253,4 +240,5 @@ public class Master : MonoBehaviour
 
         EndTurn();
     }
+    */
 }

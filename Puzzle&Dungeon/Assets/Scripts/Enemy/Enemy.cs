@@ -7,6 +7,7 @@ using Common;
 
 public class Enemy : CharacterBace
 {
+    /*
     //オブジェクト
     protected EnemyManager em;
     protected Animator animator;
@@ -311,5 +312,5 @@ public class Enemy : CharacterBace
     {
         return mNextAction;
     }
-
+    */
 }

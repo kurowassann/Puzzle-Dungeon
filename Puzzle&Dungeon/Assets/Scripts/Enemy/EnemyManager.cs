@@ -6,6 +6,7 @@ using Data;
 
 public class EnemyManager : MonoBehaviour
 {
+    /*
     //オブジェクト
     [Tooltip("マスター"), SerializeField]
     private Master master; 
@@ -80,7 +81,7 @@ public class EnemyManager : MonoBehaviour
             clone.transform.SetParent(this.gameObject.transform, false);
             clone.transform.localPosition = new Vector3(0,0, 0);
             mEnemys[i] = clone.GetComponent<Enemy>();
-            master.Generate("e", mEnemys[i]);
+            //master.GeneratePlayer("e", mEnemys[i]);
             mEnemys[i].Init(this);
         }
         //経路探索
@@ -136,7 +137,7 @@ public class EnemyManager : MonoBehaviour
     /// <summary>生成</summary>
 	public void Generate(string tstr, Enemy bace)
 	{
-		master.Generate(tstr, bace);
+		//master.GeneratePlayer(tstr, bace);
         bace.Init(this);
 
     }    	
@@ -482,14 +483,14 @@ public class EnemyManager : MonoBehaviour
 			case Status.STAY:
 				if(isStatus)
 				{
-					Debug.Log("プレイヤの行動待ちです");
+					//Debug.Log("プレイヤの行動待ちです");
 					isStatus = false;
 				}
 				break;
 			case Status.MOVE:
 				if(isStatus)
 				{
-					Debug.Log("移動の敵の処理を行います");
+					//Debug.Log("移動の敵の処理を行います");
 					ChangeAction(Status.MOVE);
                     ChangeAction(Status.TRUN);
 					isStatus = false;
@@ -499,7 +500,7 @@ public class EnemyManager : MonoBehaviour
 			case Status.ATTACK:
 				if(isStatus)
 				{
-					Debug.Log("攻撃の敵の処理を行います");
+					//Debug.Log("攻撃の敵の処理を行います");
 					ChangeAction(Status.ATTACK);
 					isStatus = false;
 				}
@@ -508,7 +509,7 @@ public class EnemyManager : MonoBehaviour
 			case Status.REAR_GAP:
 				if(isStatus)
 				{
-					Debug.Log("行動が完了しました");
+					//Debug.Log("行動が完了しました");
 					master.EnemyActionFinish();
 					RearGap();
 					isStatus = false;
@@ -614,7 +615,7 @@ public class EnemyManager : MonoBehaviour
                 var tmp = master.CheckTile(point);
                 print($"チェックしたタイル{tmp}");
             }
-            */
+            
 
             //float length;
             //Debug.Log(length);
@@ -624,5 +625,5 @@ public class EnemyManager : MonoBehaviour
     }
 
 	
-
+*/
 }

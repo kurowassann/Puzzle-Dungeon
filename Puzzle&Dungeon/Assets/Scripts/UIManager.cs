@@ -91,7 +91,7 @@ public class UIManager : MonoBehaviour
     /// </summary>
     void UIInit()
     {
-        mapPanel = GameObject.Find("PanelMap");
+        //mapPanel = GameObject.Find("PanelMap");
         //mapPanel.SetActive(true);
 
         playerHPPrefab = Resources.Load<GameObject>("Prefabs/HPImagePrefab");
