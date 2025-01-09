@@ -4,6 +4,7 @@ using UnityEditor;
 using UnityEngine;
 using UnityEngine.UI;
 using Common;
+using UnityEngine.InputSystem;
 
 public class TitleManager : MonoBehaviour
 {
@@ -14,7 +15,15 @@ public class TitleManager : MonoBehaviour
     [Tooltip("選択できるUIの親オブジェクト"), SerializeField]
     Transform selectableParent;
 
+    //オブジェクト
+    [Tooltip("スティック"), SerializeField]
+    private InputAction inputMover;
+    [Tooltip("スティック"), SerializeField]
+    private InputAction inputSelect;
+    [Tooltip("スティック"), SerializeField]
+    private InputActionAsset inputActions;
 
+    bool isInput = false;
 
     /// <summary>
     /// 選択可能UIの列挙
@@ -32,6 +41,12 @@ public class TitleManager : MonoBehaviour
     void Start()
     {
         Init();
+
+        inputMover = inputActions.FindAction("UI/Move");
+        inputSelect = new InputAction("AButton", binding: "<Gamepad>/buttonEast");
+
+        inputMover.Enable();
+        inputSelect.Enable();
     }
 
     /// <summary>
@@ -82,6 +97,34 @@ public class TitleManager : MonoBehaviour
     {
         bool ret = false;
 
+        float buttonValue = inputSelect.ReadValue<float>();
+
+        if (buttonValue > 0.5f)
+        {
+            // 入力があった
+            ret = true;
+
+            // 選択中のUIで分岐
+            switch (selectedMenu)
+            {
+                // ゲーム開始
+                case SelectedMenu.START:
+                    PushStart();
+                    break;
+                // オプションを開く
+                case SelectedMenu.OPTION:
+                    PushOption();
+                    break;
+                // ゲーム終了
+                case SelectedMenu.QUIT:
+                    PushQuit();
+                    break;
+
+                default:
+                    break;
+            }
+        }
+
         if (Input.GetKeyDown(KeyCode.Space))
         {
             // 入力があった
@@ -120,7 +163,25 @@ public class TitleManager : MonoBehaviour
         // 戻り値の初期化
         bool ret = false;
 
+        if (inputMover.ReadValue<Vector2>() == new Vector2(0, 0))
+        {
+            isInput = false;
+        }
+
         // 上方向の入力
+        if (inputMover.ReadValue<Vector2>().y == 1.0f && isInput == false)
+        {
+            // 入力アリ
+            ret = true;
+            isInput = true;
+            selectedMenu--;
+            // 最下端に行ったら上に戻る
+            if (selectedMenu < 0)
+            {
+                selectedMenu = (SelectedMenu)selectableImages.Length - 1;
+            }
+        }
+
         if (Input.GetKeyDown(KeyCode.W) || Input.GetKeyDown(KeyCode.UpArrow))
         {
             // 入力アリ
@@ -134,6 +195,19 @@ public class TitleManager : MonoBehaviour
         }
 
         // 下方向の入力
+        if (inputMover.ReadValue<Vector2>().y == -1.0f && isInput == false)
+        {
+            // 入力アリ
+            ret = true;
+            isInput = true;
+            selectedMenu++;
+            // 最上端に行ったら下に戻る
+            if (selectedMenu > (SelectedMenu)selectableImages.Length - 1)
+            {
+                selectedMenu = 0;
+            }
+        }
+
         if (Input.GetKeyDown(KeyCode.S) || Input.GetKeyDown(KeyCode.DownArrow))
         {
             // 入力アリ
