@@ -22,11 +22,12 @@ public class RoomManager
         mRoomCount = 0;
     }
     //•”‰®‚Ì’Ç‰Á
-    public void AddRoom(Lurd tlurd)
+    public int AddRoom(Lurd tlurd)
     {
         cRooms.Add(new Room(tlurd,mRoomCount, this));
 
-        mRoomCount++;   
+        mRoomCount++; 
+        return mRoomCount-1;
     }
     /// <summary>w’è‚µ‚½•”‰®‚ğÆ‚ç‚·</summary>
     public void OpenOneRoom(int num)

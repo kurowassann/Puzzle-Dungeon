@@ -87,6 +87,28 @@ namespace Common
         }
     }
 
+    /// <summary>•”‰®‚Æ˜L‰º‚ÌÚ‘±•”•ªî•ñ</summary>
+    public struct RoomJoint
+    {
+        private Point pos;
+        private int RoomId;
+        private int AisleId;
+
+        public void Set(Point tpos, int troom, int taisle)
+        {
+            pos = tpos;
+            RoomId = troom;
+            AisleId = taisle;
+        }
+
+        public RoomJoint(Point tpos, int troom,int taisle)
+        {
+            pos = tpos;
+            RoomId = troom;
+            AisleId = taisle;
+        }
+    }
+
     //ƒGƒŠƒA‚©•ªŠòü
     public enum ArDi
     {

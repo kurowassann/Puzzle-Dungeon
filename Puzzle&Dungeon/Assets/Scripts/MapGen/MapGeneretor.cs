@@ -8,6 +8,7 @@ using Unity.VisualScripting;
 using Unity.Mathematics;
 using Common;
 using TMPro;
+using UnityEngine.UIElements;
 
 /// <summary>マップの生成のみを行うクラス</summary>
 public class MapGeneretor : MonoBehaviour
@@ -89,9 +90,9 @@ public class MapGeneretor : MonoBehaviour
     {
         List<GameObject> gos = new List<GameObject>();
 
-        for(int i = troom.GetValue(Value.LEFT);i < troom.GetValue(Value.RIGHT)+1;i++)
+        for(int i = troom.GetValue(Value.LEFT)-1;i < troom.GetValue(Value.RIGHT)+2;i++)
         {
-            for(int j = troom.GetValue(Value.TOP);j < troom.GetValue(Value.BOTTOM)+1;j++)
+            for(int j = troom.GetValue(Value.TOP)-1;j < troom.GetValue(Value.BOTTOM)+2;j++)
             {
                 gos.Add(cTiles[i,j]);
             }
@@ -222,16 +223,17 @@ public class MapGeneretor : MonoBehaviour
 
     }
     /// <summary>部屋追加処理</summary>
-    public void InsertRoom(Lurd troom)
+    public int InsertRoom(Lurd troom)
     {
         DrawArea(troom);
 
-        cRm.AddRoom(troom);
+        int Id = cRm.AddRoom(troom);
+        return Id;
     }
     /// <summary>通路の追加</summary>
-    public void InsertAisle(Lurd[] tlurds)
+    public void InsertAisle(Lurd[] tlurds, Point[] tpoints, int[] tids)
     {
-        cAm.AddAisle(tlurds);
+        cAm.AddAisle(tlurds, tpoints, tids);
 
         for(int i = 0;i<tlurds.Length;i++)
         {
@@ -298,7 +300,7 @@ public class MapGeneretor : MonoBehaviour
     {
         return cRm;
     }
-    //
+    //廊下のまとまりを渡す
     public AisleManager GetAisleManager()
     {
         return cAm;
@@ -339,6 +341,7 @@ public class MapGeneretor : MonoBehaviour
         private Area[] cChildArea;
         /// <summary>部屋の情報</summary>
         private Lurd cRoom;
+        private int cRoomId;
 
 
         //メンバ変数
@@ -457,31 +460,55 @@ public class MapGeneretor : MonoBehaviour
             cRoom.SetValue(Value.RIGHT, x); cRoom.SetValue(Value.BOTTOM, y);
 
             //CreateRoad(this, mAd.division, mAd.dir)
-            cMg.InsertRoom(cRoom);
+            cRoomId = cMg.InsertRoom(cRoom);
 
         }
         /// <summary>分岐点へ向かって道を伸ばす</summary>
         private void CreateRoad(Area[] tarea, Lurd tdiv, Direction tdir)
         {
             Lurd[] road = new Lurd[3];
+            //RoomJoint[] roomJoints = new RoomJoint[2];
+            Point[] points = new Point[2];
 
             for (int i = 0; i < tarea.Length; i++)
             {
                 if (tdir == Direction.HOR)
                 {
+                    //分割線がどっち側にあるか判断する必要あり
+                    if(tdiv.GetValue(Value.TOP) < tarea[i].cRoom.GetValue(Value.TOP))
+                    {
+                        road[i].SetValue(Value.TOP, tarea[i].cRoom.GetValue(Value.TOP)-1);
+                    }
+                    else
+                    {
+                        road[i].SetValue(Value.TOP, tarea[i].cRoom.GetValue(Value.BOTTOM)+1);
+                    }
+
                     int value = UnityEngine.Random.Range(tarea[i].cRoom.GetValue(Value.LEFT), tarea[i].cRoom.GetValue(Value.RIGHT));
                     road[i].SetValue(Value.LEFT, value);
                     road[i].SetValue(Value.RIGHT, value);
-                    road[i].SetValue(Value.TOP, tarea[i].cRoom.GetValue(Value.TOP));
                     road[i].SetValue(Value.BOTTOM, tdiv.GetValue(Value.BOTTOM));
+
+                    points[i] = new Point(road[i].GetValue(Value.TOP), road[i].GetValue(Value.LEFT));
                 }
                 else
                 {
+                    //分割線がどっち側にあるか判断する必要あり
+                    if (tdiv.GetValue(Value.LEFT) < tarea[i].cRoom.GetValue(Value.LEFT))
+                    {
+                        road[i].SetValue(Value.LEFT, tarea[i].cRoom.GetValue(Value.LEFT)-1);
+                    }
+                    else
+                    {
+                        road[i].SetValue(Value.LEFT, tarea[i].cRoom.GetValue(Value.RIGHT)+1);
+                    }
+
                     int num = UnityEngine.Random.Range(tarea[i].cRoom.GetValue(Value.TOP), tarea[i].cRoom.GetValue(Value.BOTTOM));
                     road[i].SetValue(Value.TOP, num);
                     road[i].SetValue(Value.BOTTOM, num);
-                    road[i].SetValue(Value.LEFT, tarea[i].cRoom.GetValue(Value.LEFT));
                     road[i].SetValue(Value.RIGHT, tdiv.GetValue(Value.RIGHT));
+
+                    points[i] = new Point(road[i].GetValue(Value.TOP), road[i].GetValue(Value.LEFT));
                 }
                 //cMg.Draw(road[i]);
 
@@ -498,7 +525,13 @@ public class MapGeneretor : MonoBehaviour
             road[2] = road[1];
             road[1] = tmp;
 
-            cMg.InsertAisle(road);
+            int[] Ids =
+            {
+                tarea[0].cRoomId,
+                tarea[1].cRoomId,
+            };
+
+            cMg.InsertAisle(road, points, Ids);
         }
         /// <summary>最下層の部屋を取得</summary>
         private Area GetChildRoom(Point point, Direction dir)

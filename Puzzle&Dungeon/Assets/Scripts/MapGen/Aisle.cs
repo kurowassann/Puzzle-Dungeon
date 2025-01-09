@@ -15,7 +15,7 @@ public class Aisle
     /// <summary>自身のID</summary>
     private int cAisleId;
     /// <summary>左右の部屋ID</summary>
-    private int[] cRoomId;
+    private RoomJoint[] cRoomJoints;
     /// <summary>位置情報</summary>
     private Lurd[] cLurds;
 
@@ -58,12 +58,17 @@ public class Aisle
     }
 
     //コンストラクタ
-    public Aisle(Lurd[] tlurds,int num,AisleManager tam) 
+    public Aisle(Lurd[] tlurds, Point[] tpoints,int[] tids,int num,AisleManager tam) 
     {
         cLurds = tlurds;
+        
         cAisleTiles= new List<GameObject>();
         cAisleId = num;
-        cRoomId = new int[2];
+        cRoomJoints = new RoomJoint[2];
+
+        cRoomJoints[0] = new RoomJoint(tpoints[0], tids[0], num);
+        cRoomJoints[1] = new RoomJoint(tpoints[1], tids[1], num);
+        
         cAm = tam;
     }
 

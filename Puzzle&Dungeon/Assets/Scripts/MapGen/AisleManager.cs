@@ -1,6 +1,7 @@
 using Common;
 using System.Collections;
 using System.Collections.Generic;
+using System.Drawing;
 using UnityEngine;
 
 /// <summary>˜L‰º‚ğ‚Ü‚Æ‚ß‚ÄŠÇ—‚·‚é</summary>
@@ -26,10 +27,11 @@ public class AisleManager
         cAisles = new List<Aisle>();
     }
     /// <summary>˜L‰º‚Ì’Ç‰Á¶¬</summary>
-    public void AddAisle(Lurd[] tlurds)
+    public int  AddAisle(Lurd[] tlurds, Point[] tpoints, int[] tids)
     {
-        cAisles.Add(new Aisle(tlurds,mAisleCount,this));
+        cAisles.Add(new Aisle(tlurds, tpoints, tids,mAisleCount,this));
         mAisleCount++;
+        return mAisleCount - 1;
     }
     /// <summary>˜L‰ºƒ^ƒCƒ‹‚Ì’Ç‰Á</summary>
     public void AddAisleTiles()
