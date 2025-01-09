@@ -659,7 +659,7 @@ GameObject:
   - component: {fileID: 306538687}
   - component: {fileID: 306538686}
   m_Layer: 5
-  m_Name: Text (Legacy)
+  m_Name: 'ClearMapText '
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2050,20 +2050,16 @@ MonoBehaviour:
   - {fileID: 554644228}
   - {fileID: 1262081706}
   BuffNumbertext:
-  - {fileID: 1188650896}
   - {fileID: 442917411}
   - {fileID: 966374371}
-  - {fileID: 494025069}
-  - {fileID: 1147100301}
-  - {fileID: 306538686}
-  - {fileID: 722770255}
   DeBuffNumbertext:
   - {fileID: 384858399}
   - {fileID: 48669222}
   - {fileID: 401460030}
   - {fileID: 374848858}
   - {fileID: 1134153002}
-  - {fileID: 271163845}
+  FiveTurntext:
+  - {fileID: 306538686}
   - {fileID: 1243043773}
 --- !u!4 &756688696
 Transform:
@@ -2920,7 +2916,7 @@ GameObject:
   - component: {fileID: 1243043774}
   - component: {fileID: 1243043773}
   m_Layer: 5
-  m_Name: Text (Legacy)
+  m_Name: DarknessText
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

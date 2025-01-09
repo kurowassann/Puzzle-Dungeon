@@ -15,13 +15,18 @@ public class BonusManager : MonoBehaviour
 
     [SerializeField]
     Text[] BuffNumbertext;
+
     [SerializeField]
     Text[] DeBuffNumbertext;
+
+    [SerializeField]
+    Text[] FiveTurntext; //5ターン減少する数値
+
 
     // バフとデバフのカウント
     private int[] buffCounts;
     private int[] debuffCounts;
-
+    private int[] fiveCounts; //5ターン最高で1ターンずつマイナスになる最低0
     AllBonus bonus = AllBonus.ENEMYROOM;
 
     void Start()
@@ -29,7 +34,10 @@ public class BonusManager : MonoBehaviour
         // バフとデバフのカウント配列を初期化（Buff と DeBuff の数と一致するように設定）
         buffCounts = new int[Buff.Length];
         debuffCounts = new int[DeBuff.Length];
+        fiveCounts = new int[FiveTurntext.Length];
     }
+
+    
 
     // 関数1: バフかデバフをランダムで選択させる
     public void BuffOrDebuff()
@@ -141,38 +149,31 @@ public class BonusManager : MonoBehaviour
         {
             case AllBonus.ALLHEEL:
                 Buff[0].SetActive(true);
-                buffCounts[0]++;  // カウントを増加
-                BuffNumbertext[0].text = buffCounts[0].ToString();  // テキストを更新
                 break;
             case AllBonus.HEELUP:
                 Buff[1].SetActive(true);
-                buffCounts[1]++;  // カウントを増加
-                BuffNumbertext[1].text = buffCounts[1].ToString();  // テキストを更新
+                buffCounts[0]++;  // カウントを増加
+                BuffNumbertext[0].text = buffCounts[0].ToString();  // テキストを更新
                 break;
             case AllBonus.ATTACK1UP:
                 Buff[2].SetActive(true);
-                buffCounts[2]++;  // カウントを増加
-                BuffNumbertext[2].text = buffCounts[2].ToString();  // テキストを更新
+                buffCounts[1]++;  // カウントを増加
+                BuffNumbertext[1].text = buffCounts[1].ToString();  // テキストを更新
                 break;
             case AllBonus.GUARD:
                 Buff[3].SetActive(true);
-                buffCounts[3]++;  // カウントを増加
-                BuffNumbertext[3].text = buffCounts[3].ToString();  // テキストを更新
                 break;
             case AllBonus.ONEHITATTACK:
                 Buff[4].SetActive(true);
-                buffCounts[4]++;  // カウントを増加
-                BuffNumbertext[4].text = buffCounts[4].ToString();  // テキストを更新
                 break;
             case AllBonus.FLOORCLEAR:
                 Buff[5].SetActive(true);
-                buffCounts[5]++;  // カウントを増加
-                BuffNumbertext[5].text = buffCounts[5].ToString();  // テキストを更新
+                FiveTurntext[0].gameObject.SetActive(true);
+                fiveCounts[0] = 5; // 5ターンに設定
+                FiveTurntext[0].text = fiveCounts[0].ToString();
                 break;
             case AllBonus.ENEMYROOM:
                 Buff[6].SetActive(true);
-                buffCounts[6]++;  // カウントを増加
-                BuffNumbertext[6].text = buffCounts[6].ToString();  // テキストを更新
                 break;
             case AllBonus.HEELDOWN:
                 DeBuff[0].SetActive(true);
@@ -201,16 +202,48 @@ public class BonusManager : MonoBehaviour
                 break;
             case AllBonus.EHEEL1UP1:
                 DeBuff[5].SetActive(true);
-                debuffCounts[5]++;
-                DeBuffNumbertext[5].text = debuffCounts[5].ToString();
                 break;
             case AllBonus.SPACE_2_CLEAR:
                 DeBuff[6].SetActive(true);
-                debuffCounts[6]++;
-                DeBuffNumbertext[6].text = debuffCounts[6].ToString();
+                FiveTurntext[1].gameObject.SetActive(true);
+                fiveCounts[1] = 5; // 5ターンに設定
+                FiveTurntext[1].text = fiveCounts[1].ToString();
                 break;
             default:
                 break;
+        }
+    }
+
+    void Update()
+    {
+        // Spaceキーが押されたときにカウントを減らす
+        if (Input.GetKeyDown(KeyCode.A))
+        {
+            // FLOORCLEARのカウントダウン
+            if (fiveCounts[0] > 0)
+            {
+                fiveCounts[0]--;
+                FiveTurntext[0].text = fiveCounts[0].ToString();
+                if (fiveCounts[0] == 0)
+                {
+                    FiveTurntext[0].gameObject.SetActive(false); // 0になったら非表示
+                }
+            }
+
+        }
+
+        if (Input.GetKeyDown(KeyCode.D))
+        {
+            // SPACE_2_CLEARのカウントダウン
+            if (fiveCounts[1] > 0)
+            {
+                fiveCounts[1]--;
+                FiveTurntext[1].text = fiveCounts[1].ToString();
+                if (fiveCounts[1] == 0)
+                {
+                    FiveTurntext[1].gameObject.SetActive(false); // 0になったら非表示
+                }
+            }
         }
     }
 
