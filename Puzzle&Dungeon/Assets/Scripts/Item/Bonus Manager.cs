@@ -149,65 +149,85 @@ public class BonusManager : MonoBehaviour
         {
             case AllBonus.ALLHEEL:
                 Buff[0].SetActive(true);
+                Buff[0].gameObject.GetComponent<Image>().color = new Color(1.0f, 1.0f, 1.0f, 0.5f);
                 break;
             case AllBonus.HEELUP:
                 Buff[1].SetActive(true);
                 buffCounts[0]++;  // カウントを増加
                 BuffNumbertext[0].text = buffCounts[0].ToString();  // テキストを更新
+                Buff[1].gameObject.GetComponent<Image>().color = new Color(1.0f, 1.0f, 1.0f, 0.5f);
+                DeBuff[0].gameObject.GetComponent<Image>().color = new Color(1.0f, 1.0f, 1.0f, 0.1f);
                 break;
             case AllBonus.ATTACK1UP:
                 Buff[2].SetActive(true);
                 buffCounts[1]++;  // カウントを増加
                 BuffNumbertext[1].text = buffCounts[1].ToString();  // テキストを更新
+                Buff[2].gameObject.GetComponent<Image>().color = new Color(1.0f, 1.0f, 1.0f, 0.5f);
+                DeBuff[1].gameObject.GetComponent<Image>().color = new Color(1.0f, 1.0f, 1.0f, 0.1f);
                 break;
             case AllBonus.GUARD:
                 Buff[3].SetActive(true);
+                Buff[3].gameObject.GetComponent<Image>().color = new Color(1.0f, 1.0f, 1.0f, 0.5f);
                 break;
             case AllBonus.ONEHITATTACK:
                 Buff[4].SetActive(true);
+                Buff[4].gameObject.GetComponent<Image>().color = new Color(1.0f, 1.0f, 1.0f, 0.5f);
                 break;
             case AllBonus.FLOORCLEAR:
                 Buff[5].SetActive(true);
+                //DeBuff[6].SetActive(false);
                 FiveTurntext[0].gameObject.SetActive(true);
                 fiveCounts[0] = 5; // 5ターンに設定
                 FiveTurntext[0].text = fiveCounts[0].ToString();
+                Buff[5].gameObject.GetComponent<Image>().color = new Color(1.0f, 1.0f, 1.0f, 0.5f);
+                DeBuff[6].gameObject.GetComponent<Image>().color = new Color(1.0f, 1.0f, 1.0f, 0.1f);
                 break;
             case AllBonus.ENEMYROOM:
                 Buff[6].SetActive(true);
+                Buff[6].gameObject.GetComponent<Image>().color = new Color(1.0f, 1.0f, 1.0f, 0.5f);
                 break;
             case AllBonus.HEELDOWN:
                 DeBuff[0].SetActive(true);
                 debuffCounts[0]++;
                 DeBuffNumbertext[0].text = debuffCounts[0].ToString();
+                DeBuff[0].gameObject.GetComponent<Image>().color = new Color(1.0f, 1.0f, 1.0f, 0.5f);
                 break;
             case AllBonus.ATTACK1DOWN:
                 DeBuff[1].SetActive(true);
                 debuffCounts[1]++;
                 DeBuffNumbertext[1].text = debuffCounts[1].ToString();
+                DeBuff[1].gameObject.GetComponent<Image>().color = new Color(1.0f, 1.0f, 1.0f, 0.5f);
                 break;
             case AllBonus.EATTACK1UP:
                 DeBuff[2].SetActive(true);
                 debuffCounts[2]++;
                 DeBuffNumbertext[2].text = debuffCounts[2].ToString();
+                DeBuff[2].gameObject.GetComponent<Image>().color = new Color(1.0f, 1.0f, 1.0f, 0.5f);
                 break;
             case AllBonus.LIFE1DOWN:
                 DeBuff[3].SetActive(true);
                 debuffCounts[3]++;
                 DeBuffNumbertext[3].text = debuffCounts[3].ToString();
+                DeBuff[3].gameObject.GetComponent<Image>().color = new Color(1.0f, 1.0f, 1.0f, 0.5f);
                 break;
             case AllBonus.EHEEL1UP:
                 DeBuff[4].SetActive(true);
                 debuffCounts[4]++;
                 DeBuffNumbertext[4].text = debuffCounts[4].ToString();
+                DeBuff[4].gameObject.GetComponent<Image>().color = new Color(1.0f, 1.0f, 1.0f, 0.5f);
                 break;
             case AllBonus.EHEEL1UP1:
                 DeBuff[5].SetActive(true);
+                DeBuff[5].gameObject.GetComponent<Image>().color = new Color(1.0f, 1.0f, 1.0f, 0.5f);
                 break;
             case AllBonus.SPACE_2_CLEAR:
+                //Buff[5].SetActive(false);
                 DeBuff[6].SetActive(true);
                 FiveTurntext[1].gameObject.SetActive(true);
                 fiveCounts[1] = 5; // 5ターンに設定
                 FiveTurntext[1].text = fiveCounts[1].ToString();
+                DeBuff[6].gameObject.GetComponent<Image>().color = new Color(1.0f, 1.0f, 1.0f, 0.5f);
+                Buff[5].gameObject.GetComponent<Image>().color = new Color(1.0f, 1.0f, 1.0f, 0.1f);
                 break;
             default:
                 break;
@@ -226,7 +246,8 @@ public class BonusManager : MonoBehaviour
                 FiveTurntext[0].text = fiveCounts[0].ToString();
                 if (fiveCounts[0] == 0)
                 {
-                    FiveTurntext[0].gameObject.SetActive(false); // 0になったら非表示
+                    FiveTurntext[0].gameObject.SetActive(true); // 0になったら非表示
+                    Buff[5].gameObject.GetComponent<Image>().color = new Color(1.0f, 1.0f, 1.0f, 0.1f);
                 }
             }
 
@@ -241,7 +262,9 @@ public class BonusManager : MonoBehaviour
                 FiveTurntext[1].text = fiveCounts[1].ToString();
                 if (fiveCounts[1] == 0)
                 {
-                    FiveTurntext[1].gameObject.SetActive(false); // 0になったら非表示
+                    FiveTurntext[1].gameObject.SetActive(true); // 0になったら非表示
+                    
+                    DeBuff[6].gameObject.GetComponent<Image>().color = new Color(1.0f, 1.0f, 1.0f, 0.1f);
                 }
             }
         }
