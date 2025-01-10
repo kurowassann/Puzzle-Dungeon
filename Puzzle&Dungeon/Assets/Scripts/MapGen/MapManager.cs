@@ -1,6 +1,7 @@
 using Common;
 using System.Collections;
 using System.Collections.Generic;
+using System.Drawing;
 using UnityEngine;
 
 /// <summary>生成したマップを管理するクラス</summary>
@@ -27,7 +28,9 @@ public class MapManager : MonoBehaviour
     private GameObject[,] cTileObjects;
 
     //メンバ変数
+    /// <summary>部屋表示用番号</summary>
     private int mNum;
+    /// <summary>廊下表示用番号</summary>
     private int mNum2;
 
     //メンバ関数
@@ -46,15 +49,13 @@ public class MapManager : MonoBehaviour
 
 
     //public
+    /// <summary>初期化処理</summary>
     public void Init()
     {
         //マップ生成オブジェクトの生成
         GameObject clone = Instantiate(mapGen, this.transform);
         cMg = clone.GetComponent<MapGeneretor>();
-        if(isStart)
-        {
-            cMg.Init(40,40,15);
-        }
+        cMg.Init(120,40,15);
 
         //生成したマップの情報を受け取る
         cTiles = cMg.GetStrings();
@@ -65,6 +66,42 @@ public class MapManager : MonoBehaviour
 
         mNum = 0;
         mNum2 = 0;
+    }
+    
+    
+    //Set関数
+
+
+    //Get関数
+    /// <summary>ランダムな部屋のランダムな座標を返す</summary>
+    public Point GetRamdomPos()
+    {
+        PosId posId;
+        Point pos = new Point();
+
+        pos = cRm.GetRandomRoom();
+
+        return pos;
+    }
+    //
+    public Vector3 GetTilePos(Point tpos)
+    {
+        return cTileObjects[tpos.X, tpos.Y].transform.position;
+    }
+    /// <summary>プレイヤの初期値</summary>
+    public PosId GetRandomPlayer()
+    {
+        PosId posId;
+        int num;
+        Point pos;
+
+        num= Random.Range(0, cRm.GetRoomCount());
+
+        pos = cRm.GetRandomRoom(num);
+
+        posId = new PosId(pos,num);
+
+        return posId;
     }
 
 

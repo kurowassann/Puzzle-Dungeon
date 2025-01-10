@@ -109,6 +109,44 @@ namespace Common
         }
     }
 
+    //
+    public struct PosId
+    {
+        public Point pos;
+        public int RoomId;
+
+        public PosId(Point tpos, int tid)
+        {
+            pos = tpos;
+            RoomId=tid;
+        }
+
+        public void Set(Point tpos,int tid)
+        {
+            pos = tpos;
+            RoomId = tid;
+        }
+
+        public void SetPos(Point tpos)
+        {
+            pos = tpos; 
+        }
+
+        public void SetId(int tid)
+        {
+            RoomId = tid;
+        }
+
+        public Point GetPos()
+        {
+            return pos;
+        }
+        public int GetId()
+        {
+            return RoomId;
+        }
+    }
+
     //ÉGÉäÉAÇ©ï™äÚê¸
     public enum ArDi
     {

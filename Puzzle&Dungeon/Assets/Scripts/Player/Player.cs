@@ -10,14 +10,14 @@ using UnityEngine.Timeline;
 
 public class Player : CharacterBace
 {
-    /*
+    
     //オブジェクト
     [Tooltip("スティック"), SerializeField]
     private InputAction inputMover;
     [Tooltip("スティック"), SerializeField]
     private InputActionAsset inputActions;
     /// <summary>UI表示連携用</summary>
-	private UIManager um;
+	//private UIManager um;
     [Tooltip("アニメーターコンポーネント")]
     Animator animator;
 
@@ -31,12 +31,12 @@ public class Player : CharacterBace
 
     //メンバ関数 
     /// <summary>初期化処理</summary>
-    public override void Init(Master tmas, Point tpoint, int thp, string tstr)
+    public override void Init(GameManager tgm, PosId tposId, int thp, string tstr)
     {
-        base.Init(tmas, tpoint, thp, tstr);
+        base.Init(tgm, tposId, thp, tstr);
 
-        um = GameObject.Find("UIManager").GetComponent<UIManager>();
-        um.GeneratePlayerHP(mHp);
+        //um = GameObject.Find("UIManager").GetComponent<UIManager>();
+        //um.GeneratePlayerHP(mHp);
 
         Debug.Log("プレイヤ初期化");
         SetCam();
@@ -63,13 +63,14 @@ public class Player : CharacterBace
     public override bool Damage()
 	{
 		bool ret = base.Damage();
-
+        /*
 		um.DisplayPlayerHP(mHp);
 		um.AddLog("プレイヤにダメージ！！");
 		if(ret == true) 
 		{
 			um.AddLog("やられました");
 		}
+        */
 		return ret;
 	}   
     /// <summary>体力回復</summary>
@@ -80,8 +81,10 @@ public class Player : CharacterBace
         {
             mHp = 2;
         }
+        /*
         um.DisplayPlayerHP(mHp);
         um.AddLog("プレイヤーのHPが回復");
+        */
     }    
     /// <summary>移動終了処理</summary>
     protected override void MoveEnd()
@@ -115,7 +118,7 @@ public class Player : CharacterBace
     protected override void AttackEnd()
     {
         base.AttackEnd();
-        master.PlayerAttack(AttackPoint);
+        //master.PlayerAttack(AttackPoint);
         var animationName = animator.GetCurrentAnimatorClipInfo(0)[0].clip.name;
         string triggerName = "";
         ResetTrigger(animator, Common.Common.CHARA_ANIMS_MOVE_DIR);
@@ -158,7 +161,7 @@ public class Player : CharacterBace
             if (mStatus == Status.STAY)
             {
                 TileInfo TI;
-                Point point = mPoint;
+                Point point = mPosId.GetPos();
                 isAction = false;
 
                 // 呼び出すアニメーショントリガーの名前
@@ -194,18 +197,18 @@ public class Player : CharacterBace
 
                 }
                 else { return; }
-                TI = master.CheckTile(point);
+                //TI = master.CheckTile(point);
                 //Debug.Log(point);
-                if (TI == TileInfo.ROUTE)
+                if (true)//TI == TileInfo.ROUTE)
                 {
                     //Debug.Log("移動開始");
-                    SetPos(point);
+                    SetPos(mPosId);
                     SetStatus(Status.MOVE);
                     // アニメーションの呼び出し
                     var triggerName = Common.Common.CHARA_ANIMS_MOVE_DIR[(int)vec];
                     animator.SetTrigger(triggerName);
                 }
-                else if (TI == TileInfo.ENEMY)
+                else //if (TI == TileInfo.ENEMY)
                 {
                     //Debug.Log("攻撃");
 
@@ -228,7 +231,7 @@ public class Player : CharacterBace
     /// <summary>カメラを追尾</summary>
     private void SetCam()
     {
-        /*
+        
         float z = Camera.main.transform.position.z;
         Camera.main.transform.position = new Vector3(transform.position.x, transform.position.y, z);
  
@@ -243,7 +246,7 @@ public class Player : CharacterBace
 
         if (GetStatus() == Status.REAR_GAP && !isAction)
         {
-            master.PlayerAction();
+            //master.PlayerAction();
             isAction = true;
         }
 
@@ -252,5 +255,5 @@ public class Player : CharacterBace
     private void LateUpdate()
     {
         SetCam();
-    }*/
+    }
 }

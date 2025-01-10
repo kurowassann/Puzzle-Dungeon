@@ -4,10 +4,10 @@ using Common;
 
 public class CharacterBace : MonoBehaviour
 {
-	/*
+	
 	//オブジェクト　定数的扱い
     [Tooltip("マスターリクエスト用"), SerializeField]
-    protected Master master;
+    protected GameManager cGm;
 
 
 	//メンバ変数
@@ -20,7 +20,7 @@ public class CharacterBace : MonoBehaviour
 	[Tooltip("敵かプレイヤか"),SerializeField]
     protected string mName;
     [Tooltip("自分のマス目"), SerializeField]
-    protected Point mPoint;
+    protected PosId mPosId;
 	//体力
 	protected int mHp;
 	//移動開始位置
@@ -37,13 +37,13 @@ public class CharacterBace : MonoBehaviour
 
 	//メンバ関数
     /// <summary>初期化処理</summary>
-    virtual public void Init(Master tmas, Point tpoint, int thp, string tstr)
+    virtual public void Init(GameManager tgm, PosId tposId, int thp, string tstr)
     {   
         Debug.Log("基底クラス初期化");
         mName = tstr;
-        master = tmas;
+		cGm = tgm;
 		SetStatus(Status.STAY);
-        SetPos(tpoint);
+        SetPos(tposId);
         transform.position = mGoalPos;
 		mHp = thp;
 		isActive = true;
@@ -131,8 +131,8 @@ public class CharacterBace : MonoBehaviour
 		Debug.Log($"ダメージをうけた！{mName}の残りHPは:{mHp}");
 		if(mHp <= 0)//HPが0になったら自信を消滅
 		{
-			master.SetPos(this, new Point(0,0), "w");
-			mPoint = new Point(0, 0);
+			//master.SetPos(this, new Point(0,0), "w");
+			mPosId.SetPos(new Point(0, 0));
 
 			this.gameObject.SetActive(false);
 			isActive = false;
@@ -189,10 +189,10 @@ public class CharacterBace : MonoBehaviour
 		isStatusChange = true;
 	}
     /// <summary>カメラの外に出ないように座標移動、マス更新</summary>
-    protected void SetPos(Point tpoint)
+    protected void SetPos(PosId tposId)
     {
-        mGoalPos = master.SetPos(this, tpoint, mName); 
-        mPoint = tpoint;
+        //mGoalPos = master.SetPos(this, tpoint, mName); 
+        mPosId = tposId;
         mStartPos = transform.position;
         //Debug.Log(mGoalPos);
         mSpeed = mGoalPos - mStartPos;
@@ -204,7 +204,7 @@ public class CharacterBace : MonoBehaviour
     /// <summary>現在のマスを返す</summary>
     public Point GetPos()
     {
-        return mPoint;
+        return mPosId.GetPos();
     }
 	/// <summary>ゲーム内に登場しているか</summary>
 	public bool GetActive()
@@ -222,5 +222,5 @@ public class CharacterBace : MonoBehaviour
 		StatusBranch();
     }
     
-	*/
+	
 }
