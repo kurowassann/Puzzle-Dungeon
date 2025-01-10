@@ -22,11 +22,17 @@ public class BonusManager : MonoBehaviour
     [SerializeField]
     Text[] FiveTurntext; //5ターン減少する数値
 
+    // 抽選を行う間隔（秒）
+    public float lotteryInterval = 5f; // 例: 秒ごとに抽選
+    private float timeSinceLastLottery = 0f; // 最後の抽選から経過した時間
+
 
     // バフとデバフのカウント
     private int[] buffCounts;
     private int[] debuffCounts;
     private int[] fiveCounts; //5ターン最高で1ターンずつマイナスになる最低0
+   
+
     AllBonus bonus = AllBonus.ENEMYROOM;
 
     void Start()
@@ -35,9 +41,92 @@ public class BonusManager : MonoBehaviour
         buffCounts = new int[Buff.Length];
         debuffCounts = new int[DeBuff.Length];
         fiveCounts = new int[FiveTurntext.Length];
+       
+        // バフのカウントを0にリセットし、テキストも更新
+        for (int i = 0; i < BuffNumbertext.Length; i++)
+        {
+            buffCounts[i] = 0;
+            BuffNumbertext[i].text = buffCounts[i].ToString();  // テキストを0に設定
+        }
+
+        // デバフのカウントを0にリセットし、テキストも更新
+        for (int i = 0; i < DeBuffNumbertext.Length; i++)
+        {
+            debuffCounts[i] = 0;
+            DeBuffNumbertext[i].text = debuffCounts[i].ToString();  // テキストを0に設定
+        }
+
+        // 5ターンカウントを0にリセットし、テキストも更新
+        for (int i = 0; i < FiveTurntext.Length; i++)
+        {
+            fiveCounts[i] = 0;
+            FiveTurntext[i].text = fiveCounts[i].ToString();  // テキストを0に設定
+        }
+
+       
     }
 
-    
+
+    void Update()
+    {
+            PerformLottery();
+
+        // 時間が経過したら抽選を行う
+        timeSinceLastLottery += Time.deltaTime; // 経過時間を加算
+
+        if (timeSinceLastLottery >= lotteryInterval)
+        {
+            // ここで抽選を行う
+            //LotNextBonus2();
+            // 経過時間をリセットして次の抽選までカウント
+            timeSinceLastLottery = 0f;
+        }
+
+        // Spaceキーが押されたときにカウントを減らす
+        if (Input.GetKeyDown(KeyCode.A))
+        {
+            // FLOORCLEARのカウントダウン
+            if (fiveCounts[0] > 0)
+            {
+                fiveCounts[0]--;
+                FiveTurntext[0].text = fiveCounts[0].ToString();
+                if (fiveCounts[0] == 0)
+                {
+                    FiveTurntext[0].gameObject.SetActive(true); // 0になったら非表示
+                    Buff[5].gameObject.GetComponent<Image>().color = new Color(1.0f, 1.0f, 1.0f, 0.1f);
+                }
+            }
+
+        }
+
+        if (Input.GetKeyDown(KeyCode.D))
+        {
+            // SPACE_2_CLEARのカウントダウン
+            if (fiveCounts[1] > 0)
+            {
+                fiveCounts[1]--;
+                FiveTurntext[1].text = fiveCounts[1].ToString();
+                if (fiveCounts[1] == 0)
+                {
+                    FiveTurntext[1].gameObject.SetActive(true); // 0になったら非表示
+
+                    DeBuff[6].gameObject.GetComponent<Image>().color = new Color(1.0f, 1.0f, 1.0f, 0.1f);
+                }
+            }
+        }
+
+    }
+
+    // 抽選を行うメソッド
+    private void PerformLottery()
+    {
+        // 複数回抽選を行いたい場合、forループで回す
+        for (int i = 0; i < 3; i++) // 例えば3回抽選を行いたい
+        {
+            BuffOrDebuff(); // バフかデバフを選び、その後に詳細を決定
+            //Debug.Log("抽選結果: " + buffCounts[0] + " " + debuffCounts[0]);
+        }
+    }
 
     // 関数1: バフかデバフをランダムで選択させる
     public void BuffOrDebuff()
@@ -85,7 +174,7 @@ public class BonusManager : MonoBehaviour
                 bonus = AllBonus.FLOORCLEAR;
                 break;
             case int n when (n >= 65 && n < 70):
-                bonus = AllBonus.ALLENEMYATTACK;
+                bonus = AllBonus.ALLENEMYATTACK;//elemtal5
                 break;
             default:
                 break;
@@ -104,24 +193,31 @@ public class BonusManager : MonoBehaviour
         {
             case int n when (n < 10):
                 bonus = AllBonus.HEELDOWN;
+                Debug.Log("HEELDOWN");
                 break;
             case int n when (n >= 10 && n < 20):
                 bonus = AllBonus.ATTACK1DOWN;
+                Debug.Log("ATTACKDOWN");
                 break;
             case int n when (n >= 20 && n < 30):
                 bonus = AllBonus.EATTACK1UP;
+                Debug.Log("EATTACK1UP");
                 break;
             case int n when (n >= 30 && n < 40):
                 bonus = AllBonus.LIFE1DOWN;
+                Debug.Log("LIFE1DOWN");
                 break;
             case int n when (n >= 40 && n < 50):
                 bonus = AllBonus.EHEEL1UP;
+                Debug.Log("EHEEL1UP");
                 break;
             case int n when (n >= 50 && n < 55):
                 bonus = AllBonus.SPACE_2_CLEAR;
+                Debug.Log("SPACE_2_CLEAR");
                 break;
             case int n when (n >= 55 && n < 60):
                 bonus = AllBonus.EHEEL1UP1;
+                Debug.Log("EHEEL1UP1");
                 break;
             default:
                 break;
@@ -148,30 +244,48 @@ public class BonusManager : MonoBehaviour
         switch (bonus)
         {
             case AllBonus.ALLHEEL:
+                if (buffCounts[0] < 1)  // buffCounts[0]が1未満の場合のみ増加
+                {
+                    buffCounts[0]++;  // カウントを増加
+                }
                 Buff[0].SetActive(true);
                 Buff[0].gameObject.GetComponent<Image>().color = new Color(1.0f, 1.0f, 1.0f, 0.5f);
+                BuffNumbertext[0].text = buffCounts[0].ToString();  // テキストを更新
+
                 break;
             case AllBonus.HEELUP:
                 Buff[1].SetActive(true);
-                buffCounts[0]++;  // カウントを増加
-                BuffNumbertext[0].text = buffCounts[0].ToString();  // テキストを更新
+                buffCounts[1]++;  // カウントを増加
+                BuffNumbertext[1].text = buffCounts[1].ToString();  // テキストを更新
                 Buff[1].gameObject.GetComponent<Image>().color = new Color(1.0f, 1.0f, 1.0f, 0.5f);
-                DeBuff[0].gameObject.GetComponent<Image>().color = new Color(1.0f, 1.0f, 1.0f, 0.1f);
+                //DeBuff[0].gameObject.GetComponent<Image>().color = new Color(1.0f, 1.0f, 1.0f, 0.1f);
                 break;
             case AllBonus.ATTACK1UP:
                 Buff[2].SetActive(true);
-                buffCounts[1]++;  // カウントを増加
-                BuffNumbertext[1].text = buffCounts[1].ToString();  // テキストを更新
+                buffCounts[2]++;  // カウントを増加
+                BuffNumbertext[2].text = buffCounts[2].ToString();  // テキストを更新
                 Buff[2].gameObject.GetComponent<Image>().color = new Color(1.0f, 1.0f, 1.0f, 0.5f);
-                DeBuff[1].gameObject.GetComponent<Image>().color = new Color(1.0f, 1.0f, 1.0f, 0.1f);
+                //DeBuff[1].gameObject.GetComponent<Image>().color = new Color(1.0f, 1.0f, 1.0f, 0.1f);
                 break;
             case AllBonus.GUARD:
                 Buff[3].SetActive(true);
+                if (buffCounts[3] < 1)  // buffCounts[0]が1未満の場合のみ増加
+                {
+                    buffCounts[3]++;  // カウントを増加
+                }
                 Buff[3].gameObject.GetComponent<Image>().color = new Color(1.0f, 1.0f, 1.0f, 0.5f);
+                BuffNumbertext[3].text = buffCounts[3].ToString();  // テキストを更新
                 break;
             case AllBonus.ONEHITATTACK:
                 Buff[4].SetActive(true);
+                if (buffCounts[4] < 1)  // buffCounts[0]が1未満の場合のみ増加
+                {
+                    buffCounts[4]++;  // カウントを増加
+                }
                 Buff[4].gameObject.GetComponent<Image>().color = new Color(1.0f, 1.0f, 1.0f, 0.5f);
+                BuffNumbertext[4].text = buffCounts[4].ToString();  // テキストを更新
+
+
                 break;
             case AllBonus.FLOORCLEAR:
                 Buff[5].SetActive(true);
@@ -180,53 +294,63 @@ public class BonusManager : MonoBehaviour
                 fiveCounts[0] = 5; // 5ターンに設定
                 FiveTurntext[0].text = fiveCounts[0].ToString();
                 Buff[5].gameObject.GetComponent<Image>().color = new Color(1.0f, 1.0f, 1.0f, 0.5f);
-                DeBuff[6].gameObject.GetComponent<Image>().color = new Color(1.0f, 1.0f, 1.0f, 0.1f);
+                DeBuff[4].gameObject.GetComponent<Image>().color = new Color(1.0f, 1.0f, 1.0f, 0.1f);
                 break;
-            case AllBonus.ENEMYROOM:
+            case AllBonus.ALLENEMYATTACK:
                 Buff[6].SetActive(true);
+                if (buffCounts[5] < 1)  // buffCounts[0]が1未満の場合のみ増加
+                {
+                    buffCounts[5]++;  // カウントを増加
+                }
                 Buff[6].gameObject.GetComponent<Image>().color = new Color(1.0f, 1.0f, 1.0f, 0.5f);
+                BuffNumbertext[5].text = buffCounts[5].ToString();  // テキストを更新
                 break;
-            case AllBonus.HEELDOWN:
+            case AllBonus.HEELDOWN://プレイヤーのhp down
                 DeBuff[0].SetActive(true);
                 debuffCounts[0]++;
                 DeBuffNumbertext[0].text = debuffCounts[0].ToString();
                 DeBuff[0].gameObject.GetComponent<Image>().color = new Color(1.0f, 1.0f, 1.0f, 0.5f);
                 break;
-            case AllBonus.ATTACK1DOWN:
+            case AllBonus.ATTACK1DOWN://プレイヤーの攻撃力down
                 DeBuff[1].SetActive(true);
                 debuffCounts[1]++;
                 DeBuffNumbertext[1].text = debuffCounts[1].ToString();
                 DeBuff[1].gameObject.GetComponent<Image>().color = new Color(1.0f, 1.0f, 1.0f, 0.5f);
                 break;
-            case AllBonus.EATTACK1UP:
+            case AllBonus.EHEEL1UP://敵のHPup
                 DeBuff[2].SetActive(true);
                 debuffCounts[2]++;
                 DeBuffNumbertext[2].text = debuffCounts[2].ToString();
                 DeBuff[2].gameObject.GetComponent<Image>().color = new Color(1.0f, 1.0f, 1.0f, 0.5f);
                 break;
-            case AllBonus.LIFE1DOWN:
+           
+            case AllBonus.EATTACK1UP://敵の攻撃力up
                 DeBuff[3].SetActive(true);
                 debuffCounts[3]++;
                 DeBuffNumbertext[3].text = debuffCounts[3].ToString();
                 DeBuff[3].gameObject.GetComponent<Image>().color = new Color(1.0f, 1.0f, 1.0f, 0.5f);
                 break;
-            case AllBonus.EHEEL1UP:
-                DeBuff[4].SetActive(true);
-                debuffCounts[4]++;
-                DeBuffNumbertext[4].text = debuffCounts[4].ToString();
-                DeBuff[4].gameObject.GetComponent<Image>().color = new Color(1.0f, 1.0f, 1.0f, 0.5f);
-                break;
-            case AllBonus.EHEEL1UP1:
-                DeBuff[5].SetActive(true);
-                DeBuff[5].gameObject.GetComponent<Image>().color = new Color(1.0f, 1.0f, 1.0f, 0.5f);
-                break;
+            //case AllBonus.EHEEL1UP:
+            //    DeBuff[4].SetActive(true);
+            //    debuffCounts[4]++;
+            //    DeBuffNumbertext[4].text = debuffCounts[4].ToString();
+            //    DeBuff[4].gameObject.GetComponent<Image>().color = new Color(1.0f, 1.0f, 1.0f, 0.5f);
+            //    break;
+            //case AllBonus.EHEEL1UP1:
+            //    DeBuff[5].SetActive(true);
+            //    debuffCounts[5]++;  // debuffCounts[5] をインクリメント
+            //    // UIの色を変更
+            //    DeBuff[5].gameObject.GetComponent<Image>().color = new Color(1.0f, 1.0f, 1.0f, 0.5f);
+            //    // debuffCounts[5] を表示するためにテキストを更新
+            //    DeBuffNumbertext[5].text = debuffCounts[5].ToString();  // debuffCounts[5] を表示
+            //    break;
             case AllBonus.SPACE_2_CLEAR:
                 //Buff[5].SetActive(false);
-                DeBuff[6].SetActive(true);
+                DeBuff[4].SetActive(true);
                 FiveTurntext[1].gameObject.SetActive(true);
                 fiveCounts[1] = 5; // 5ターンに設定
                 FiveTurntext[1].text = fiveCounts[1].ToString();
-                DeBuff[6].gameObject.GetComponent<Image>().color = new Color(1.0f, 1.0f, 1.0f, 0.5f);
+                DeBuff[4].gameObject.GetComponent<Image>().color = new Color(1.0f, 1.0f, 1.0f, 0.5f);
                 Buff[5].gameObject.GetComponent<Image>().color = new Color(1.0f, 1.0f, 1.0f, 0.1f);
                 break;
             default:
@@ -234,41 +358,35 @@ public class BonusManager : MonoBehaviour
         }
     }
 
-    void Update()
+   
+
+    // バフとデバフのカウントをリセットするメソッド
+    public void ResetCounts()
     {
-        // Spaceキーが押されたときにカウントを減らす
-        if (Input.GetKeyDown(KeyCode.A))
+        // バフのカウントをリセット
+        for (int i = 0; i < buffCounts.Length; i++)
         {
-            // FLOORCLEARのカウントダウン
-            if (fiveCounts[0] > 0)
-            {
-                fiveCounts[0]--;
-                FiveTurntext[0].text = fiveCounts[0].ToString();
-                if (fiveCounts[0] == 0)
-                {
-                    FiveTurntext[0].gameObject.SetActive(true); // 0になったら非表示
-                    Buff[5].gameObject.GetComponent<Image>().color = new Color(1.0f, 1.0f, 1.0f, 0.1f);
-                }
-            }
-
+            buffCounts[i] = 0;
+            BuffNumbertext[i].text = buffCounts[i].ToString();  // テキストを更新
         }
 
-        if (Input.GetKeyDown(KeyCode.D))
+        // デバフのカウントをリセット
+        for (int i = 0; i < debuffCounts.Length; i++)
         {
-            // SPACE_2_CLEARのカウントダウン
-            if (fiveCounts[1] > 0)
-            {
-                fiveCounts[1]--;
-                FiveTurntext[1].text = fiveCounts[1].ToString();
-                if (fiveCounts[1] == 0)
-                {
-                    FiveTurntext[1].gameObject.SetActive(true); // 0になったら非表示
-                    
-                    DeBuff[6].gameObject.GetComponent<Image>().color = new Color(1.0f, 1.0f, 1.0f, 0.1f);
-                }
-            }
+            debuffCounts[i] = 0;
+            DeBuffNumbertext[i].text = debuffCounts[i].ToString();  // テキストを更新
         }
+
+        // 5ターンカウントもリセット
+        for (int i = 0; i < fiveCounts.Length; i++)
+        {
+            fiveCounts[i] = 0;
+            FiveTurntext[i].text = fiveCounts[i].ToString();  // テキストを更新
+        }
+
+        
     }
+
 
     public void Lottery()
     {
@@ -276,6 +394,7 @@ public class BonusManager : MonoBehaviour
         print(bonus); // 選ばれたボーナスの種類を表示
         print(BuffNumbertext);
         print(DeBuffNumbertext);
+       
     }
 }
 
