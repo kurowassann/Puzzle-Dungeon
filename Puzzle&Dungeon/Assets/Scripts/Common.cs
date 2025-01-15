@@ -109,22 +109,33 @@ namespace Common
         }
     }
 
-    //
+    /// <summary>‚Ç‚ÌêŠ‚É‚¢‚é‚©‚Ìî•ñ</summary>
+    public enum RoomAisle
+    {
+        ROOM,
+        AISLE,
+        NONE,
+    }
+
+    /// <summary>À•WEIdE•”‰®‚©˜L‰º‚Ìî•ñ</summary>
     public struct PosId
     {
-        public Point pos;
-        public int RoomId;
+        private Point pos;
+        private int Id;
+        private RoomAisle RA;
 
-        public PosId(Point tpos, int tid)
+        public PosId(Point tpos, int tid, RoomAisle tra)
         {
             pos = tpos;
-            RoomId=tid;
+            Id=tid;
+            RA = tra;
         }
 
-        public void Set(Point tpos,int tid)
+        public void Set(Point tpos,int tid, RoomAisle tra)
         {
             pos = tpos;
-            RoomId = tid;
+            Id = tid;
+            RA = tra;
         }
 
         public void SetPos(Point tpos)
@@ -134,7 +145,7 @@ namespace Common
 
         public void SetId(int tid)
         {
-            RoomId = tid;
+            Id = tid;
         }
 
         public Point GetPos()
@@ -143,7 +154,7 @@ namespace Common
         }
         public int GetId()
         {
-            return RoomId;
+            return Id;
         }
     }
 

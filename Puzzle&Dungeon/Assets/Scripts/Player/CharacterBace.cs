@@ -8,11 +8,15 @@ public class CharacterBace : MonoBehaviour
 	//オブジェクト　定数的扱い
     [Tooltip("マスターリクエスト用"), SerializeField]
     protected GameManager cGm;
+	//
+	protected MapManager cMm;
 
 
 	//メンバ変数
 	/// <summary>アクティブ状態</summary>
 	private bool isActive;
+	/// <summary>行動が完了したか</summary>
+	private bool isAction;
 	/// <summary>ステート管理</summary>
     protected Status mStatus;
 	/// <summary>ステートが変わったときに一度だけ処理を行う</summary>
@@ -37,16 +41,19 @@ public class CharacterBace : MonoBehaviour
 
 	//メンバ関数
     /// <summary>初期化処理</summary>
-    virtual public void Init(GameManager tgm, PosId tposId, int thp, string tstr)
+    virtual public void Init(GameManager tgm, MapManager tmm, PosId tposId, int thp, string tstr)
     {   
         Debug.Log("基底クラス初期化");
         mName = tstr;
 		cGm = tgm;
+		cMm = tmm;
 		SetStatus(Status.STAY);
-        SetPos(tposId);
+		mPosId = tposId;
+        SetPos(tposId.GetPos());
         transform.position = mGoalPos;
 		mHp = thp;
 		isActive = true;
+		isAction = false;
 
 		mAttackTimer = 0;
     }
@@ -70,8 +77,7 @@ public class CharacterBace : MonoBehaviour
     {
 		if (isStatusChange)
 		{
-			//Debug.Log("移動を開始します");
-			//SetPos();
+			Debug.Log("移動を開始します");
 			isStatusChange = false;
 		}
 
@@ -94,9 +100,9 @@ public class CharacterBace : MonoBehaviour
     virtual protected void MoveEnd()
     {
         transform.position = mGoalPos;
-        //Debug.Log("移動終了");
+        Debug.Log("移動終了");
         mGoalPos = Vector3.zero;
-        mStatus = Status.REAR_GAP;
+		SetStatus(Status.REAR_GAP);
     }
 	/// <summary>攻撃を行う</summary>
 	protected void Attack()
@@ -157,7 +163,7 @@ public class CharacterBace : MonoBehaviour
 			case Status.STAY:
 				if (isStatusChange)
 				{
-					//Debug.Log("入力待機状態になりました、行動してください");
+					Debug.Log("入力待機状態になりました、行動してください");
 					isStatusChange = false;
 				}
 				break;
@@ -173,12 +179,18 @@ public class CharacterBace : MonoBehaviour
 			case Status.REAR_GAP:
 				if (isStatusChange)
 				{
-					//Debug.Log($"{this.name}行動が終了しました。");
-					//master.PlayerAction();
+					Debug.Log($"{this.name}行動が終了しました。");
+					isAction = true;
 					isStatusChange = false;
 				}
 				break;
 		}
+	}
+	/// <summary>ターン終了時</summary>
+	public void TurnEnd()
+	{
+		isAction = false;
+		SetStatus(Status.STAY);
 	}
 
 	//Set関数
@@ -189,15 +201,14 @@ public class CharacterBace : MonoBehaviour
 		isStatusChange = true;
 	}
     /// <summary>カメラの外に出ないように座標移動、マス更新</summary>
-    protected void SetPos(PosId tposId)
+    protected void SetPos(Point tpos)
     {
-        //mGoalPos = master.SetPos(this, tpoint, mName); 
-        mPosId = tposId;
+        mGoalPos = cMm.SetPos(this, tpos, mName);
+		//mPosId = tposId;
         mStartPos = transform.position;
         //Debug.Log(mGoalPos);
         mSpeed = mGoalPos - mStartPos;
         mVec = mSpeed.normalized;
-        //Debug.Log(mPoint);
     }
 
 	//Get関数
@@ -211,11 +222,17 @@ public class CharacterBace : MonoBehaviour
 	{
 		return isActive;
 	}
+	/// <summary>行動が完了したか</summary>
+	public bool GetAction()
+	{
+		return isAction;
+	}
 	/// <summary>現在の状態</summary>
 	public Status GetStatus()
 	{
 		return mStatus;
 	}
+
 
     virtual protected void  Update() 
     {

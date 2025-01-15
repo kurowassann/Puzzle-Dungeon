@@ -7,7 +7,8 @@ using UnityEngine;
 
 /// <summary>ゲームを動かす</summary>
 public class GameManager : MonoBehaviour 
-{
+{ 
+
     //オブジェクト
     [Tooltip("マップの管理オブジェクト"),SerializeField]
     private MapManager cMm;
@@ -15,15 +16,24 @@ public class GameManager : MonoBehaviour
     private Player cPlayer;
 
     //メンバ変数
+    
 
     //メンバ関数
     //private
-    /// <summary>プレイヤの初期位置を決める</summary>
-    private PosId SelectPlayerFirstPos()
+    /// <summary>ターンの終わりを確認</summary>
+    private bool TurnCheck()
     {
-        PosId posId = cMm.GetRandomPlayer();
+        if(cPlayer.GetAction())
+        {
+            return true;
+        }
 
-        return posId;
+        return false;
+    }
+    /// <summary>ターンの終了</summary>
+    private void TurnEnd()
+    {
+        cPlayer.TurnEnd();
     }
 
     //public
@@ -41,16 +51,20 @@ public class GameManager : MonoBehaviour
 
         //プレイヤの生成
         //生成位置の決定
-        PosId posId = SelectPlayerFirstPos();
-        cPlayer.Init(this,posId,1,"p");
+        PosId posId = cMm.GetRandomPlayer();
+        cPlayer.Init(this, cMm,posId,1,"p");
         cPlayer.transform.position = cMm.GetTilePos(posId.GetPos());
-
-
     }
 
     //
     private void Update()
     {
+        if(TurnCheck())
+        {
+            TurnEnd();
+        }
+
+
         
     }
 }

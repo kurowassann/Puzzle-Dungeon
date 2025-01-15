@@ -23,17 +23,15 @@ public class Player : CharacterBace
 
 
     //メンバ変数
-    /// <summary>行動が完了したか</summary>
-    private bool isAction;
     /// <summary>攻撃位置</summary>
     private Point AttackPoint;
 
 
     //メンバ関数 
     /// <summary>初期化処理</summary>
-    public override void Init(GameManager tgm, PosId tposId, int thp, string tstr)
+    public override void Init(GameManager tgm, MapManager tmm, PosId tposId, int thp, string tstr)
     {
-        base.Init(tgm, tposId, thp, tstr);
+        base.Init(tgm, tmm, tposId, thp, tstr);
 
         //um = GameObject.Find("UIManager").GetComponent<UIManager>();
         //um.GeneratePlayerHP(mHp);
@@ -150,7 +148,6 @@ public class Player : CharacterBace
     {
         if (Input.GetKeyDown(KeyCode.Space))
         {
-            isAction = false;
             SetStatus(Status.REAR_GAP);
         }
 
@@ -162,7 +159,6 @@ public class Player : CharacterBace
             {
                 TileInfo TI;
                 Point point = mPosId.GetPos();
-                isAction = false;
 
                 // 呼び出すアニメーショントリガーの名前
                 Vector vec;
@@ -197,18 +193,18 @@ public class Player : CharacterBace
 
                 }
                 else { return; }
-                //TI = master.CheckTile(point);
+                TI = cMm.CheckTile(point);
                 //Debug.Log(point);
-                if (true)//TI == TileInfo.ROUTE)
+                if (TI == TileInfo.ROUTE)
                 {
-                    //Debug.Log("移動開始");
-                    SetPos(mPosId);
+                    Debug.Log("移動開始");
+                    SetPos(point);
                     SetStatus(Status.MOVE);
                     // アニメーションの呼び出し
                     var triggerName = Common.Common.CHARA_ANIMS_MOVE_DIR[(int)vec];
                     animator.SetTrigger(triggerName);
                 }
-                else //if (TI == TileInfo.ENEMY)
+                else if (TI == TileInfo.ENEMY)
                 {
                     //Debug.Log("攻撃");
 
@@ -244,11 +240,6 @@ public class Player : CharacterBace
 
         base.Update();
 
-        if (GetStatus() == Status.REAR_GAP && !isAction)
-        {
-            //master.PlayerAction();
-            isAction = true;
-        }
 
     }
     /// <summary>Updateのあと、最後に呼ばれる</summary>

@@ -2,6 +2,7 @@ using Common;
 using System.Collections;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Security.Cryptography;
 using UnityEngine;
 
 /// <summary>生成したマップを管理するクラス</summary>
@@ -67,23 +68,66 @@ public class MapManager : MonoBehaviour
         mNum = 0;
         mNum2 = 0;
     }
-    
-    
+    /// <summary>移動しようとしている部分が何か</summary>
+    public TileInfo CheckTile(Point tpos)
+    {
+        TileInfo tile;
+        switch (cTiles[tpos.X, tpos.Y])
+        {
+            case " ":
+                //Debug.Log("移動可能");
+                //Debug.Log(tiles[tpoint.X, tpoint.Y]);
+                tile = TileInfo.ROUTE;
+                break;
+            case "w":
+                //Debug.Log("移動不可");
+                //Debug.Log(tiles[tpoint.X, tpoint.Y]);
+
+                tile = TileInfo.WALL;
+                break;
+            case "e":
+                //Debug.Log("敵がいるよ");
+                tile = TileInfo.ENEMY;
+                break;
+            case "p":
+                //Debug.Log("プレイヤがいるよ");
+                tile = TileInfo.PLAYER;
+                break;
+            default:
+                tile = TileInfo.NONE;
+                break;
+        }
+
+        return tile;
+    }
+
+
     //Set関数
+    /// <summary>位置の更新</summary>
+    public Vector3 SetPos(CharacterBace tchara, Point tafter, string tstr)
+    {
+
+        Point point = tchara.GetPos();
+        //print(point);
+        cTiles[point.X, point.Y] = " ";
+        cTiles[tafter.X, tafter.Y] = tstr;
+        //print($"死んだ敵の座標：{tafter}");
+        return GetTilePos(tafter);
+
+    }
 
 
     //Get関数
     /// <summary>ランダムな部屋のランダムな座標を返す</summary>
     public Point GetRamdomPos()
     {
-        PosId posId;
-        Point pos = new Point();
+        Point pos;
 
         pos = cRm.GetRandomRoom();
 
         return pos;
     }
-    //
+    //座標の位置を返す
     public Vector3 GetTilePos(Point tpos)
     {
         return cTileObjects[tpos.X, tpos.Y].transform.position;
@@ -99,7 +143,7 @@ public class MapManager : MonoBehaviour
 
         pos = cRm.GetRandomRoom(num);
 
-        posId = new PosId(pos,num);
+        posId = new PosId(pos,num, RoomAisle.ROOM);
 
         return posId;
     }
