@@ -157,24 +157,31 @@ public class BonusManager : MonoBehaviour
         {
             case int n when (n < 11):
                 bonus = AllBonus.ALLHEEL;
+                Debug.Log("ライフ全回復");
                 break;
             case int n when (n >= 11 && n < 22):
                 bonus = AllBonus.HEELUP;
+                Debug.Log("ライフ上限+1");
                 break;
             case int n when (n >= 22 && n < 33):
                 bonus = AllBonus.ATTACK1UP;
+                Debug.Log("攻撃力+1");
                 break;
             case int n when (n >= 33 && n < 44):
                 bonus = AllBonus.GUARD;
+                Debug.Log("ダメージ1回無効");
                 break;
             case int n when (n >= 44 && n < 55):
                 bonus = AllBonus.ONEHITATTACK;
+                Debug.Log("次の攻撃一撃");
                 break;
             case int n when (n >= 55 && n < 65):
                 bonus = AllBonus.FLOORCLEAR;
+                Debug.Log("5ターンの間フロア全体が見える");
                 break;
             case int n when (n >= 65 && n < 70):
                 bonus = AllBonus.ALLENEMYATTACK;//elemtal5
+                Debug.Log("部屋内の敵を全滅");
                 break;
             default:
                 break;
@@ -193,31 +200,31 @@ public class BonusManager : MonoBehaviour
         {
             case int n when (n < 10):
                 bonus = AllBonus.HEELDOWN;
-                Debug.Log("HEELDOWN");
+                Debug.Log("ライフ-1");
                 break;
             case int n when (n >= 10 && n < 20):
                 bonus = AllBonus.ATTACK1DOWN;
-                Debug.Log("ATTACKDOWN");
+                Debug.Log("攻撃力-1");
                 break;
             case int n when (n >= 20 && n < 30):
                 bonus = AllBonus.EATTACK1UP;
-                Debug.Log("EATTACK1UP");
+                Debug.Log("敵の攻撃力+1");
                 break;
             case int n when (n >= 30 && n < 40):
                 bonus = AllBonus.LIFE1DOWN;
-                Debug.Log("LIFE1DOWN");
+                Debug.Log("ライフ上限-1");
                 break;
             case int n when (n >= 40 && n < 50):
                 bonus = AllBonus.EHEEL1UP;
-                Debug.Log("EHEEL1UP");
+                Debug.Log("敵のライフ上限+1");
                 break;
             case int n when (n >= 50 && n < 55):
                 bonus = AllBonus.SPACE_2_CLEAR;
-                Debug.Log("SPACE_2_CLEAR");
+                Debug.Log("5ターンの間周囲2マスしか見えない");
                 break;
             case int n when (n >= 55 && n < 60):
                 bonus = AllBonus.EHEEL1UP1;
-                Debug.Log("EHEEL1UP1");
+                Debug.Log("部屋内に敵を生成する");
                 break;
             default:
                 break;
@@ -243,7 +250,7 @@ public class BonusManager : MonoBehaviour
         // 新しいボーナスオブジェクトをインスタンス化して表示
         switch (bonus)
         {
-            case AllBonus.ALLHEEL:
+            /*case AllBonus.ALLHEEL:
                 if (buffCounts[0] < 1)  // buffCounts[0]が1未満の場合のみ増加
                 {
                     buffCounts[0]++;  // カウントを増加
@@ -252,59 +259,57 @@ public class BonusManager : MonoBehaviour
                 Buff[0].gameObject.GetComponent<Image>().color = new Color(1.0f, 1.0f, 1.0f, 0.5f);
                 BuffNumbertext[0].text = buffCounts[0].ToString();  // テキストを更新
 
-                break;
+                break;*/
             case AllBonus.HEELUP:
                 Buff[1].SetActive(true);
-                buffCounts[1]++;  // カウントを増加
-                BuffNumbertext[1].text = buffCounts[1].ToString();  // テキストを更新
-                Buff[1].gameObject.GetComponent<Image>().color = new Color(1.0f, 1.0f, 1.0f, 0.5f);
+                buffCounts[0]++;  // カウントを増加
+                BuffNumbertext[0].text = buffCounts[1].ToString();  // テキストを更新
+                Buff[0].gameObject.GetComponent<Image>().color = new Color(1.0f, 1.0f, 1.0f, 0.5f);
                 //DeBuff[0].gameObject.GetComponent<Image>().color = new Color(1.0f, 1.0f, 1.0f, 0.1f);
                 break;
             case AllBonus.ATTACK1UP:
-                Buff[2].SetActive(true);
-                buffCounts[2]++;  // カウントを増加
-                BuffNumbertext[2].text = buffCounts[2].ToString();  // テキストを更新
-                Buff[2].gameObject.GetComponent<Image>().color = new Color(1.0f, 1.0f, 1.0f, 0.5f);
+                Buff[1].SetActive(true);
+                buffCounts[1]++;  // カウントを増加
+                BuffNumbertext[1].text = buffCounts[2].ToString();  // テキストを更新
+                Buff[1].gameObject.GetComponent<Image>().color = new Color(1.0f, 1.0f, 1.0f, 0.5f);
                 //DeBuff[1].gameObject.GetComponent<Image>().color = new Color(1.0f, 1.0f, 1.0f, 0.1f);
                 break;
-            case AllBonus.GUARD:
-                Buff[3].SetActive(true);
-                if (buffCounts[3] < 1)  // buffCounts[0]が1未満の場合のみ増加
+           case AllBonus.GUARD:
+                Buff[2].SetActive(true);
+                if (buffCounts[2] < 1)  // buffCounts[0]が1未満の場合のみ増加
                 {
-                    buffCounts[3]++;  // カウントを増加
+                    buffCounts[2]++;  // カウントを増加
                 }
-                Buff[3].gameObject.GetComponent<Image>().color = new Color(1.0f, 1.0f, 1.0f, 0.5f);
-                BuffNumbertext[3].text = buffCounts[3].ToString();  // テキストを更新
+                Buff[2].gameObject.GetComponent<Image>().color = new Color(1.0f, 1.0f, 1.0f, 0.5f);
+                BuffNumbertext[2].text = buffCounts[2].ToString();  // テキストを更新
                 break;
             case AllBonus.ONEHITATTACK:
-                Buff[4].SetActive(true);
+                Buff[3].SetActive(true);
                 if (buffCounts[4] < 1)  // buffCounts[0]が1未満の場合のみ増加
                 {
                     buffCounts[4]++;  // カウントを増加
                 }
-                Buff[4].gameObject.GetComponent<Image>().color = new Color(1.0f, 1.0f, 1.0f, 0.5f);
-                BuffNumbertext[4].text = buffCounts[4].ToString();  // テキストを更新
-
-
+                Buff[3].gameObject.GetComponent<Image>().color = new Color(1.0f, 1.0f, 1.0f, 0.5f);
+                BuffNumbertext[3].text = buffCounts[4].ToString();  // テキストを更新
                 break;
             case AllBonus.FLOORCLEAR:
-                Buff[5].SetActive(true);
+                Buff[4].SetActive(true);
                 //DeBuff[6].SetActive(false);
                 FiveTurntext[0].gameObject.SetActive(true);
                 fiveCounts[0] = 5; // 5ターンに設定
                 FiveTurntext[0].text = fiveCounts[0].ToString();
-                Buff[5].gameObject.GetComponent<Image>().color = new Color(1.0f, 1.0f, 1.0f, 0.5f);
+                Buff[4].gameObject.GetComponent<Image>().color = new Color(1.0f, 1.0f, 1.0f, 0.5f);
                 DeBuff[4].gameObject.GetComponent<Image>().color = new Color(1.0f, 1.0f, 1.0f, 0.1f);
                 break;
-            case AllBonus.ALLENEMYATTACK:
-                Buff[6].SetActive(true);
+            /*case AllBonus.ALLENEMYATTACK:
+                //Buff[6].SetActive(true);
                 if (buffCounts[5] < 1)  // buffCounts[0]が1未満の場合のみ増加
                 {
                     buffCounts[5]++;  // カウントを増加
                 }
                 Buff[6].gameObject.GetComponent<Image>().color = new Color(1.0f, 1.0f, 1.0f, 0.5f);
                 BuffNumbertext[5].text = buffCounts[5].ToString();  // テキストを更新
-                break;
+                break;*/
             case AllBonus.HEELDOWN://プレイヤーのhp down
                 DeBuff[0].SetActive(true);
                 debuffCounts[0]++;
@@ -351,7 +356,7 @@ public class BonusManager : MonoBehaviour
                 fiveCounts[1] = 5; // 5ターンに設定
                 FiveTurntext[1].text = fiveCounts[1].ToString();
                 DeBuff[4].gameObject.GetComponent<Image>().color = new Color(1.0f, 1.0f, 1.0f, 0.5f);
-                Buff[5].gameObject.GetComponent<Image>().color = new Color(1.0f, 1.0f, 1.0f, 0.1f);
+                Buff[4].gameObject.GetComponent<Image>().color = new Color(1.0f, 1.0f, 1.0f, 0.1f);
                 break;
             default:
                 break;
