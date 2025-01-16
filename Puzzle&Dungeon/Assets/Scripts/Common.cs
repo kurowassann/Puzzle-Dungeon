@@ -284,6 +284,14 @@ namespace Common
 		ATTACK,
 		REAR_GAP
 	}
+
+    /// <summary>ゲームのステータス</summary>
+    public enum GameStatus
+    {
+        STAY,
+        ACTION,
+        COUNT,
+    };
     
     
     class Common

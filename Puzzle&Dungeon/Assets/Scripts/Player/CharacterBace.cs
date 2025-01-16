@@ -43,12 +43,10 @@ public class CharacterBace : MonoBehaviour
     /// <summary>初期化処理</summary>
     virtual public void Init(GameManager tgm, MapManager tmm, PosId tposId, int thp, string tstr)
     {   
-        Debug.Log("基底クラス初期化");
         mName = tstr;
 		cGm = tgm;
 		cMm = tmm;
 		SetStatus(Status.STAY);
-		mPosId = tposId;
         SetPos(tposId.GetPos());
         transform.position = mGoalPos;
 		mHp = thp;
@@ -182,6 +180,7 @@ public class CharacterBace : MonoBehaviour
 					Debug.Log($"{this.name}行動が終了しました。");
 					isAction = true;
 					isStatusChange = false;
+					cGm.PlayerActionEnd();
 				}
 				break;
 		}
@@ -204,9 +203,8 @@ public class CharacterBace : MonoBehaviour
     protected void SetPos(Point tpos)
     {
         mGoalPos = cMm.SetPos(this, tpos, mName);
-		//mPosId = tposId;
+		mPosId.SetPos(tpos);
         mStartPos = transform.position;
-        //Debug.Log(mGoalPos);
         mSpeed = mGoalPos - mStartPos;
         mVec = mSpeed.normalized;
     }

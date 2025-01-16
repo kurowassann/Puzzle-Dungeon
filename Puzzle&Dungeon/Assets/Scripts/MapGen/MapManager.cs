@@ -106,14 +106,10 @@ public class MapManager : MonoBehaviour
     /// <summary>位置の更新</summary>
     public Vector3 SetPos(CharacterBace tchara, Point tafter, string tstr)
     {
-
         Point point = tchara.GetPos();
-        //print(point);
         cTiles[point.X, point.Y] = " ";
         cTiles[tafter.X, tafter.Y] = tstr;
-        //print($"死んだ敵の座標：{tafter}");
         return GetTilePos(tafter);
-
     }
 
 
