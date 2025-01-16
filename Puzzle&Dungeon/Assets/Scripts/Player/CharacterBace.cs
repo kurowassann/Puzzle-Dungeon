@@ -4,15 +4,19 @@ using Common;
 
 public class CharacterBace : MonoBehaviour
 {
-	/*
+	
 	//オブジェクト　定数的扱い
     [Tooltip("マスターリクエスト用"), SerializeField]
-    protected Master master;
+    protected GameManager cGm;
+	//
+	protected MapManager cMm;
 
 
 	//メンバ変数
 	/// <summary>アクティブ状態</summary>
 	private bool isActive;
+	/// <summary>行動が完了したか</summary>
+	private bool isAction;
 	/// <summary>ステート管理</summary>
     protected Status mStatus;
 	/// <summary>ステートが変わったときに一度だけ処理を行う</summary>
@@ -20,7 +24,7 @@ public class CharacterBace : MonoBehaviour
 	[Tooltip("敵かプレイヤか"),SerializeField]
     protected string mName;
     [Tooltip("自分のマス目"), SerializeField]
-    protected Point mPoint;
+    protected PosId mPosId;
 	//体力
 	protected int mHp;
 	//移動開始位置
@@ -37,16 +41,17 @@ public class CharacterBace : MonoBehaviour
 
 	//メンバ関数
     /// <summary>初期化処理</summary>
-    virtual public void Init(Master tmas, Point tpoint, int thp, string tstr)
+    virtual public void Init(GameManager tgm, MapManager tmm, PosId tposId, int thp, string tstr)
     {   
-        Debug.Log("基底クラス初期化");
         mName = tstr;
-        master = tmas;
+		cGm = tgm;
+		cMm = tmm;
 		SetStatus(Status.STAY);
-        SetPos(tpoint);
+        SetPos(tposId.GetPos());
         transform.position = mGoalPos;
 		mHp = thp;
 		isActive = true;
+		isAction = false;
 
 		mAttackTimer = 0;
     }
@@ -70,8 +75,7 @@ public class CharacterBace : MonoBehaviour
     {
 		if (isStatusChange)
 		{
-			//Debug.Log("移動を開始します");
-			//SetPos();
+			Debug.Log("移動を開始します");
 			isStatusChange = false;
 		}
 
@@ -94,9 +98,9 @@ public class CharacterBace : MonoBehaviour
     virtual protected void MoveEnd()
     {
         transform.position = mGoalPos;
-        //Debug.Log("移動終了");
+        Debug.Log("移動終了");
         mGoalPos = Vector3.zero;
-        mStatus = Status.REAR_GAP;
+		SetStatus(Status.REAR_GAP);
     }
 	/// <summary>攻撃を行う</summary>
 	protected void Attack()
@@ -131,8 +135,8 @@ public class CharacterBace : MonoBehaviour
 		Debug.Log($"ダメージをうけた！{mName}の残りHPは:{mHp}");
 		if(mHp <= 0)//HPが0になったら自信を消滅
 		{
-			master.SetPos(this, new Point(0,0), "w");
-			mPoint = new Point(0, 0);
+			//master.SetPos(this, new Point(0,0), "w");
+			mPosId.SetPos(new Point(0, 0));
 
 			this.gameObject.SetActive(false);
 			isActive = false;
@@ -157,7 +161,7 @@ public class CharacterBace : MonoBehaviour
 			case Status.STAY:
 				if (isStatusChange)
 				{
-					//Debug.Log("入力待機状態になりました、行動してください");
+					Debug.Log("入力待機状態になりました、行動してください");
 					isStatusChange = false;
 				}
 				break;
@@ -173,12 +177,19 @@ public class CharacterBace : MonoBehaviour
 			case Status.REAR_GAP:
 				if (isStatusChange)
 				{
-					//Debug.Log($"{this.name}行動が終了しました。");
-					//master.PlayerAction();
+					Debug.Log($"{this.name}行動が終了しました。");
+					isAction = true;
 					isStatusChange = false;
+					cGm.PlayerActionEnd();
 				}
 				break;
 		}
+	}
+	/// <summary>ターン終了時</summary>
+	public void TurnEnd()
+	{
+		isAction = false;
+		SetStatus(Status.STAY);
 	}
 
 	//Set関数
@@ -189,27 +200,30 @@ public class CharacterBace : MonoBehaviour
 		isStatusChange = true;
 	}
     /// <summary>カメラの外に出ないように座標移動、マス更新</summary>
-    protected void SetPos(Point tpoint)
+    protected void SetPos(Point tpos)
     {
-        mGoalPos = master.SetPos(this, tpoint, mName); 
-        mPoint = tpoint;
+        mGoalPos = cMm.SetPos(this, tpos, mName);
+		mPosId.SetPos(tpos);
         mStartPos = transform.position;
-        //Debug.Log(mGoalPos);
         mSpeed = mGoalPos - mStartPos;
         mVec = mSpeed.normalized;
-        //Debug.Log(mPoint);
     }
 
 	//Get関数
     /// <summary>現在のマスを返す</summary>
     public Point GetPos()
     {
-        return mPoint;
+        return mPosId.GetPos();
     }
 	/// <summary>ゲーム内に登場しているか</summary>
 	public bool GetActive()
 	{
 		return isActive;
+	}
+	/// <summary>行動が完了したか</summary>
+	public bool GetAction()
+	{
+		return isAction;
 	}
 	/// <summary>現在の状態</summary>
 	public Status GetStatus()
@@ -217,10 +231,11 @@ public class CharacterBace : MonoBehaviour
 		return mStatus;
 	}
 
+
     virtual protected void  Update() 
     {
 		StatusBranch();
     }
     
-	*/
+	
 }

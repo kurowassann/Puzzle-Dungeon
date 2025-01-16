@@ -109,6 +109,55 @@ namespace Common
         }
     }
 
+    /// <summary>どの場所にいるかの情報</summary>
+    public enum RoomAisle
+    {
+        ROOM,
+        AISLE,
+        NONE,
+    }
+
+    /// <summary>座標・Id・部屋か廊下の情報</summary>
+    public struct PosId
+    {
+        private Point pos;
+        private int Id;
+        private RoomAisle RA;
+
+        public PosId(Point tpos, int tid, RoomAisle tra)
+        {
+            pos = tpos;
+            Id=tid;
+            RA = tra;
+        }
+
+        public void Set(Point tpos,int tid, RoomAisle tra)
+        {
+            pos = tpos;
+            Id = tid;
+            RA = tra;
+        }
+
+        public void SetPos(Point tpos)
+        {
+            pos = tpos; 
+        }
+
+        public void SetId(int tid)
+        {
+            Id = tid;
+        }
+
+        public Point GetPos()
+        {
+            return pos;
+        }
+        public int GetId()
+        {
+            return Id;
+        }
+    }
+
     //エリアか分岐線
     public enum ArDi
     {
@@ -235,6 +284,14 @@ namespace Common
 		ATTACK,
 		REAR_GAP
 	}
+
+    /// <summary>ゲームのステータス</summary>
+    public enum GameStatus
+    {
+        STAY,
+        ACTION,
+        COUNT,
+    };
     
     
     class Common

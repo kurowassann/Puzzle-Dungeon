@@ -91,6 +91,15 @@ MonoBehaviour:
     m_Interactions: 
     m_SingletonActionBindings: []
     m_Flags: 0
+  inputSelect:
+    m_Name: Input Select
+    m_Type: 0
+    m_ExpectedControlType: 
+    m_Id: 1b151564-50f0-4320-ad58-7b098c5c4a81
+    m_Processors: 
+    m_Interactions: 
+    m_SingletonActionBindings: []
+    m_Flags: 0
   inputActions: {fileID: -944628639613478452, guid: 3332fe1599286624f887188808a0d8ae, type: 3}
   settingParents:
   - {fileID: 1467371147218174495}
