@@ -39,7 +39,7 @@ public class UIManager : MonoBehaviour
 
     [Header("ログ系")]
     [Tooltip("ログの最大保存数")]
-    private const int MAX_LOG_NAM = 5;
+    private const int MAX_LOG_NAM = 2;
     [Tooltip("ログが表示される時間")]
     private const float LOG_ACTIVE_TIME = 1.2f;
     [Tooltip("ログが消える時間")]
@@ -79,7 +79,7 @@ public class UIManager : MonoBehaviour
 
         if(Input.GetKeyDown(KeyCode.M))
         {
-            mapPanel.SetActive(!mapPanel.activeSelf);
+            //mapPanel.SetActive(!mapPanel.activeSelf);
         }
 
         // ログの表示を制御
@@ -91,15 +91,15 @@ public class UIManager : MonoBehaviour
     /// </summary>
     void UIInit()
     {
-        mapPanel = GameObject.Find("PanelMap");
-        mapPanel.SetActive(true);
+        //mapPanel = GameObject.Find("PanelMap");
+        //mapPanel.SetActive(true);
 
         playerHPPrefab = Resources.Load<GameObject>("Prefabs/HPImagePrefab");
         playerHPParent = GameObject.Find("PlayerHPParent").transform;
 
         logPanel = GameObject.Find("PanelLog").GetComponent<Image>();
         var col = logPanel.color;
-        col.a = 0;
+        col.a = 1;
         logPanel.color = col;
 
         logTextOutputObj = GameObject.Find("TextLog").GetComponent<Text>();
@@ -197,6 +197,15 @@ public class UIManager : MonoBehaviour
     /// </summary>
     void LogControll()
     {
+        logPanel.gameObject.SetActive(true);
+        var col = logPanel.color;
+        col.a = 1;
+        logPanel.color = col;
+        logTextOutputObj.gameObject.SetActive(true);
+        col = logTextOutputObj.color;
+        col.a = 1;
+        logTextOutputObj.color = col;
+        /*
         // タイマーが正の間は表示し続ける
         if (logTimer > 0)
         {
@@ -230,7 +239,7 @@ public class UIManager : MonoBehaviour
                 logPanel.gameObject.SetActive(false);
                 logTextOutputObj.gameObject.SetActive(false);
             }
-        }
+        }*/
     }
 
 

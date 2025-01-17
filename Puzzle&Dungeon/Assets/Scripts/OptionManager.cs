@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
-
+using UnityEngine.InputSystem;
 using Json;
 
 
@@ -17,7 +17,6 @@ public class OptionManager : MonoBehaviour
         SOUND,
         LIGHT,
 
-        SAVE,
         CLOSE_OPT,
         BACK_TITLE,
     }
@@ -31,6 +30,14 @@ public class OptionManager : MonoBehaviour
         VALUE,
         SLIDER,
     }
+
+    //オブジェクト
+    [Tooltip("スティック"), SerializeField]
+    private InputAction inputMover;
+    [Tooltip("スティック"), SerializeField]
+    private InputAction inputSelect;
+    [Tooltip("スティック"), SerializeField]
+    private InputActionAsset inputActions;
 
     [Tooltip("インスタンス")]
     public static OptionManager Instance { get; private set; }
@@ -61,6 +68,7 @@ public class OptionManager : MonoBehaviour
     [Tooltip("ライト用のキャンバス")]
     Canvas canvasLight;
 
+    bool isInput = false;
 
     /// <summary>
     /// シングルトン化処理
@@ -114,6 +122,7 @@ public class OptionManager : MonoBehaviour
 
     void Update()
     {
+
         // オプションを開いている間のみ処理を行う
         if (isOptionOpened)
         {
@@ -167,6 +176,23 @@ public class OptionManager : MonoBehaviour
         SetLight();
     }
 
+    // オブジェクトがアクティブになったときに呼ばれるイベント
+    private void OnDisable()
+    {
+        inputMover.Disable();
+        print("終了");
+    }
+    // オブジェクトが非表示になったときに呼ばれるイベント
+    private void OnEnable()
+    {
+        inputMover = inputActions.FindAction("UI/Move");
+        inputSelect = new InputAction("AButton", binding: "<Gamepad>/buttonEast");
+
+        inputMover.Enable();
+        inputSelect.Enable();
+        print("起動");
+    }
+
     /// <summary>
     /// 入力処理
     /// </summary>
@@ -200,6 +226,44 @@ public class OptionManager : MonoBehaviour
     {
         bool ret = false;
 
+        if(inputMover.ReadValue<Vector2>() == new Vector2(0,0))
+        {
+            isInput = false;
+        }
+
+        if (inputMover.ReadValue<Vector2>().y == 1.0f && isInput == false)
+        {
+            selectedMenu--;
+
+            if (selectedMenu < 0)
+            {
+                selectedMenu = 0;
+            }
+            ret = true;
+            isInput = true;
+            print(isInput);
+        }
+        if (inputMover.ReadValue<Vector2>().y == -1.0f && isInput == false)
+        {
+            selectedMenu++;
+
+            if (isTitleScene && selectedMenu == SelectableOption.BACK_TITLE)
+            {
+                selectedMenu--;
+            }
+
+            if (selectedMenu > (SelectableOption)Common.Common.GetEnumLength<SelectableOption>() - 1)
+            {
+                selectedMenu = (SelectableOption)Common.Common.GetEnumLength<SelectableOption>() - 1;
+
+            }
+            ret = true;
+            isInput = true;
+            print(isInput);
+
+        }
+
+
         if (Input.GetKeyDown(KeyCode.UpArrow) || Input.GetKeyDown(KeyCode.W))
         {
             selectedMenu--;
@@ -211,15 +275,12 @@ public class OptionManager : MonoBehaviour
         }
         if (Input.GetKeyDown(KeyCode.DownArrow) || Input.GetKeyDown(KeyCode.S))
         {
-
-
             selectedMenu++;
 
             if (isTitleScene && selectedMenu == SelectableOption.BACK_TITLE)
             {
                 selectedMenu--;
             }
-
 
             if (selectedMenu > (SelectableOption)Common.Common.GetEnumLength<SelectableOption>() - 1)
             {
@@ -228,6 +289,7 @@ public class OptionManager : MonoBehaviour
             }
             ret = true;
         }
+        
 
         return ret;
     }
@@ -238,7 +300,52 @@ public class OptionManager : MonoBehaviour
     /// <returns></returns>
     bool Volumeinput()
     {
+        // 変更する場所
+
         bool ret = false;
+
+        if (inputMover.ReadValue<Vector2>() == new Vector2(0, 0))
+        {
+            isInput = false;
+        }
+
+        if (inputMover.ReadValue<Vector2>().x == -1.0f && isInput == false)
+        {
+            switch (selectedMenu)
+            {
+                case SelectableOption.SOUND:
+                case SelectableOption.LIGHT:
+                    var slider = settingParents[(int)selectedMenu].GetChild((int)SettingObject.SLIDER).GetComponent<Slider>();
+                    slider.value -= 1;
+                    // 音量をセット
+                    SetVolume();
+
+                    // 明るさのセット
+                    SetLight();
+                    break;
+            }
+            ret = true;
+            isInput = true;
+        }
+        if (inputMover.ReadValue<Vector2>().x == 1.0f && isInput == false)
+        {
+            switch (selectedMenu)
+            {
+                case SelectableOption.SOUND:
+                case SelectableOption.LIGHT:
+                    var slider = settingParents[(int)selectedMenu].GetChild((int)SettingObject.SLIDER).GetComponent<Slider>();
+                    slider.value += 1;
+                    // 音量をセット
+                    SetVolume();
+
+                    // 明るさのセット
+                    SetLight();
+                    break;
+            }
+            ret = true;
+            isInput = true;
+        }
+
         if (Input.GetKeyDown(KeyCode.LeftArrow) || Input.GetKeyDown(KeyCode.A))
         {
             switch (selectedMenu)
@@ -247,6 +354,11 @@ public class OptionManager : MonoBehaviour
                 case SelectableOption.LIGHT:
                     var slider = settingParents[(int)selectedMenu].GetChild((int)SettingObject.SLIDER).GetComponent<Slider>();
                     slider.value -= 1;
+                    // 音量をセット
+                    SetVolume();
+
+                    // 明るさのセット
+                    SetLight();
                     break;
             }
             ret = true;
@@ -259,6 +371,11 @@ public class OptionManager : MonoBehaviour
                 case SelectableOption.LIGHT:
                     var slider = settingParents[(int)selectedMenu].GetChild((int)SettingObject.SLIDER).GetComponent<Slider>();
                     slider.value += 1;
+                    // 音量をセット
+                    SetVolume();
+
+                    // 明るさのセット
+                    SetLight();
                     break;
             }
             ret = true;
@@ -273,19 +390,35 @@ public class OptionManager : MonoBehaviour
     /// <returns></returns>
     void SubmitInput()
     {
+
+        float buttonValue = inputSelect.ReadValue<float>();
+
+        if (buttonValue > 0.5f)
+        {
+            switch (selectedMenu)
+            {
+                case SelectableOption.CLOSE_OPT:
+                    // 設定の保存
+                    SaveSettings();
+                    break;
+                case SelectableOption.BACK_TITLE:
+
+                    // 確認ダイアログを出す
+                    Common.Common.LoadScene("TItle");
+                    break;
+            }
+        }
+
         if (Input.GetKeyDown(KeyCode.Space))
         {
             switch (selectedMenu)
             {
                 case SelectableOption.CLOSE_OPT:
-                    //print("保存せずオプションを閉じる処理");
-                    Invoke("CloseOption", 0.1f);
-                    break;
-                case SelectableOption.SAVE:
                     // 設定の保存
                     SaveSettings();
                     break;
                 case SelectableOption.BACK_TITLE:
+
                     // 確認ダイアログを出す
                     Common.Common.LoadScene("TItle");
                     break;
@@ -318,9 +451,6 @@ public class OptionManager : MonoBehaviour
             case SelectableOption.SOUND:
             case SelectableOption.LIGHT:
                 pos = settingParents[(int)selectedMenu].GetChild((int)SettingObject.TYPE).position;
-                break;
-            case SelectableOption.SAVE:
-                pos = saveSettingText.position;
                 break;
             case SelectableOption.CLOSE_OPT:
                 pos = unsaveSettingText.position;
@@ -403,11 +533,6 @@ public class OptionManager : MonoBehaviour
         print("保存前データ:" + txt);
         PlayerPrefs.SetString(Common.Common.KEY_SETTINGS, txt);
         PlayerPrefs.Save();
-        // 音量をセット
-        SetVolume();
-
-        // 明るさのセット
-        SetLight();
 
         // 保存して終了
         Invoke("CloseOption", 0.1f);

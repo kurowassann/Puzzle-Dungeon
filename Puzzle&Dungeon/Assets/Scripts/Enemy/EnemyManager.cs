@@ -6,6 +6,7 @@ using Data;
 
 public class EnemyManager : MonoBehaviour
 {
+    /*
     //オブジェクト
     [Tooltip("マスター"), SerializeField]
     private Master master; 
@@ -25,105 +26,18 @@ public class EnemyManager : MonoBehaviour
         START,
         END
     }
-
-    //メンバ変数
-    /// <summary>行動を行う順番</summary>
-	private int[] mActionOrder;
-
-    //メンバ関数
-
-    //Set関数
-
-    //Get関数
-
-
-	private Status mStatus;
-	private bool isStatus;
-
 	/// <summary>ゲームデータ</summary>
 	private JsonGameData mGameData;
 
-	/// <summary>プレイヤの攻撃する</summary>
-	public void EnemyAttack()
-	{
-		master.EnemyAttack();
-	}
+    //メンバ変数
+    /// <summary>ステータス</summary>
+	private Status mStatus;
+    /// <summary>ステータス変更時一回呼ぶもの</summary>
+	private bool isStatus;
+    /// <summary>行動を行う順番</summary>
+	private int[] mActionOrder;
 
-	/// <summary>引数の座標の敵にダメージを与える</summary>
-	/// <param name="tpos"></param>
-	public void Damege(Point tpos)
-	{
-		for (int i = 0; i < mEnemys.Length;i++)
-		{
-			if (mEnemys[i].GetPos() == tpos && mEnemys[i].GetActive())
-			{
-				mEnemys[i].Damage();
-			}
-		}
-	}
-
-	private void SetStatus(Status tstatus)
-	{
-		mStatus = tstatus;
-		isStatus = true;
-	}
-    
-	/// <summary>idが一致する敵を持ってくる</summary>
-	private JsonEnemyData LookUseEnemys(JsonGameData tdata, int tnum)
-	{
-		//print(tdata.enemy_datas[0].enemy_name);
-
-		//ステージに現れる敵を見る
-		for(int i=0;i< tdata.enemy_datas.Length;i++)
-		{
-				if (tdata.enemy_datas[i] == null)
-				{
-					print("そんな敵はいないよ");
-					continue;
-				}
-
-				if(tnum == tdata.enemy_datas[i].enemy_id)
-				{
-					print($"{tdata.enemy_datas[i].enemy_name}を出現させます。");
-					return tdata.enemy_datas[i];
-				}
-		}
-		return null;
-	}
-
-	/// <summary>敵の抽選</summary>
-	private int LotteryEnemy(JsonStageEnemyData[] tdata)
-	{
-		int sumRate =0;
-
-		for(int i=0;i <tdata.Length;i++)
-		{
-			sumRate += (int)tdata[i].spawn_rate;
-		}
-		print($"割合合計：{sumRate}");
-		int ram = UnityEngine.Random.Range(1,sumRate+1);
-		print($"抽選結果：{ram}");
-
-		sumRate = 0;
-		for(int i = 0; i < tdata.Length; i++)
-		{
-			sumRate += (int)tdata[i].spawn_rate;
-			if(ram <= sumRate )
-			{
-				return tdata[i].enemy_id;
-			}
-		}
-
-		return 0;
-	}
-
-	public void Generate(string tstr, Enemy bace)
-	{
-		master.Generate(tstr, bace);
-        bace.Init(this);
-
-    }
-
+    //メンバ関数  
     /// <summary>初期化処理</summary>
     public void Init(Master tmaster, JsonGameData tgameData)
     {
@@ -140,7 +54,7 @@ public class EnemyManager : MonoBehaviour
             {
                 for (int j = 0; j < mTiles.GetLength(1); j++)
                 {
-                    mTiles[i, j] = new Tile();
+                    mTiles[i, j] = new Tile(master);
                 }
             }
             ResetTiles();
@@ -167,13 +81,77 @@ public class EnemyManager : MonoBehaviour
             clone.transform.SetParent(this.gameObject.transform, false);
             clone.transform.localPosition = new Vector3(0,0, 0);
             mEnemys[i] = clone.GetComponent<Enemy>();
-            master.Generate("e", mEnemys[i]);
+            //master.GeneratePlayer("e", mEnemys[i]);
             mEnemys[i].Init(this);
         }
         //経路探索
         SearchTarget(master.GetPlayer());
     }
-    
+    /// <summary>敵の抽選</summary>
+	private int LotteryEnemy(JsonStageEnemyData[] tdata)
+	{
+		int sumRate =0;
+
+		for(int i=0;i <tdata.Length;i++)
+		{
+			sumRate += (int)tdata[i].spawn_rate;
+		}
+		print($"割合合計：{sumRate}");
+		int ram = UnityEngine.Random.Range(1,sumRate+1);
+		print($"抽選結果：{ram}");
+
+		sumRate = 0;
+		for(int i = 0; i < tdata.Length; i++)
+		{
+			sumRate += (int)tdata[i].spawn_rate;
+			if(ram <= sumRate )
+			{
+				return tdata[i].enemy_id;
+			}
+		}
+
+		return 0;
+	}
+	/// <summary>idが一致する敵を持ってくる</summary>
+	private JsonEnemyData LookUseEnemys(JsonGameData tdata, int tnum)
+	{
+		//print(tdata.enemy_datas[0].enemy_name);
+
+		//ステージに現れる敵を見る
+		for(int i=0;i< tdata.enemy_datas.Length;i++)
+		{
+				if (tdata.enemy_datas[i] == null)
+				{
+					print("そんな敵はいないよ");
+					continue;
+				}
+
+				if(tnum == tdata.enemy_datas[i].enemy_id)
+				{
+					print($"{tdata.enemy_datas[i].enemy_name}を出現させます。");
+					return tdata.enemy_datas[i];
+				}
+		}
+		return null;
+	}   
+    /// <summary>生成</summary>
+	public void Generate(string tstr, Enemy bace)
+	{
+		//master.GeneratePlayer(tstr, bace);
+        bace.Init(this);
+
+    }    	
+    /// <summary>検索タイルリセット</summary>
+	private void ResetTiles()
+    {
+        for(int i = 0;i< mTiles.GetLength(0);i++)
+        {
+            for(int j = 0;j<mTiles.GetLength(1);j++)
+            {
+                mTiles[i,j].Init();
+            }
+        }
+    }
     /// <summary>目標までの経路探索</summary>
     private void SearchTarget(Point tpPos)
     {
@@ -184,10 +162,7 @@ public class EnemyManager : MonoBehaviour
             SeachOne(i, tpPos);
         }
     }
-
 	/// <summary>経路探索</summary>
-	/// <param name="i"></param>
-	/// <param name="tpPos"></param>
     private void SeachOne(int i,Point tpPos)
     {
         
@@ -223,7 +198,6 @@ public class EnemyManager : MonoBehaviour
         ResetTiles();
 
     }
-	
     /// <summary>次に検索を始めるタイルを決める</summary>
     private Point SearchTile()
     {
@@ -240,7 +214,7 @@ public class EnemyManager : MonoBehaviour
                     continue;
                 }
 
-                if (mTiles[i,j].GetBfore() < mTiles[point.X,point.Y].GetBfore() || point == Point.Empty)
+                if (mTiles[i,j].GetScore() < mTiles[point.X,point.Y].GetScore() || point == Point.Empty)
                 {
                     //Debug.Log($"タイル更新:{i},{j}");
                     point.X = i; point.Y = j;
@@ -250,9 +224,8 @@ public class EnemyManager : MonoBehaviour
 
         return point;
     }
-
     /// <summary>四方向チェック</summary>
-    private bool CheckAround(Point tpos, Point tendPos, int tbfore)
+    private bool CheckAround(Point tpos, Point tendPos, float tbfore)
     {
         Point point;
         bool flg;
@@ -281,6 +254,7 @@ public class EnemyManager : MonoBehaviour
 
         for (int i = 0;i < vec.Length;i++)
         {
+            //print($"検索方向{vec[i]}");
             //見ようとしているマスが移動可能マスか、まだ計算してないマスか
             point = tpos;
             if (vec[i] == Vector.RIGHT) { point.X++; }//RIGHT
@@ -302,12 +276,11 @@ public class EnemyManager : MonoBehaviour
 
         return false;
     }
-
     /// <summary>最短経路を記録する</summary>
     private void FollowRoute(Point tpos, Enemy tenemy, int num)
     {
         num++;
-        if(num == 100)
+        if(num == 800)
         {
             Debug.LogError("経路探索に失敗");
             return;
@@ -330,163 +303,8 @@ public class EnemyManager : MonoBehaviour
         FollowRoute(point,tenemy, num);
 
         tenemy.AddRoute(vec);
-    }
-
-	/// <summary>ステートを実行状態にする</summary>
-	private void ChangeAction(Status tstatus)
-	{
-		for(int i = 0;i < mEnemys.Length;i++)
-		{
-			Enemy enemy = mEnemys[mActionOrder[i]];
-			if(enemy.GetAction() == tstatus)
-			{
-				enemy.SetStatus(tstatus);
-			}
-		}
-	}
-
-	/// <summary>攻撃の敵が攻撃を終えているか</summary>
-	private void Attack()
-	{ 
-		for(int i = 0; i < mEnemys.Length; i++)
-		{
-			Enemy enemy = mEnemys[mActionOrder[i]];
-			if(enemy.GetAction() == Status.ATTACK)
-			{
-				if(enemy.GetStatus() != Status.REAR_GAP)
-				{
-					return;
-				}
-			}
-		}
-		SetStatus(Status.MOVE);
-
-	}
-
-	/// <summary>移動の敵が移動を終えているか</summary>
-	private void Move()
-	{
-		for (int i = 0; i < mEnemys.Length; i++)
-		{
-			Enemy enemy = mEnemys[mActionOrder[i]];
-			if (enemy.GetAction() == Status.MOVE)
-			{
-				if (enemy.GetStatus() != Status.REAR_GAP)
-				{
-					return;
-				}
-			}
-		}
-		SetStatus(Status.REAR_GAP);
-	}
-
-	private void RearGap()
-	{
-		for( int i = 0;i < mEnemys.Length;i++)
-		{
-			Enemy enemy= mEnemys[mActionOrder[i]];
-            if(enemy.GetActive() == false)
-            {
-                enemy.RespawnCount();
-            }
-
-			enemy.SetStatus(Status.STAY);
-			enemy.SetAction(Status.STAY);
-		}
-		SetStatus(Status.STAY);
-	}
-
-	// Update is called once per frame
-	void Update()
-    {
-		switch(mStatus)
-		{
-			case Status.STAY:
-				if(isStatus)
-				{
-					Debug.Log("プレイヤの行動待ちです");
-					isStatus = false;
-				}
-				break;
-			case Status.MOVE:
-				if(isStatus)
-				{
-					Debug.Log("移動の敵の処理を行います");
-					ChangeAction(Status.MOVE);
-					isStatus = false;
-				}
-				Move();
-				break;
-			case Status.ATTACK:
-				if(isStatus)
-				{
-					Debug.Log("攻撃の敵の処理を行います");
-					ChangeAction(Status.ATTACK);
-					isStatus = false;
-				}
-				Attack();
-				break;
-			case Status.REAR_GAP:
-				if(isStatus)
-				{
-					Debug.Log("行動が完了しました");
-					master.EnemyActionFinish();
-					RearGap();
-					isStatus = false;
-				}
-				break;
-		}
-
-
-    }
-
-	
-
-    /// <summary>行動決定</summary>
-    public void EnemyActionSelect()
-    {
-		//行動順整理
-		mActionOrder =  SortEnemys();
-
-		//行動
-        bool first = true, second = true;
-        for (int i = 0; i < mEnemys.Length; i++)
-        {
-			Enemy tenemy = mEnemys[mActionOrder[i]];
-
-			//存在しない場合スキップ
-			if (tenemy.GetActive() == false)
-			{
-				tenemy.SetStatus(Status.REAR_GAP);
-				continue; 
-			}
-
-			//プレイヤが近い場合プレイヤの行動に対応した動きを行う
-			float z = Mathf.Abs(tenemy.GetPos().X - master.GetPlayer().X) + Mathf.Abs(tenemy.GetPos().Y - master.GetPlayer().Y);
-			if (z < 5)
-			{
-				SeachOne(mActionOrder[i], master.GetPlayer());
-			}
-
-
-			first = tenemy.Tracking();
-            z = Mathf.Abs(tenemy.GetPos().X - master.GetPlayer().X) + Mathf.Abs(tenemy.GetPos().Y - master.GetPlayer().Y);
-            if (!first ||z<3)
-            {
-                SeachOne(mActionOrder[i], master.GetPlayer());
-            }
-            second = tenemy.Tracking();
-			if(first == second) //移動がなかった時に移動済みに
-			{
-				Debug.Log("移動先がありませんでした");
-				tenemy.SetStatus(Status.REAR_GAP);
-			}
-        }
-        //SearchTarget(master.GetPlayer());
-
-        SetStatus(Status.ATTACK);
-    }
-
+    }    
+    /// <summary>プレイヤーに近い順に行動を決める</summary>
 	private int[] SortEnemys()
 	{
 		//プレイヤに近い順に行動を行う
@@ -516,28 +334,205 @@ public class EnemyManager : MonoBehaviour
 
 		return actionOrder;
 	}
-
-	/// <summary>検索タイルリセット</summary>
-	private void ResetTiles()
+    /// <summary>行動決定</summary>
+    public void EnemyActionSelect()
     {
-        for(int i = 0;i< mTiles.GetLength(0);i++)
+		//行動順整理
+		mActionOrder =  SortEnemys();
+
+		//行動
+        bool first = true, second = true;
+        for (int i = 0; i < mEnemys.Length; i++)
         {
-            for(int j = 0;j<mTiles.GetLength(1);j++)
+			Enemy tenemy = mEnemys[mActionOrder[i]];
+
+            if(i != 0)
             {
-                mTiles[i,j].Init();
+                tenemy.SetStatus(Status.REAR_GAP);
+                continue;
             }
+
+
+			//存在しない場合スキップ
+			if (tenemy.GetActive() == false)
+			{
+				tenemy.SetStatus(Status.REAR_GAP);
+				continue; 
+			}
+
+			//プレイヤが近い場合プレイヤの行動に対応した動きを行う
+			float z = Mathf.Abs(tenemy.GetPos().X - master.GetPlayer().X) + Mathf.Abs(tenemy.GetPos().Y - master.GetPlayer().Y);
+			if (z < 5)
+			{
+				SeachOne(mActionOrder[i], master.GetPlayer());
+			}
+
+
+			first = tenemy.Tracking();
+            //z = Mathf.Abs(tenemy.GetPos().X - master.GetPlayer().X) + Mathf.Abs(tenemy.GetPos().Y - master.GetPlayer().Y);
+            if (!first)
+            {
+                print("1度目の行動が無かったのでルートの再検索を行います");
+                SeachOne(mActionOrder[i], master.GetPlayer());
+            }
+            second = tenemy.Tracking();
+			if(first == second) //移動がなかった時に移動済みに
+			{
+				Debug.Log("移動先がありませんでした");
+				tenemy.SetStatus(Status.REAR_GAP);
+			}
         }
+        //SearchTarget(master.GetPlayer());
+
+        SetStatus(Status.ATTACK);
     }
+	/// <summary>ステートを実行状態にする</summary>
+	private void ChangeAction(Status tstatus)
+	{
+		for(int i = 0;i < mEnemys.Length;i++)
+		{
+			Enemy enemy = mEnemys[mActionOrder[i]];
+			if(enemy.GetAction() == tstatus)
+			{
+				enemy.SetStatus(tstatus);
+			}
+		}
+	}
+	/// <summary>攻撃の敵が攻撃を終えているか</summary>
+	private void Attack()
+	{ 
+		for(int i = 0; i < mEnemys.Length; i++)
+		{
+			Enemy enemy = mEnemys[mActionOrder[i]];
+			if(enemy.GetAction() == Status.ATTACK)
+			{
+				if(enemy.GetStatus() != Status.REAR_GAP)
+				{
+					return;
+				}
+			}
+		}
+		SetStatus(Status.MOVE);
+
+	}
+	/// <summary>プレイヤの攻撃する</summary>
+	public void EnemyAttack()
+	{
+		master.EnemyAttack();
+	}
+	/// <summary>引数の座標の敵にダメージを与える</summary>
+	/// <param name="tpos"></param>
+	public void Damege(Point tpos)
+	{
+		for (int i = 0; i < mEnemys.Length;i++)
+		{
+			if (mEnemys[i].GetPos() == tpos && mEnemys[i].GetActive())
+			{
+				mEnemys[i].Damage();
+			}
+		}
+	}
+	/// <summary>移動の敵が移動を終えているか</summary>
+	private void Move()
+	{
+		for (int i = 0; i < mEnemys.Length; i++)
+		{
+			Enemy enemy = mEnemys[mActionOrder[i]];
+			if (enemy.GetAction() == Status.MOVE)
+			{
+				if (enemy.GetStatus() != Status.REAR_GAP)
+				{
+					return;
+				}
+			}
+		}
+		SetStatus(Status.REAR_GAP);
+	}
+    /// <summary>すべてが完了しているか</summary>
+	private void RearGap()
+	{
+		for( int i = 0;i < mEnemys.Length;i++)
+		{
+			Enemy enemy= mEnemys[mActionOrder[i]];
+            if(enemy.GetActive() == false)
+            {
+                enemy.RespawnCount();
+            }
+
+			enemy.SetStatus(Status.STAY);
+			enemy.SetAction(Status.STAY);
+		}
+		SetStatus(Status.STAY);
+	}
+
+    //Set関数
+    /// <summary>ステータスの変更</summary>
+	private void SetStatus(Status tstatus)
+	{
+		mStatus = tstatus;
+		isStatus = true;
+	}
+
+    //Get関数
+
+	// Update is called once per frame
+	void Update()
+    {
+		switch(mStatus)
+		{
+			case Status.STAY:
+				if(isStatus)
+				{
+					//Debug.Log("プレイヤの行動待ちです");
+					isStatus = false;
+				}
+				break;
+			case Status.MOVE:
+				if(isStatus)
+				{
+					//Debug.Log("移動の敵の処理を行います");
+					ChangeAction(Status.MOVE);
+                    ChangeAction(Status.TRUN);
+					isStatus = false;
+				}
+				Move();
+				break;
+			case Status.ATTACK:
+				if(isStatus)
+				{
+					//Debug.Log("攻撃の敵の処理を行います");
+					ChangeAction(Status.ATTACK);
+					isStatus = false;
+				}
+				Attack();
+				break;
+			case Status.REAR_GAP:
+				if(isStatus)
+				{
+					//Debug.Log("行動が完了しました");
+					master.EnemyActionFinish();
+					RearGap();
+					isStatus = false;
+				}
+				break;
+		}
+
+
+    }
+
 
     //探索情報格納用クラス
     private class Tile
     {
+        /// <summary>マスター情報</summary>
+        private Master master;
+
         //どこから来たか
         private Vector mDir;
         //スコア
-        private int mScore;
+        private float mScore;
         //ここに来るまでの歩数
-        private int mBfore;
+        private float mBfore;
         //自身の状態
         private TileStatus mStatus;
 
@@ -547,9 +542,14 @@ public class EnemyManager : MonoBehaviour
             return mStatus;
         }
         /// <summary>mBforeを返す</summary>
-        public int GetBfore()
+        public float GetBfore()
         {
             return mBfore;
+        }
+        /// <summary>mScoreを返す</summary>
+        public float GetScore()
+        {
+            return mScore;
         }
         /// <summary>mDirを返す</summary>
         public Vector GetDir()
@@ -570,20 +570,21 @@ public class EnemyManager : MonoBehaviour
         }
 
         //初期化処理
-        public Tile()
+        public Tile(Master master)
         {
             Init();
+            this.master = master;
         }
         public void Init()
         {
             mDir =  Vector.NONE;
-            mScore = 0;
-            mBfore = 0;
+            mScore = 0.0f;
+            mBfore = 0.0f;
             mStatus = TileStatus.NONE;
         }
 
         /// <summary>タイルの情報計算</summary>
-        public TileStatus OpenTile(Point tpos, Point tendPos,Vector tdir, int tbfore)
+        public TileStatus OpenTile(Point tpos, Point tendPos,Vector tdir, float tbfore)
         {
             SetTile(TileStatus.OPEN);
             mDir = tdir;
@@ -594,9 +595,29 @@ public class EnemyManager : MonoBehaviour
         }
         
         /// <summary>スタートからゴールまで最短の移動回数</summary>
-        private int CheckLength(Point tstart, Point tgoal)
+        private float CheckLength(Point tstart, Point tgoal)
         {
-            var length = Mathf.Abs(tgoal.Y - tstart.Y) + Mathf.Abs(tgoal.X - tstart.X);
+            float length = Mathf.Abs(tgoal.Y - tstart.Y) + Mathf.Abs(tgoal.X - tstart.X);
+            if (master.CheckTile(tstart) == TileInfo.ENEMY)
+            {
+                print("敵がいるためペナルティ");
+                length += 100.1f;
+            }
+            /*
+            float width = Mathf.Abs(tgoal.X - tstart.X);
+            float height = Mathf.Abs(tgoal.Y - tstart.Y);
+
+            //横方向の検索
+            Point point = tstart;
+            for(int i = 0;i < width;i++)
+            {
+                point.X += i;
+                var tmp = master.CheckTile(point);
+                print($"チェックしたタイル{tmp}");
+            }
+            
+
+            //float length;
             //Debug.Log(length);
             return length;
         }
@@ -604,5 +625,5 @@ public class EnemyManager : MonoBehaviour
     }
 
 	
-
+*/
 }

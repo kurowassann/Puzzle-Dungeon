@@ -8,6 +8,261 @@ using UnityEngine.SceneManagement;
 
 namespace Common
 {
+    //4隅列挙
+    public enum Value
+    {
+        LEFT, RIGHT, TOP, BOTTOM
+    }
+
+    /// <summary>四隅のマス目を持つもの</summary>
+    public struct Lurd
+    {
+        private int left;
+        private int top;
+        private int right;
+        private int bottom;
+
+        public Lurd Set(int tl, int tt, int tr, int tb)
+        {
+            left = tl;
+            top = tt;
+            right = tr;
+            bottom = tb;
+            return this;
+        }
+
+        public void SetValue(Value tvalue,int tnum)
+        {
+
+            switch (tvalue)
+            {
+                case Value.LEFT:
+                    left = tnum;
+                    break;
+                case Value.RIGHT:
+                    right = tnum;
+                    break;
+                case Value.TOP:
+                    top = tnum;
+                    break;
+                case Value.BOTTOM:
+                    bottom = tnum;
+                    break;
+                default:
+                    break;
+            }
+        }
+
+
+        public int GetValue(Value tvalue)
+        {
+            int val;
+            switch (tvalue)
+            {
+                case Value.LEFT:
+                    val = left;
+                    break;
+                case Value.RIGHT:
+                    val = right;
+                    break;
+                case Value.TOP:
+                    val = top;
+                    break;
+                case Value.BOTTOM:
+                    val = bottom;
+                    break;
+                    default:
+                    val = 0;
+                    break;
+            }
+            return val;
+        }
+
+        public Lurd(int tl, int tt, int tr, int tb)
+        {
+            this.left = tl;
+            this.top = tt;
+            this.right = tr;
+            this.bottom = tb;
+        }
+    }
+
+    /// <summary>部屋と廊下の接続部分情報</summary>
+    public struct RoomJoint
+    {
+        private Point pos;
+        private int RoomId;
+        private int AisleId;
+
+        public void Set(Point tpos, int troom, int taisle)
+        {
+            pos = tpos;
+            RoomId = troom;
+            AisleId = taisle;
+        }
+
+        public RoomJoint(Point tpos, int troom,int taisle)
+        {
+            pos = tpos;
+            RoomId = troom;
+            AisleId = taisle;
+        }
+
+        public Point GetPos() { return pos; }
+
+        public int GetId(RoomAisle tra)
+        {
+            switch (tra)
+            {
+                case RoomAisle.ROOM:
+                    return RoomId;
+                case RoomAisle.AISLE:
+                    return AisleId;
+                case RoomAisle.NONE:
+                    break;
+                default:
+                    break;
+            }
+            return 0;
+        }
+    }
+
+    /// <summary>どの場所にいるかの情報</summary>
+    public enum RoomAisle
+    {
+        ROOM,
+        AISLE,
+        NONE,
+    }
+
+    /// <summary>座標・Id・部屋か廊下の情報</summary>
+    public struct PosId
+    {
+        private Point pos;
+        private int Id;
+        private RoomAisle RA;
+
+        public PosId(Point tpos, int tid, RoomAisle tra)
+        {
+            pos = tpos;
+            Id=tid;
+            RA = tra;
+        }
+
+        public void Set(PosId tpi)
+        {
+            this = tpi;
+        }
+
+        public void SetPos(Point tpos)
+        {
+            pos = tpos; 
+        }
+
+        public void SetId(int tid, RoomAisle tra)
+        {
+            Id = tid;
+            RA = tra;
+        }
+
+        public Point GetPos()
+        {
+            return pos;
+        }
+        public int GetId()
+        {
+            return Id;
+        }
+        public RoomAisle GetRA()
+        {
+            return RA;
+        }
+    }
+
+    //エリアか分岐線
+    public enum ArDi
+    {
+        AREA,
+        DIVIDION,
+    }
+
+    /// <summary>1エリアと分割線の四隅</summary>
+    public struct AreaDiv
+    {
+        private Lurd area;
+        private Lurd division;
+        private Direction dir;
+
+        public void Set(Lurd tArea, Lurd tDiv)
+        {
+            area = tArea;
+            division = tDiv;
+        }
+
+        public void SetLurd(ArDi val,Lurd tlurd)
+        {
+            switch (val)
+            {
+                case ArDi.AREA:
+                   area = tlurd;
+                    break;
+                case ArDi.DIVIDION:
+                    division = tlurd;
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        public void SetDir(Direction tdir)
+        {
+            dir = tdir;
+        }
+
+
+        public Lurd GetLurd(ArDi val)
+        {
+            Lurd lurd;
+            switch (val)
+            {
+                case ArDi.AREA:
+                    lurd = area;
+                    break;
+                case ArDi.DIVIDION:
+                    lurd = division;
+                    break;
+                default:
+                    lurd = area;
+                    break;
+            }
+            return lurd;
+        }
+
+        /// <summary>コンストラクタ</summary>
+        public AreaDiv(Lurd tArea, Lurd tDiv, Direction tDir)
+        {
+            area = tArea;
+            division = tDiv;
+            dir = tDir;
+        }
+        public AreaDiv(Lurd tArea)
+        {
+            area = tArea;
+            division = new Lurd();
+            dir = new Direction();
+        }
+    }
+
+    /// <summary>縦横方向</summary>
+    public enum Direction
+    {
+        /// <summary>横</summary>
+        HOR,
+        /// <summary>縦</summary>
+        VER
+    };
+
+
     public enum Abc
     {
         PLAYER_HP,
@@ -46,11 +301,41 @@ namespace Common
 	{
 		STAY,
 		MOVE,
+        TRUN,
 		ATTACK,
 		REAR_GAP
 	}
+
+    /// <summary>ゲームのステータス</summary>
+    public enum GameStatus
+    {
+        STAY,
+        ACTION,
+        COUNT,
+    };
     
     
+    public enum AllBonus
+    {
+        ALLHEEL,
+        HEELUP,
+        ATTACK1UP,
+        GUARD,
+        ONEHITATTACK,
+        FLOORCLEAR,
+        ALLENEMYATTACK,
+        HEELDOWN,
+        ATTACK1DOWN,
+        EATTACK1UP,
+        LIFE1DOWN,
+        EHEEL1UP,
+        EHEEL1UP1,  // 最後の要素にはカンマなし
+        SPACE_2_CLEAR, // 数字で始まる識別子も修正した例
+        ENEMYROOM
+        //NONE // 最後の要素
+    }
+
+
     class Common
     {
         /// <summary>ステージの総数</summary>
@@ -192,4 +477,7 @@ namespace Common
             return NormalizedFunc(_val, _min2, _max2);
         }
     }
+    
+
+
 }
