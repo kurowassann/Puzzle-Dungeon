@@ -7,9 +7,11 @@ using UnityEngine;
 
 /// <summary>ゲームを動かす</summary>
 public class GameManager : MonoBehaviour 
-{ 
+{
+    [Tooltip("デバック確認フラグ"), SerializeField]
+    private bool isDebug;
 
-    //オブジェクト
+    //定数
     [Tooltip("マップの管理オブジェクト"),SerializeField]
     private MapManager cMm;
     [Tooltip("プレイヤ管理オブジェクト"), SerializeField]
@@ -48,7 +50,10 @@ public class GameManager : MonoBehaviour
     {
         if(isStatusChange)
         {
-            print("ゲームモード：待機");
+            if (isDebug) 
+            {
+                print("ゲームモード：待機");
+            }
             isStatusChange = false;
         }
 
@@ -58,7 +63,10 @@ public class GameManager : MonoBehaviour
     {
         if (isStatusChange)
         {
-            print("ゲームモード：アクション");
+            if (isDebug) 
+            {
+                print("ゲームモード：アクション");
+            }
             isStatusChange = false;
         }
 
@@ -72,12 +80,15 @@ public class GameManager : MonoBehaviour
     {
         if (isStatusChange)
         {
-            print("ゲームモード：カウント");
+            if (isDebug) 
+            {
+                print("ゲームモード：カウント");
+            }
             mEndTimer = 0;
             isStatusChange= false;
         }
         mEndTimer += Time.deltaTime;
-        if(0.3f < mEndTimer)
+        if(0.1f < mEndTimer)
         {
             TurnEnd();
         }
@@ -116,6 +127,10 @@ public class GameManager : MonoBehaviour
     }
 
     //Get関数
+    public bool GetDebug()
+    {
+        return isDebug;
+    }
 
     /// <summary>起動時に呼ぶ</summary>
     private void Start()

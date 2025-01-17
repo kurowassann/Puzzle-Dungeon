@@ -75,7 +75,10 @@ public class CharacterBace : MonoBehaviour
     {
 		if (isStatusChange)
 		{
-			Debug.Log("移動を開始します");
+			if(cGm.GetDebug())
+			{
+				Debug.Log("移動を開始します");
+			}
 			isStatusChange = false;
 		}
 
@@ -161,7 +164,10 @@ public class CharacterBace : MonoBehaviour
 			case Status.STAY:
 				if (isStatusChange)
 				{
-					Debug.Log("入力待機状態になりました、行動してください");
+					if(cGm.GetDebug())
+					{
+						Debug.Log("入力待機状態になりました、行動してください");
+					}
 					isStatusChange = false;
 				}
 				break;
@@ -177,7 +183,10 @@ public class CharacterBace : MonoBehaviour
 			case Status.REAR_GAP:
 				if (isStatusChange)
 				{
-					Debug.Log($"{this.name}行動が終了しました。");
+					if (cGm.GetDebug()) 
+					{
+						Debug.Log($"{this.name}行動が終了しました。");
+					}
 					isAction = true;
 					isStatusChange = false;
 					cGm.PlayerActionEnd();
@@ -204,6 +213,7 @@ public class CharacterBace : MonoBehaviour
     {
         mGoalPos = cMm.SetPos(this, tpos, mName);
 		mPosId.SetPos(tpos);
+		mPosId.Set(cMm.ChangeId(mPosId));
         mStartPos = transform.position;
         mSpeed = mGoalPos - mStartPos;
         mVec = mSpeed.normalized;
