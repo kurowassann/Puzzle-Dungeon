@@ -17,8 +17,10 @@ using UnityEngine.EventSystems;
 
 public class Room 
 {
-    
+
     //オブジェクト
+    /// <summary>表示されるべき物か</summary>
+    private bool isActive;
     /// <summary>管理元</summary>
     private RoomManager cRm;
     /// <summary>部屋番号</summary>
@@ -102,6 +104,7 @@ public class Room
         cRm = trm;
         cAislePoint = new List<Point>();
 
+        isActive = false;
     }
 
 }

@@ -10,6 +10,9 @@ public class AisleManager
     //オブジェクト
     /// <summary>廊下クラス</summary>
     private List<Aisle> cAisles;
+    /// <summary>接続部のリスト</summary>
+    private List<RoomJoint> cJoints;
+
 
     //メンバ変数
     /// <summary>廊下の数、IDに使う</summary>
@@ -25,6 +28,7 @@ public class AisleManager
     {
         mAisleCount = 0;
         cAisles = new List<Aisle>();
+        cJoints = new List<RoomJoint>();
     }
     /// <summary>廊下の追加生成</summary>
     public int  AddAisle(Lurd[] tlurds, Point[] tpoints, int[] tids)
@@ -37,6 +41,52 @@ public class AisleManager
     public void AddAisleTiles()
     {
 
+    }
+    /// <summary>接続部分をリスト化</summary>
+    public void CreateJointList()
+    {
+        for(int i = 0; i < cAisles.Count; i++) 
+        {
+            RoomJoint[] Rjs = cAisles[i].GetRoomJoint();
+            for(int j = 0;j < Rjs.Length; j++)
+            {
+                cJoints.Add(Rjs[j]);
+                Debug.Log($"接続部分は{Rjs[j].GetPos()}です");
+            }
+        }
+    }
+    /// <summary>プレイヤが接続部分にいるか調べる</summary>
+    public PosId ChangeJoint(PosId tpi)
+    {
+        int num = -1;
+
+        for(int i = 0; i < cJoints.Count;i++)
+        {
+            if(tpi.GetPos() == cJoints[i].GetPos())
+            {
+                num = i; 
+                break;
+            }
+        }
+
+        if(num == -1)
+        {
+            Debug.Log("部屋変化なし");
+            return tpi;
+        }
+
+        if(tpi.GetRA() == RoomAisle.ROOM)
+        {
+            tpi.SetId(cJoints[num].GetId(RoomAisle.AISLE),RoomAisle.AISLE);
+
+        }
+        else if(tpi.GetRA() == RoomAisle.AISLE)
+        {
+            tpi.SetId(cJoints[num].GetId(RoomAisle.ROOM), RoomAisle.ROOM);
+
+        }
+
+        return tpi;
     }
     /// <summary>廊下の表示</summary>
     public void OpenOneAisle(int num)

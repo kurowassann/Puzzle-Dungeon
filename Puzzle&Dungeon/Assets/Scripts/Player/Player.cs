@@ -197,7 +197,7 @@ public class Player : CharacterBace
                 //Debug.Log(point);
                 if (TI == TileInfo.ROUTE)
                 {
-                    Debug.Log("移動開始");
+                    Debug.Log($"{point}に移動を開始します。");
                     SetPos(point);
                     SetStatus(Status.MOVE);
                     // アニメーションの呼び出し
@@ -213,7 +213,8 @@ public class Player : CharacterBace
                     //master.PlayerAttack(point);
 
                     // アニメーション起動部
-                    //print("攻撃します:" + point);
+                    //
+                    //("攻撃します:" + point);
                     var triggerName = Common.Common.CHARA_ANIMS_ATTACK_DIR[(int)vec];
                     animator.SetTrigger(triggerName);
                 }
@@ -227,10 +228,10 @@ public class Player : CharacterBace
     /// <summary>カメラを追尾</summary>
     private void SetCam()
     {
-        
+        /*
         float z = Camera.main.transform.position.z;
         Camera.main.transform.position = new Vector3(transform.position.x, transform.position.y, z);
- 
+ */
         }
 
     // Update is called once per frame

@@ -56,14 +56,14 @@ public class MapManager : MonoBehaviour
         //マップ生成オブジェクトの生成
         GameObject clone = Instantiate(mapGen, this.transform);
         cMg = clone.GetComponent<MapGeneretor>();
-        cMg.Init(120,40,15);
+        cMg.Init(45,30,12);
 
         //生成したマップの情報を受け取る
         cTiles = cMg.GetStrings();
         cTileObjects = cMg.GetTileObjects();
         cRm = cMg.GetRoomManager();
         cAm = cMg.GetAisleManager();
-
+        cAm.CreateJointList();
 
         mNum = 0;
         mNum2 = 0;
@@ -99,6 +99,30 @@ public class MapManager : MonoBehaviour
         }
 
         return tile;
+    }
+    //
+    public PosId ChangeId(PosId tpi)
+    {
+        //移動前の部屋番号・部屋IDと移動後の座標が送られてくる
+
+        //IDにつながる場所の座標か調べる(接続部の座標のリストを持っておく)        
+        PosId pi =  cAm.ChangeJoint(tpi);        
+
+        if(pi.GetRA() != tpi.GetRA()) 
+        {
+            switch(pi.GetRA())
+            {
+                case RoomAisle.NONE: break;
+                case RoomAisle.ROOM:
+                    cRm.OpenOneRoom(pi.GetId());
+                    break;
+                case RoomAisle.AISLE:
+                    cAm.OpenOneAisle(pi.GetId());
+                    break;
+            }
+        }
+
+        return pi;
     }
 
 
@@ -193,7 +217,13 @@ public class MapManager : MonoBehaviour
                 print("マップ全体を表示");
                 TileOpen();
             }
-        }
+
+            if(Input.GetKeyDown(KeyCode.B))
+            {
+                
+            }
+
+        }//デバック終わり
     }
 
 }

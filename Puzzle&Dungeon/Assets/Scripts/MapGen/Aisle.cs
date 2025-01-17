@@ -8,6 +8,8 @@ using UnityEngine;
 public class Aisle
 {
     //オブジェクト
+    /// <summary>表示されるべきものか</summary>
+    private bool isActive;
     /// <summary>管理元</summary>
     private AisleManager cAm;
     /// <summary>通路の座標</summary>
@@ -56,6 +58,11 @@ public class Aisle
     {
         return cLurds[num];
     }
+    /// <summary>接続部分を返す</summary>
+    public RoomJoint[] GetRoomJoint()
+    {
+        return cRoomJoints;
+    }
 
     //コンストラクタ
     public Aisle(Lurd[] tlurds, Point[] tpoints,int[] tids,int num,AisleManager tam) 
@@ -68,7 +75,8 @@ public class Aisle
 
         cRoomJoints[0] = new RoomJoint(tpoints[0], tids[0], num);
         cRoomJoints[1] = new RoomJoint(tpoints[1], tids[1], num);
-        
+
+
         cAm = tam;
     }
 

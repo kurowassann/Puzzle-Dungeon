@@ -489,7 +489,7 @@ public class MapGeneretor : MonoBehaviour
                     road[i].SetValue(Value.RIGHT, value);
                     road[i].SetValue(Value.BOTTOM, tdiv.GetValue(Value.BOTTOM));
 
-                    points[i] = new Point(road[i].GetValue(Value.TOP), road[i].GetValue(Value.LEFT));
+                    points[i] = new Point(road[i].GetValue(Value.LEFT), road[i].GetValue(Value.TOP));
                 }
                 else
                 {
@@ -508,7 +508,7 @@ public class MapGeneretor : MonoBehaviour
                     road[i].SetValue(Value.BOTTOM, num);
                     road[i].SetValue(Value.RIGHT, tdiv.GetValue(Value.RIGHT));
 
-                    points[i] = new Point(road[i].GetValue(Value.TOP), road[i].GetValue(Value.LEFT));
+                    points[i] = new Point(road[i].GetValue(Value.LEFT), road[i].GetValue(Value.TOP));
                 }
                 //cMg.Draw(road[i]);
 

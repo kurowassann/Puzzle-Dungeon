@@ -107,6 +107,24 @@ namespace Common
             RoomId = troom;
             AisleId = taisle;
         }
+
+        public Point GetPos() { return pos; }
+
+        public int GetId(RoomAisle tra)
+        {
+            switch (tra)
+            {
+                case RoomAisle.ROOM:
+                    return RoomId;
+                case RoomAisle.AISLE:
+                    return AisleId;
+                case RoomAisle.NONE:
+                    break;
+                default:
+                    break;
+            }
+            return 0;
+        }
     }
 
     /// <summary>Ç«ÇÃèÍèäÇ…Ç¢ÇÈÇ©ÇÃèÓïÒ</summary>
@@ -131,11 +149,9 @@ namespace Common
             RA = tra;
         }
 
-        public void Set(Point tpos,int tid, RoomAisle tra)
+        public void Set(PosId tpi)
         {
-            pos = tpos;
-            Id = tid;
-            RA = tra;
+            this = tpi;
         }
 
         public void SetPos(Point tpos)
@@ -143,9 +159,10 @@ namespace Common
             pos = tpos; 
         }
 
-        public void SetId(int tid)
+        public void SetId(int tid, RoomAisle tra)
         {
             Id = tid;
+            RA = tra;
         }
 
         public Point GetPos()
@@ -155,6 +172,10 @@ namespace Common
         public int GetId()
         {
             return Id;
+        }
+        public RoomAisle GetRA()
+        {
+            return RA;
         }
     }
 
