@@ -51,7 +51,7 @@ public class AisleManager
             for(int j = 0;j < Rjs.Length; j++)
             {
                 cJoints.Add(Rjs[j]);
-                Debug.Log($"Ú‘±•”•ª‚Í{Rjs[j].GetPos()}‚Å‚·");
+                //Debug.Log($"Ú‘±•”•ª‚Í{Rjs[j].GetPos()}‚Å‚·");
             }
         }
     }

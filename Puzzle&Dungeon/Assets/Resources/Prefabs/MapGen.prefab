@@ -124,6 +124,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 81b718212e5cd364bb22dd632c77b32a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  isDebug: 1
+  isDebug: 0
   isStart: 0
   tileParent: {fileID: 7406514418837367972}
