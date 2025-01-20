@@ -16,6 +16,9 @@ public class GameManager : MonoBehaviour
     private MapManager cMm;
     [Tooltip("プレイヤ管理オブジェクト"), SerializeField]
     private Player cPlayer;
+    [Tooltip("敵管理オブジェクト"), SerializeField]
+    private EnemyManager cEm;
+    
 
     //メンバ変数
     /// <summary>ステータス変更時の処理用</summary>
@@ -131,6 +134,10 @@ public class GameManager : MonoBehaviour
     {
         return isDebug;
     }
+    public Point GetPlayer()
+    {
+        return cPlayer.GetPos();
+    }
 
     /// <summary>起動時に呼ぶ</summary>
     private void Start()
@@ -148,6 +155,13 @@ public class GameManager : MonoBehaviour
         //生成位置の決定
         PosId posId = cMm.GetRandomPlayer();
         cPlayer.Init(this, cMm,posId,1,"p");
+
+
+        //敵管理初期化
+        cEm.Init(this,cMm);
+
+
+
     }
 
     //

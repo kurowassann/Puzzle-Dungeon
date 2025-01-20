@@ -7,9 +7,9 @@ using Common;
 
 public class Enemy : CharacterBace
 {
-    /*
+    
     //オブジェクト
-    protected EnemyManager em;
+    protected EnemyManager cEm;
     protected Animator animator;
 
     //メンバ変数
@@ -35,7 +35,7 @@ public class Enemy : CharacterBace
     virtual public void Init(EnemyManager tem)
     {
         print("エネミーの初期化");
-        em = tem;
+        cEm = tem;
         mRoute = new Common.Vector[0];
         mRouteNum = 0;
         mNextAction = Status.STAY;
@@ -61,7 +61,7 @@ public class Enemy : CharacterBace
             print("すでに行動が決まっています。");
             return false;
         }
-        Point point = mPoint;
+        Point point = mPosId.GetPos();
 
         //次の移動先へ
         switch(mRoute[mRouteNum])
@@ -92,14 +92,14 @@ public class Enemy : CharacterBace
             return true;
         }
 
-        if (master.CheckTile(point) == Common.TileInfo.ROUTE)
+        if (cMm.CheckTile(point) == Common.TileInfo.ROUTE)
         {
             SetPos(point);
             mNextAction = Status.MOVE;
             mRouteNum++;
             return true;
         }
-        if (master.CheckTile(point) == Common.TileInfo.PLAYER)
+        if (cMm.CheckTile(point) == Common.TileInfo.PLAYER)
         {
             Debug.Log("移動の方向はプレイヤーです");
             mNextAction = Status.ATTACK;
@@ -175,7 +175,7 @@ public class Enemy : CharacterBace
     protected override void AttackEnd()
     {
         base.AttackEnd();
-        em.EnemyAttack();
+        //cEm.EnemyAttack();
         
         var animationName = animator.GetCurrentAnimatorClipInfo(0)[0].clip.name;
         string triggerName = "";
@@ -244,7 +244,7 @@ public class Enemy : CharacterBace
             Debug.Log("リスポーンします");
             this.gameObject.SetActive(true);
             mRespawnCount = 0;
-            em.Generate("e", this);
+            cEm.Generate("e", this);
             //master.Generate("e", this);
         }
     }  
@@ -312,5 +312,5 @@ public class Enemy : CharacterBace
     {
         return mNextAction;
     }
-    */
+    
 }

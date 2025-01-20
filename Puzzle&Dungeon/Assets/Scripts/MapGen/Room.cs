@@ -95,7 +95,7 @@ public class Room
     ///<summary>コンストラクタ</summary>
     public Room(Lurd tlurd,int tid, RoomManager trm)
     {
-        Debug.Log($"部屋が生成　部屋ID:{tid}");
+        //Debug.Log($"部屋が生成　部屋ID:{tid}");
         cLurd = tlurd;
         cRoomId = tid;
         cWidth = cLurd.GetValue(Value.RIGHT)-cLurd.GetValue(Value.LEFT);

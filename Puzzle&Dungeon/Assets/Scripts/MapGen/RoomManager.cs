@@ -73,7 +73,7 @@ public class RoomManager
 
     public  RoomManager()
     {
-        Debug.Log($"{this}コンストラクタ");
+        //Debug.Log($"{this}コンストラクタ");
 
         Init();
     }

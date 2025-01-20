@@ -167,6 +167,11 @@ public class MapManager : MonoBehaviour
 
         return posId;
     }
+    //
+    public Point GetTileLength()
+    {
+        return new Point(cTiles.GetLength(0), cTiles.GetLength(1));
+    }
 
 
     /// <summary>スタート関数</summary>
