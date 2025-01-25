@@ -31,9 +31,9 @@ public class AisleManager
         cJoints = new List<RoomJoint>();
     }
     /// <summary>˜L‰º‚Ì’Ç‰Á¶¬</summary>
-    public int  AddAisle(Lurd[] tlurds, Point[] tpoints, int[] tids)
+    public int  AddAisle(Lurd[] tlurds,RoomJoint[] trjs)
     {
-        cAisles.Add(new Aisle(tlurds, tpoints, tids,mAisleCount,this));
+        cAisles.Add(new Aisle(tlurds, trjs,mAisleCount,this));
         mAisleCount++;
         return mAisleCount - 1;
     }
@@ -55,43 +55,10 @@ public class AisleManager
             }
         }
     }
-    /// <summary>ƒvƒŒƒCƒ„‚ªÚ‘±•”•ª‚É‚¢‚é‚©’²‚×‚é</summary>
-    public PosId ChangeJoint(PosId tpi)
-    {
-        int num = -1;
-
-        for(int i = 0; i < cJoints.Count;i++)
-        {
-            if(tpi.GetPos() == cJoints[i].GetPos())
-            {
-                num = i; 
-                break;
-            }
-        }
-
-        if(num == -1)
-        {
-            Debug.Log("•”‰®•Ï‰»‚È‚µ");
-            return tpi;
-        }
-
-        if(tpi.GetRA() == RoomAisle.ROOM)
-        {
-            tpi.SetId(cJoints[num].GetId(RoomAisle.AISLE),RoomAisle.AISLE);
-
-        }
-        else if(tpi.GetRA() == RoomAisle.AISLE)
-        {
-            tpi.SetId(cJoints[num].GetId(RoomAisle.ROOM), RoomAisle.ROOM);
-
-        }
-
-        return tpi;
-    }
     /// <summary>˜L‰º‚Ì•\¦</summary>
-    public void OpenOneAisle(int num)
+    public bool OpenOneAisle(int num)
     {
-        cAisles[num].OpenAllTiles();
+       return cAisles[num].OpenAllTiles();
     }
 
     //SetŠÖ”

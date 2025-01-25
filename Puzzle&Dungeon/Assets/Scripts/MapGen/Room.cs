@@ -43,12 +43,20 @@ public class Room
     //private
     //public
     /// <summary>•”‰®‘S‘Ì‚ğÆ‚ç‚·</summary>
-    public void OpenTiles()
+    public bool OpenTiles()
     {
+        if(isActive == true)
+        {
+            return true;    
+        }
+
         for(int i = 0;i < cTiles.Count;i++) 
         {
             cTiles[i].SetActive(true);
         }
+        isActive = true;
+
+        return false;
     }
 
     //SetŠÖ”
@@ -99,7 +107,7 @@ public class Room
         cLurd = tlurd;
         cRoomId = tid;
         cWidth = cLurd.GetValue(Value.RIGHT)-cLurd.GetValue(Value.LEFT);
-        cWidth = cLurd.GetValue(Value.BOTTOM) -cLurd.GetValue(Value.TOP);
+        cHeight = cLurd.GetValue(Value.BOTTOM) -cLurd.GetValue(Value.TOP);
         cTiles = new List<GameObject>();
         cRm = trm;
         cAislePoint = new List<Point>();

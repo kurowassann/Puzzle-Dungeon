@@ -100,7 +100,7 @@ public class GameManager : MonoBehaviour
     /// <summary>ターンの終わりを確認</summary>
     private bool TurnCheck()
     {
-        if(cPlayer.GetAction())
+        if(cPlayer.GetAction() && cEm.GetAction())
         {
             return true;
         }
@@ -119,6 +119,11 @@ public class GameManager : MonoBehaviour
    public void PlayerActionEnd()
     {
         SetStatus(GameStatus.ACTION);
+        cEm.EnemyActionSelect();
+    }
+    public void RoomOpen(int num)
+    {
+        cEm.Spawn(num);
     }
 
     //Set関数
@@ -149,7 +154,7 @@ public class GameManager : MonoBehaviour
         mEndTimer = 0;
 
         //マップの生成
-        cMm.Init();
+        cMm.Init(this);
 
         //プレイヤの生成
         //生成位置の決定

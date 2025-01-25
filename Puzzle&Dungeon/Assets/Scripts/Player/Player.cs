@@ -36,8 +36,8 @@ public class Player : CharacterBace
         //um = GameObject.Find("UIManager").GetComponent<UIManager>();
         //um.GeneratePlayerHP(mHp);
 
-        Debug.Log("プレイヤ初期化");
-        SetCam();
+        //Debug.Log("プレイヤ初期化");
+        //SetCam();
 
         // アニメーターコンポーネントの取得
         animator = GetComponent<Animator>();

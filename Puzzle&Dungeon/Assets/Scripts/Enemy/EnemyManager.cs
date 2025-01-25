@@ -3,6 +3,7 @@ using System.Drawing;
 using UnityEngine;
 using Common;
 using Data;
+using static UnityEngine.EventSystems.EventTrigger;
 
 public class EnemyManager : MonoBehaviour
 {
@@ -38,6 +39,8 @@ public class EnemyManager : MonoBehaviour
 	private bool isStatus;
     /// <summary>行動を行う順番</summary>
 	private int[] mActionOrder;
+    //
+    private bool isAction;
 
 
     //メンバ関数  
@@ -155,7 +158,7 @@ public class EnemyManager : MonoBehaviour
             cMm = tmm;
             //enemy = (GameObject)Resources.Load("Prefabs/Enemy");
             cEnemy = (GameObject)Resources.Load("Prefabs/Ant");
-            //mEnemys = new Enemy[mGameData.stage_data.max_enemy_num];
+            cEnemys = new Enemy[5];
 			Point point = cMm.GetTileLength();//マス目の大きさが知りたい
             cTiles = new Tile[point.X, point.Y];
             for (int i = 0; i < cTiles.GetLength(0); i++)
@@ -169,6 +172,7 @@ public class EnemyManager : MonoBehaviour
 
 			SetStatus(Status.STAY);
 			
+            isAction = false;
         }
         /*
         //指定数敵を生成する
@@ -200,9 +204,23 @@ public class EnemyManager : MonoBehaviour
 	public void Generate(string tstr, Enemy bace)
 	{
 		//master.GeneratePlayer(tstr, bace);
-        bace.Init(this);
+        //bace.Init(this);
 
-    }    	
+    }
+    /// <summary>部屋点灯じの敵生成</summary>
+    public void Spawn(int num)
+    {
+        cEnemy = (GameObject)Resources.Load("Prefabs/Ant" );
+
+
+        var clone = Instantiate(cEnemy);
+        clone.transform.SetParent(this.gameObject.transform, false);
+        clone.transform.localPosition = new Vector3(0, 0, 0);
+        cEnemys[0] = clone.GetComponent<Enemy>();
+        //master.GeneratePlayer("e", mEnemys[i]);
+        cEnemys[0].Init(this, cGm, cMm, cMm.GetPosId(num), 1, "e");
+
+    }
     /// <summary>次に検索を始めるタイルを決める</summary>
     private Point SearchTile()
     {
@@ -318,6 +336,7 @@ public class EnemyManager : MonoBehaviour
 		bool[] decision = new bool[cEnemys.Length];
 		for (int i = 0; i < cEnemys.Length; i++)
 		{
+            if (cEnemys[i] == null) { continue; }
 			length[i] = Mathf.Abs(cEnemys[i].GetRoute() - cEnemys[i].GetNum());
 			decision[i] = false;
 		}
@@ -326,7 +345,8 @@ public class EnemyManager : MonoBehaviour
 		{
 			for (int j = 0; j < cEnemys.Length; j++)
 			{
-				if (length[i] == Mathf.Abs(cEnemys[j].GetRoute() - cEnemys[j].GetNum()) && !decision[j])
+                if (cEnemys[i] == null) { continue; }
+                if (length[i] == Mathf.Abs(cEnemys[j].GetRoute() - cEnemys[j].GetNum()) && !decision[j])
 				{
 					//Debug.Log(decision[j]);
 					decision[j] = true;
@@ -342,6 +362,8 @@ public class EnemyManager : MonoBehaviour
     /// <summary>行動決定</summary>
     public void EnemyActionSelect()
     {
+        isAction = false;
+
 		//行動順整理
 		mActionOrder =  SortEnemys();
 
@@ -351,7 +373,10 @@ public class EnemyManager : MonoBehaviour
         {
 			Enemy tenemy = cEnemys[mActionOrder[i]];
 
-            if(i != 0)
+            if (tenemy == null) { continue; }
+
+
+            if (i != 0)
             {
                 tenemy.SetStatus(Status.REAR_GAP);
                 continue;
@@ -359,7 +384,7 @@ public class EnemyManager : MonoBehaviour
 
 
 			//存在しない場合スキップ
-			if (tenemy.GetActive() == false)
+			if (tenemy.GetActive() == false )
 			{
 				tenemy.SetStatus(Status.REAR_GAP);
 				continue; 
@@ -468,6 +493,7 @@ public class EnemyManager : MonoBehaviour
 			enemy.SetStatus(Status.STAY);
 			enemy.SetAction(Status.STAY);
 		}
+        isAction = true;
 		SetStatus(Status.STAY);
 	}
 
@@ -480,6 +506,10 @@ public class EnemyManager : MonoBehaviour
 	}
 
     //Get関数
+    public bool GetAction()
+    {
+        return isAction;
+    }
 
 	// Update is called once per frame
 	void Update()

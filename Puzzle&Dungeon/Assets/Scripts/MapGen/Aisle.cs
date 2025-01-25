@@ -30,12 +30,20 @@ public class Aisle
 
     }
     /// <summary>廊下の表示</summary>
-    public void OpenAllTiles()
+    public bool OpenAllTiles()
     {
+        if(isActive)
+        {
+            return true;
+        }
+
         for(int i = 0; i < cAisleTiles.Count;i++)
         {
             cAisleTiles[i].SetActive(true);
         }
+        isActive = true;
+
+        return false;
     }
 
     //Set関数
@@ -65,16 +73,15 @@ public class Aisle
     }
 
     //コンストラクタ
-    public Aisle(Lurd[] tlurds, Point[] tpoints,int[] tids,int num,AisleManager tam) 
+    public Aisle(Lurd[] tlurds, RoomJoint[] trj,int num,AisleManager tam) 
     {
         cLurds = tlurds;
         
         cAisleTiles= new List<GameObject>();
         cAisleId = num;
-        cRoomJoints = new RoomJoint[2];
-
-        cRoomJoints[0] = new RoomJoint(tpoints[0], tids[0], num);
-        cRoomJoints[1] = new RoomJoint(tpoints[1], tids[1], num);
+        cRoomJoints = trj;
+        cRoomJoints[0].SetAisleId(num);
+        cRoomJoints[1].SetAisleId(num);
 
 
         cAm = tam;

@@ -32,8 +32,10 @@ public class Enemy : CharacterBace
 
     //メンバ関数
     //初期化処理
-    virtual public void Init(EnemyManager tem)
+    virtual public void Init(EnemyManager tem, GameManager tgm, MapManager tmm, PosId tposId, int thp, string tstr)
     {
+        base.Init(tgm,  tmm,  tposId,  thp,  tstr);
+
         print("エネミーの初期化");
         cEm = tem;
         mRoute = new Common.Vector[0];

@@ -231,9 +231,9 @@ public class MapGeneretor : MonoBehaviour
         return Id;
     }
     /// <summary>’Ê˜H‚Ì’Ç‰Á</summary>
-    public void InsertAisle(Lurd[] tlurds, Point[] tpoints, int[] tids)
+    public void InsertAisle(Lurd[] tlurds, RoomJoint[] trj)
     {
-        cAm.AddAisle(tlurds, tpoints, tids);
+        cAm.AddAisle(tlurds, trj);
 
         for(int i = 0;i<tlurds.Length;i++)
         {
@@ -468,7 +468,11 @@ public class MapGeneretor : MonoBehaviour
         {
             Lurd[] road = new Lurd[3];
             //RoomJoint[] roomJoints = new RoomJoint[2];
-            Point[] points = new Point[2];
+            RoomJoint[] rjs = new RoomJoint[2];
+            Point[] jPoss = new Point[2];
+            Point[] rPoss = new Point[2];
+            Point[] aPoss = new Point[2];
+
 
             for (int i = 0; i < tarea.Length; i++)
             {
@@ -478,18 +482,26 @@ public class MapGeneretor : MonoBehaviour
                     if(tdiv.GetValue(Value.TOP) < tarea[i].cRoom.GetValue(Value.TOP))
                     {
                         road[i].SetValue(Value.TOP, tarea[i].cRoom.GetValue(Value.TOP)-1);
+
+                        rPoss[i].Y = tarea[i].cRoom.GetValue(Value.TOP) ;
+                        aPoss[i].Y = tarea[i].cRoom.GetValue(Value.TOP)-2 ;
                     }
                     else
                     {
                         road[i].SetValue(Value.TOP, tarea[i].cRoom.GetValue(Value.BOTTOM)+1);
+
+                        rPoss[i].Y = tarea[i].cRoom.GetValue(Value.BOTTOM);
+                        aPoss[i].Y = tarea[i].cRoom.GetValue(Value.BOTTOM)+2;
                     }
 
                     int value = UnityEngine.Random.Range(tarea[i].cRoom.GetValue(Value.LEFT), tarea[i].cRoom.GetValue(Value.RIGHT));
                     road[i].SetValue(Value.LEFT, value);
                     road[i].SetValue(Value.RIGHT, value);
+                    rPoss[i].X = value;
+                    aPoss[i].X= value;
                     road[i].SetValue(Value.BOTTOM, tdiv.GetValue(Value.BOTTOM));
 
-                    points[i] = new Point(road[i].GetValue(Value.LEFT), road[i].GetValue(Value.TOP));
+                    jPoss[i] = new Point(road[i].GetValue(Value.LEFT), road[i].GetValue(Value.TOP));
                 }
                 else
                 {
@@ -497,21 +509,30 @@ public class MapGeneretor : MonoBehaviour
                     if (tdiv.GetValue(Value.LEFT) < tarea[i].cRoom.GetValue(Value.LEFT))
                     {
                         road[i].SetValue(Value.LEFT, tarea[i].cRoom.GetValue(Value.LEFT)-1);
+
+                        rPoss[i].X = tarea[i].cRoom.GetValue(Value.LEFT);
+                        aPoss[i].X = tarea[i].cRoom.GetValue(Value.LEFT) - 2;
                     }
                     else
                     {
                         road[i].SetValue(Value.LEFT, tarea[i].cRoom.GetValue(Value.RIGHT)+1);
+
+
+                        rPoss[i].X = tarea[i].cRoom.GetValue(Value.RIGHT);
+                        aPoss[i].X = tarea[i].cRoom.GetValue(Value.RIGHT) + 2;
                     }
 
                     int num = UnityEngine.Random.Range(tarea[i].cRoom.GetValue(Value.TOP), tarea[i].cRoom.GetValue(Value.BOTTOM));
                     road[i].SetValue(Value.TOP, num);
                     road[i].SetValue(Value.BOTTOM, num);
+                    rPoss[i].Y = num;
+                    aPoss[i].Y=num;
                     road[i].SetValue(Value.RIGHT, tdiv.GetValue(Value.RIGHT));
 
-                    points[i] = new Point(road[i].GetValue(Value.LEFT), road[i].GetValue(Value.TOP));
+                    jPoss[i] = new Point(road[i].GetValue(Value.LEFT), road[i].GetValue(Value.TOP));
                 }
-                //cMg.Draw(road[i]);
 
+                rjs[i].Set(jPoss[i], rPoss[i], aPoss[i], tarea[i].cRoomId);
             }
 
             //L‚Î‚µ‚½“¹‚ğ‚Â‚È‚®
@@ -531,7 +552,7 @@ public class MapGeneretor : MonoBehaviour
                 tarea[1].cRoomId,
             };
 
-            cMg.InsertAisle(road, points, Ids);
+            cMg.InsertAisle(road, rjs);
         }
         /// <summary>Å‰º‘w‚Ì•”‰®‚ğæ“¾</summary>
         private Area GetChildRoom(Point point, Direction dir)

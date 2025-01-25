@@ -30,24 +30,24 @@ public class RoomManager
         return mRoomCount-1;
     }
     /// <summary>指定した部屋を照らす</summary>
-    public void OpenOneRoom(int num)
+    public bool OpenOneRoom(int num)
     {
-        cRooms[num].OpenTiles();
+        return cRooms[num].OpenTiles();
     }
 
     //Set関数
 
 
     //Get関数
-    /// <summary>ランダムな部屋のランダムなポジションを返す</summary>
-    public Point GetRandomRoom()
+    /// <summary>指定された部屋のランダムなポジションを返す</summary>
+    public PosId GetRandomPos(int num)
     {
-        Point point;
-        int num = Random.Range(0, cRooms.Count);
-        point = cRooms[num].GetRandomPoint();
+        PosId posId = new PosId();
+        posId.SetPos(cRooms[num].GetRandomPoint());
+        posId.SetId(num, RoomAisle.ROOM);
 
 
-        return point;
+        return posId;
     }
     /// <summary>プレイヤの生成部屋の表示をONに</summary>
     public Point GetRandomRoom(int tnum)
