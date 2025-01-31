@@ -171,7 +171,7 @@ public class MapManager : MonoBehaviour
         {
             return posId;
         }
-        else 
+        else //ˆÚ“®‚ª‚ ‚Á‚½ê‡
         {
             posId.SetId(num, ra); 
             mPlayerRA = posId.GetRA();
@@ -185,7 +185,7 @@ public class MapManager : MonoBehaviour
                 rFlg = cRm.OpenOneRoom(cJoints[num].GetId(RoomAisle.ROOM));
                 aFlg = cAm.OpenOneAisle(cJoints[num].GetId(RoomAisle.AISLE));
 
-                if(!rFlg)
+                if(!rFlg)//“]“|‚µ‚½ê‡
                 {
                     //“G‚Ì¶¬‚ğˆË—Š‚·‚éB
                     cGm.RoomOpen(cJoints[num].GetId(RoomAisle.ROOM));

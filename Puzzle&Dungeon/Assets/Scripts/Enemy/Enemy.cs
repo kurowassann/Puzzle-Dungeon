@@ -240,16 +240,21 @@ public class Enemy : CharacterBace
     /// <summary>リスポーンまでのカウントを行い条件達成でリスポーンさせる</summary>
     public void RespawnCount()
     {
-        mRespawnCount++;
+        //mRespawnCount++;
         if (5 < mRespawnCount)
         {
             Debug.Log("リスポーンします");
             this.gameObject.SetActive(true);
+            isActive = true;
             mRespawnCount = 0;
             cEm.Generate("e", this);
-            //master.Generate("e", this);
         }
     }  
+    //リスポーン
+    public void Respawn()
+    {
+
+    }
     /// <summary>経路のリセット</summary>
     public void ResetRoute()
     {
@@ -310,7 +315,7 @@ public class Enemy : CharacterBace
         return mRoute.Length;
     }
     /// <summary>このターンどの行動を取るか</summary>
-    public Status GetAction()
+    public Status GetNextAction()
     {
         return mNextAction;
     }

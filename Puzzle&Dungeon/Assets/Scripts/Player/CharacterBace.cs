@@ -5,31 +5,32 @@ using Common;
 public class CharacterBace : MonoBehaviour
 {
 	
-	//オブジェクト　定数的扱い
-    [Tooltip("マスターリクエスト用"), SerializeField]
+	//定数
+    /// <summary>ゲームマネージャー</summary>
     protected GameManager cGm;
-	//
+	/// <summary>マップマネージャ</summary>
 	protected MapManager cMm;
+    /// <summary>敵かプレイヤか</summary>
+    protected string cName;
 
 
-	//メンバ変数
-	/// <summary>アクティブ状態</summary>
-	private bool isActive;
+
+    //メンバ変数
+    /// <summary>アクティブ状態</summary>
+    protected bool isActive;
 	/// <summary>行動が完了したか</summary>
 	private bool isAction;
 	/// <summary>ステート管理</summary>
     protected Status mStatus;
 	/// <summary>ステートが変わったときに一度だけ処理を行う</summary>
-	private bool isStatusChange; 
-	[Tooltip("敵かプレイヤか"),SerializeField]
-    protected string mName;
-    [Tooltip("自分のマス目"), SerializeField]
+	private bool isStatusChange;
+    /// <summary>自分のマス目</summary>
     protected PosId mPosId;
 	//体力
 	protected int mHp;
 	//移動開始位置
     private Vector3 mStartPos;
-    [Tooltip("目指す座標"), SerializeField]
+    /// <summary>目指す座標</summary>
     protected Vector3 mGoalPos;
 	//移動スピード
     private Vector3 mSpeed;
@@ -43,7 +44,7 @@ public class CharacterBace : MonoBehaviour
     /// <summary>初期化処理</summary>
     virtual public void Init(GameManager tgm, MapManager tmm, PosId tposId, int thp, string tstr)
     {   
-        mName = tstr;
+        cName = tstr;
 		cGm = tgm;
 		cMm = tmm;
 		SetStatus(Status.STAY);
@@ -135,15 +136,16 @@ public class CharacterBace : MonoBehaviour
 	public virtual bool Damage()
 	{
 		mHp--;
-		Debug.Log($"ダメージをうけた！{mName}の残りHPは:{mHp}");
+		Debug.Log($"ダメージをうけた！{cName}の残りHPは:{mHp}");
 		if(mHp <= 0)//HPが0になったら自信を消滅
 		{
-			//master.SetPos(this, new Point(0,0), "w");
+			cMm.SetPos(this, new Point(0,0), "w");
 			mPosId.SetPos(new Point(0, 0));
 
-			this.gameObject.SetActive(false);
 			isActive = false;
-			SetStatus(Status.REAR_GAP);
+			SetStatus(Status.REAR_GAP);	
+			this.gameObject.SetActive(false);
+
 			return true;
 		}
 		return false;
@@ -189,7 +191,6 @@ public class CharacterBace : MonoBehaviour
 					}
 					isAction = true;
 					isStatusChange = false;
-					cGm.PlayerActionEnd();
 				}
 				break;
 		}
@@ -211,9 +212,13 @@ public class CharacterBace : MonoBehaviour
     /// <summary>カメラの外に出ないように座標移動、マス更新</summary>
     protected void SetPos(Point tpos)
     {
-        mGoalPos = cMm.SetPos(this, tpos, mName);
+        mGoalPos = cMm.SetPos(this, tpos, cName);
 		mPosId.SetPos(tpos);
-		mPosId.Set(cMm.ChangeId(mPosId));
+		if(cName == "p")
+		{
+			mPosId.Set(cMm.ChangeId(mPosId));
+
+		}
         mStartPos = transform.position;
         mSpeed = mGoalPos - mStartPos;
         mVec = mSpeed.normalized;

@@ -4,6 +4,7 @@ using UnityEngine;
 using Common;
 using Data;
 using static UnityEngine.EventSystems.EventTrigger;
+using System.Collections.Generic;
 
 public class EnemyManager : MonoBehaviour
 {
@@ -13,13 +14,13 @@ public class EnemyManager : MonoBehaviour
     private GameManager cGm;
     /// <summary>マップ管理元</summary>
     private MapManager cMm;
-    [Tooltip("エネミー管理用配列")]
-    private Enemy[] cEnemys;
-    [Tooltip("エネミー生成用オブジェクト")]
+    /// <summary>敵管理用配列</summary>
+    private List<Enemy> cEnemys;
+    /// <summary>エネミー生成用オブジェクト</summary>
     private GameObject cEnemy;
-    [Tooltip("経路探索評価用タイル")]
+    /// <summary>経路探索評価用タイル</summary>
     private Tile[,] cTiles;
-    [Tooltip("タイルのチェック状態")]
+    /// <summary>タイルのチェック状態</summary>
     private enum TileStatus
     {
         NONE,
@@ -29,6 +30,7 @@ public class EnemyManager : MonoBehaviour
         START,
         END
     }
+
 	/// <summary>ゲームデータ</summary>
 	private JsonGameData mGameData;
 
@@ -39,7 +41,7 @@ public class EnemyManager : MonoBehaviour
 	private bool isStatus;
     /// <summary>行動を行う順番</summary>
 	private int[] mActionOrder;
-    //
+    /// <summary>行動の終了をみるフラグ</summary>
     private bool isAction;
 
 
@@ -108,7 +110,7 @@ public class EnemyManager : MonoBehaviour
     {
 
         //検索対象の位置を取得(ループ)
-        for(int i = 0;i < cEnemys.Length;i++)
+        for(int i = 0;i < cEnemys.Count;i++)
         {
             SeachOne(i, tpPos);
         }
@@ -158,7 +160,9 @@ public class EnemyManager : MonoBehaviour
             cMm = tmm;
             //enemy = (GameObject)Resources.Load("Prefabs/Enemy");
             cEnemy = (GameObject)Resources.Load("Prefabs/Ant");
-            cEnemys = new Enemy[5];
+            cEnemys = new List<Enemy>();
+
+
 			Point point = cMm.GetTileLength();//マス目の大きさが知りたい
             cTiles = new Tile[point.X, point.Y];
             for (int i = 0; i < cTiles.GetLength(0); i++)
@@ -203,8 +207,8 @@ public class EnemyManager : MonoBehaviour
     /// <summary>生成</summary>
 	public void Generate(string tstr, Enemy bace)
 	{
-		//master.GeneratePlayer(tstr, bace);
-        //bace.Init(this);
+		//cGm.GeneratePlayer(tstr, bace);
+        bace.Init(this,cGm,cMm,new PosId(),1,"e");
 
     }
     /// <summary>部屋点灯じの敵生成</summary>
@@ -216,11 +220,13 @@ public class EnemyManager : MonoBehaviour
         var clone = Instantiate(cEnemy);
         clone.transform.SetParent(this.gameObject.transform, false);
         clone.transform.localPosition = new Vector3(0, 0, 0);
-        cEnemys[0] = clone.GetComponent<Enemy>();
         //master.GeneratePlayer("e", mEnemys[i]);
-        cEnemys[0].Init(this, cGm, cMm, cMm.GetPosId(num), 1, "e");
+        clone.GetComponent<Enemy>().Init(this, cGm, cMm, cMm.GetPosId(num), 1, "e");
+        cEnemys.Add(clone.GetComponent<Enemy>());
 
     }
+    //敵が上限を超えていないか
+
     /// <summary>次に検索を始めるタイルを決める</summary>
     private Point SearchTile()
     {
@@ -331,19 +337,19 @@ public class EnemyManager : MonoBehaviour
 	private int[] SortEnemys()
 	{
 		//プレイヤに近い順に行動を行う
-		int[] length = new int[cEnemys.Length];
-		int[] actionOrder = new int[cEnemys.Length];
-		bool[] decision = new bool[cEnemys.Length];
-		for (int i = 0; i < cEnemys.Length; i++)
+		int[] length = new int[cEnemys.Count];
+		int[] actionOrder = new int[cEnemys.Count];
+		bool[] decision = new bool[cEnemys.Count];
+		for (int i = 0; i < cEnemys.Count; i++)
 		{
-            if (cEnemys[i] == null) { continue; }
+            if (!cEnemys[i].GetActive()) { continue; }
 			length[i] = Mathf.Abs(cEnemys[i].GetRoute() - cEnemys[i].GetNum());
 			decision[i] = false;
 		}
 		Array.Sort(length);
-		for (int i = 0; i < cEnemys.Length; i++)
+		for (int i = 0; i < cEnemys.Count; i++)
 		{
-			for (int j = 0; j < cEnemys.Length; j++)
+			for (int j = 0; j < cEnemys.Count; j++)
 			{
                 if (cEnemys[i] == null) { continue; }
                 if (length[i] == Mathf.Abs(cEnemys[j].GetRoute() - cEnemys[j].GetNum()) && !decision[j])
@@ -362,6 +368,8 @@ public class EnemyManager : MonoBehaviour
     /// <summary>行動決定</summary>
     public void EnemyActionSelect()
     {
+
+        print("aaa");
         isAction = false;
 
 		//行動順整理
@@ -369,18 +377,13 @@ public class EnemyManager : MonoBehaviour
 
 		//行動
         bool first = true, second = true;
-        for (int i = 0; i < cEnemys.Length; i++)
+        for (int i = 0; i < cEnemys.Count; i++)
         {
 			Enemy tenemy = cEnemys[mActionOrder[i]];
 
-            if (tenemy == null) { continue; }
+            if (!tenemy.GetActive()) { continue; }
 
 
-            if (i != 0)
-            {
-                tenemy.SetStatus(Status.REAR_GAP);
-                continue;
-            }
 
 
 			//存在しない場合スキップ
@@ -419,10 +422,10 @@ public class EnemyManager : MonoBehaviour
 	/// <summary>ステートを実行状態にする</summary>
 	private void ChangeAction(Status tstatus)
 	{
-		for(int i = 0;i < cEnemys.Length;i++)
+		for(int i = 0;i < cEnemys.Count;i++)
 		{
 			Enemy enemy = cEnemys[mActionOrder[i]];
-			if(enemy.GetAction() == tstatus)
+			if(enemy.GetNextAction() == tstatus)
 			{
 				enemy.SetStatus(tstatus);
 			}
@@ -431,10 +434,10 @@ public class EnemyManager : MonoBehaviour
 	/// <summary>攻撃の敵が攻撃を終えているか</summary>
 	private void Attack()
 	{ 
-		for(int i = 0; i < cEnemys.Length; i++)
+		for(int i = 0; i < cEnemys.Count; i++)
 		{
 			Enemy enemy = cEnemys[mActionOrder[i]];
-			if(enemy.GetAction() == Status.ATTACK)
+			if(enemy.GetNextAction() == Status.ATTACK)
 			{
 				if(enemy.GetStatus() != Status.REAR_GAP)
 				{
@@ -455,7 +458,7 @@ public class EnemyManager : MonoBehaviour
 	/// <summary>引数の座標の敵にダメージを与える</summary>
 	public void Damege(Point tpos)
 	{
-		for (int i = 0; i < cEnemys.Length;i++)
+		for (int i = 0; i < cEnemys.Count;i++)
 		{
 			if (cEnemys[i].GetPos() == tpos && cEnemys[i].GetActive())
 			{
@@ -466,10 +469,10 @@ public class EnemyManager : MonoBehaviour
 	/// <summary>移動の敵が移動を終えているか</summary>
 	private void Move()
 	{
-		for (int i = 0; i < cEnemys.Length; i++)
+		for (int i = 0; i < cEnemys.Count; i++)
 		{
 			Enemy enemy = cEnemys[mActionOrder[i]];
-			if (enemy.GetAction() == Status.MOVE)
+			if (enemy.GetNextAction() == Status.MOVE)
 			{
 				if (enemy.GetStatus() != Status.REAR_GAP)
 				{
@@ -482,7 +485,7 @@ public class EnemyManager : MonoBehaviour
     /// <summary>すべてが完了しているか</summary>
 	private void RearGap()
 	{
-		for( int i = 0;i < cEnemys.Length;i++)
+		for( int i = 0;i < cEnemys.Count;i++)
 		{
 			Enemy enemy= cEnemys[mActionOrder[i]];
             if(enemy.GetActive() == false)
