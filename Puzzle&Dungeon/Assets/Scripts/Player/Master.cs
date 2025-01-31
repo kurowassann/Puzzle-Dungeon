@@ -8,6 +8,8 @@ using UnityEngine.Timeline;
 using Data;
 using System;
 
+//‚Â‚©‚í‚È‚¢III
+
 public class Master : MonoBehaviour
 {
     /*

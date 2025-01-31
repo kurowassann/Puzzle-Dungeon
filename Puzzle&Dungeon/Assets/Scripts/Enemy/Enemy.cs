@@ -7,9 +7,9 @@ using Common;
 
 public class Enemy : CharacterBace
 {
-    /*
+    
     //オブジェクト
-    protected EnemyManager em;
+    protected EnemyManager cEm;
     protected Animator animator;
 
     //メンバ変数
@@ -32,10 +32,12 @@ public class Enemy : CharacterBace
 
     //メンバ関数
     //初期化処理
-    virtual public void Init(EnemyManager tem)
+    virtual public void Init(EnemyManager tem, GameManager tgm, MapManager tmm, PosId tposId, int thp, string tstr)
     {
+        base.Init(tgm,  tmm,  tposId,  thp,  tstr);
+
         print("エネミーの初期化");
-        em = tem;
+        cEm = tem;
         mRoute = new Common.Vector[0];
         mRouteNum = 0;
         mNextAction = Status.STAY;
@@ -61,7 +63,7 @@ public class Enemy : CharacterBace
             print("すでに行動が決まっています。");
             return false;
         }
-        Point point = mPoint;
+        Point point = mPosId.GetPos();
 
         //次の移動先へ
         switch(mRoute[mRouteNum])
@@ -92,14 +94,14 @@ public class Enemy : CharacterBace
             return true;
         }
 
-        if (master.CheckTile(point) == Common.TileInfo.ROUTE)
+        if (cMm.CheckTile(point) == Common.TileInfo.ROUTE)
         {
             SetPos(point);
             mNextAction = Status.MOVE;
             mRouteNum++;
             return true;
         }
-        if (master.CheckTile(point) == Common.TileInfo.PLAYER)
+        if (cMm.CheckTile(point) == Common.TileInfo.PLAYER)
         {
             Debug.Log("移動の方向はプレイヤーです");
             mNextAction = Status.ATTACK;
@@ -175,7 +177,7 @@ public class Enemy : CharacterBace
     protected override void AttackEnd()
     {
         base.AttackEnd();
-        em.EnemyAttack();
+        //cEm.EnemyAttack();
         
         var animationName = animator.GetCurrentAnimatorClipInfo(0)[0].clip.name;
         string triggerName = "";
@@ -238,16 +240,21 @@ public class Enemy : CharacterBace
     /// <summary>リスポーンまでのカウントを行い条件達成でリスポーンさせる</summary>
     public void RespawnCount()
     {
-        mRespawnCount++;
+        //mRespawnCount++;
         if (5 < mRespawnCount)
         {
             Debug.Log("リスポーンします");
             this.gameObject.SetActive(true);
+            isActive = true;
             mRespawnCount = 0;
-            em.Generate("e", this);
-            //master.Generate("e", this);
+            cEm.Generate("e", this);
         }
     }  
+    //リスポーン
+    public void Respawn()
+    {
+
+    }
     /// <summary>経路のリセット</summary>
     public void ResetRoute()
     {
@@ -308,9 +315,9 @@ public class Enemy : CharacterBace
         return mRoute.Length;
     }
     /// <summary>このターンどの行動を取るか</summary>
-    public Status GetAction()
+    public Status GetNextAction()
     {
         return mNextAction;
     }
-    */
+    
 }

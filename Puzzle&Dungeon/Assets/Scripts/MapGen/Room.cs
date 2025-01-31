@@ -43,12 +43,20 @@ public class Room
     //private
     //public
     /// <summary>部屋全体を照らす</summary>
-    public void OpenTiles()
+    public bool OpenTiles()
     {
+        if(isActive == true)
+        {
+            return true;    
+        }
+
         for(int i = 0;i < cTiles.Count;i++) 
         {
             cTiles[i].SetActive(true);
         }
+        isActive = true;
+
+        return false;
     }
 
     //Set関数
@@ -95,11 +103,11 @@ public class Room
     ///<summary>コンストラクタ</summary>
     public Room(Lurd tlurd,int tid, RoomManager trm)
     {
-        Debug.Log($"部屋が生成　部屋ID:{tid}");
+        //Debug.Log($"部屋が生成　部屋ID:{tid}");
         cLurd = tlurd;
         cRoomId = tid;
         cWidth = cLurd.GetValue(Value.RIGHT)-cLurd.GetValue(Value.LEFT);
-        cWidth = cLurd.GetValue(Value.BOTTOM) -cLurd.GetValue(Value.TOP);
+        cHeight = cLurd.GetValue(Value.BOTTOM) -cLurd.GetValue(Value.TOP);
         cTiles = new List<GameObject>();
         cRm = trm;
         cAislePoint = new List<Point>();

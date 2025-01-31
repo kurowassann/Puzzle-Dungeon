@@ -8,14 +8,22 @@ using UnityEngine;
 /// <summary>ゲームを動かす</summary>
 public class GameManager : MonoBehaviour 
 {
+    //デバック用
     [Tooltip("デバック確認フラグ"), SerializeField]
     private bool isDebug;
+    [Tooltip("プレイヤ確認フラグ"), SerializeField]
+    private bool isPlayer;
+    [Tooltip("敵確認フラグ"), SerializeField]
+    private bool isEnemy;
 
     //定数
     [Tooltip("マップの管理オブジェクト"),SerializeField]
     private MapManager cMm;
     [Tooltip("プレイヤ管理オブジェクト"), SerializeField]
     private Player cPlayer;
+    [Tooltip("敵管理オブジェクト"), SerializeField]
+    private EnemyManager cEm;
+    
 
     //メンバ変数
     /// <summary>ステータス変更時の処理用</summary>
@@ -94,10 +102,15 @@ public class GameManager : MonoBehaviour
         }
     }
 
+
     /// <summary>ターンの終わりを確認</summary>
     private bool TurnCheck()
     {
-        if(cPlayer.GetAction())
+        if(!isEnemy && cPlayer.GetAction())
+        {
+            return true;
+        }
+        else if(cPlayer.GetAction() && cEm.GetAction())
         {
             return true;
         }
@@ -112,10 +125,27 @@ public class GameManager : MonoBehaviour
         SetStatus(GameStatus.STAY);
     }
 
+
     //public
+    /// <summary>プレイヤの攻撃</summary>
+    public void PlayerAttack(Point tpos)
+    {
+        cEm.Damege(tpos);
+    }
+    /// <summary>プレイヤの行動の完了を受け取る</summary>
    public void PlayerActionEnd()
     {
         SetStatus(GameStatus.ACTION);
+        if (isEnemy)
+        {
+            cEm.EnemyActionSelect();
+        }
+
+    }
+    /// <summary>部屋が生成される</summary>
+    public void RoomOpen(int num)
+    {
+        cEm.Spawn(num);
     }
 
     //Set関数
@@ -131,23 +161,31 @@ public class GameManager : MonoBehaviour
     {
         return isDebug;
     }
+    public Point GetPlayer()
+    {
+        return cPlayer.GetPos();
+    }
+
 
     /// <summary>起動時に呼ぶ</summary>
     private void Start()
     {
-
+        //変数の初期化
         mStatus = new GameStatus();
-        mStatus = GameStatus.STAY;
-       isStatusChange = false;
+        SetStatus(GameStatus.STAY);
         mEndTimer = 0;
 
         //マップの生成
-        cMm.Init();
+        cMm.Init(this);
 
         //プレイヤの生成
-        //生成位置の決定
         PosId posId = cMm.GetRandomPlayer();
         cPlayer.Init(this, cMm,posId,1,"p");
+
+
+        //敵管理初期化
+        cEm.Init(this,cMm);
+
     }
 
     //

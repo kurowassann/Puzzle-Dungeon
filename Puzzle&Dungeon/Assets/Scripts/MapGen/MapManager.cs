@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Security.Cryptography;
+using Unity.VisualScripting;
 using UnityEngine;
 
 /// <summary>生成したマップを管理するクラス</summary>
@@ -17,6 +18,8 @@ public class MapManager : MonoBehaviour
     private GameObject mapGen;
 
     //オブジェクト
+    //
+    private GameManager cGm;
     /// <summary>部屋管理用クラス</summary>
     private RoomManager cRm;
     /// <summary>廊下管理クラス</summary>
@@ -27,12 +30,16 @@ public class MapManager : MonoBehaviour
     private string[,] cTiles;
     /// <summary>タイルのオブジェクト</summary>
     private GameObject[,] cTileObjects;
+    //すべての接続部分の情報
+    private List<RoomJoint> cJoints;
 
     //メンバ変数
     /// <summary>部屋表示用番号</summary>
     private int mNum;
     /// <summary>廊下表示用番号</summary>
     private int mNum2;
+    /// <summary>プレイヤの場所</summary>
+    private RoomAisle mPlayerRA;
 
     //メンバ関数
     //private
@@ -47,12 +54,28 @@ public class MapManager : MonoBehaviour
             }
         }
     }
+    /// <summary> 接続部分をリスト化</summary>
+    private void CreateJointList()
+    {
+        for (int i = 0; i < cAm.GetAisleCount(); i++)
+        {
+            RoomJoint[] Rjs = cAm.GetAisle(i).GetRoomJoint();
+            for (int j = 0; j < Rjs.Length; j++)
+            {
+                cJoints.Add(Rjs[j]);
+                //Debug.Log($"接続部分は{Rjs[j].GetPos()}です");
+            }
+        }
+
+    }
 
 
     //public
     /// <summary>初期化処理</summary>
-    public void Init()
+    public void Init(GameManager tgm)
     {
+        cGm = tgm;
+
         //マップ生成オブジェクトの生成
         GameObject clone = Instantiate(mapGen, this.transform);
         cMg = clone.GetComponent<MapGeneretor>();
@@ -63,7 +86,8 @@ public class MapManager : MonoBehaviour
         cTileObjects = cMg.GetTileObjects();
         cRm = cMg.GetRoomManager();
         cAm = cMg.GetAisleManager();
-        cAm.CreateJointList();
+        cJoints = new List<RoomJoint>();
+        CreateJointList();
 
         mNum = 0;
         mNum2 = 0;
@@ -103,28 +127,76 @@ public class MapManager : MonoBehaviour
     //
     public PosId ChangeId(PosId tpi)
     {
+        int num = -1;
+        PosId posId = tpi;
+        RoomAisle ra = RoomAisle.NONE;
         //移動前の部屋番号・部屋IDと移動後の座標が送られてくる
 
-        //IDにつながる場所の座標か調べる(接続部の座標のリストを持っておく)        
-        PosId pi =  cAm.ChangeJoint(tpi);        
-
-        if(pi.GetRA() != tpi.GetRA()) 
+        //IDにつながる場所の座標か調べる(接続部の座標のリストを持っておく)
+        switch(mPlayerRA)
         {
-            switch(pi.GetRA())
+            case RoomAisle.JOINT:
+                for(int i = 0;i < cJoints.Count;i++)
+                {
+                    if(posId.GetPos() == cJoints[i].GetRoomPos())
+                    {
+                        ra = RoomAisle.ROOM;
+                        num = i;
+                        break;
+                    }
+                    if(posId.GetPos() == cJoints[i].GetAislePos())
+                    {
+                        ra = RoomAisle.AISLE;
+                        num = i;
+                        break;
+                    }
+                }
+                break;
+            case RoomAisle.ROOM:
+            case RoomAisle.AISLE:
+                for(int i = 0; i < cJoints.Count; i++)
+                {
+                    if(posId.GetPos() == cJoints[i].GetJointPos())
+                    {
+                        ra = RoomAisle.JOINT;
+                        num = i;
+                        break;
+                    }
+                }
+                break;
+        }
+
+        //場所移動なかった場合
+        if(num == -1)
+        {
+            return posId;
+        }
+        else //移動があった場合
+        {
+            posId.SetId(num, ra); 
+            mPlayerRA = posId.GetRA();
+            //部屋点灯チェック
+            if(ra == RoomAisle.JOINT)
             {
-                case RoomAisle.NONE: break;
-                case RoomAisle.ROOM:
-                    cRm.OpenOneRoom(pi.GetId());
-                    break;
-                case RoomAisle.AISLE:
-                    cAm.OpenOneAisle(pi.GetId());
-                    break;
+                bool rFlg;
+                bool aFlg;
+                
+                
+                rFlg = cRm.OpenOneRoom(cJoints[num].GetId(RoomAisle.ROOM));
+                aFlg = cAm.OpenOneAisle(cJoints[num].GetId(RoomAisle.AISLE));
+
+                if(!rFlg)//転倒した場合
+                {
+                    //敵の生成を依頼する。
+                    cGm.RoomOpen(cJoints[num].GetId(RoomAisle.ROOM));
+                }
             }
         }
 
-        return pi;
-    }
 
+
+        return posId;
+    }
 
     //Set関数
     /// <summary>位置の更新</summary>
@@ -139,14 +211,17 @@ public class MapManager : MonoBehaviour
 
     //Get関数
     /// <summary>ランダムな部屋のランダムな座標を返す</summary>
+    /*
     public Point GetRamdomPos()
     {
+        
         Point pos;
 
         pos = cRm.GetRandomRoom();
 
         return pos;
-    }
+        
+    }*/
     //座標の位置を返す
     public Vector3 GetTilePos(Point tpos)
     {
@@ -167,6 +242,20 @@ public class MapManager : MonoBehaviour
 
         return posId;
     }
+    //
+    public Point GetTileLength()
+    {
+        return new Point(cTiles.GetLength(0), cTiles.GetLength(1));
+    }
+    //
+    public PosId GetPosId(int num)
+    {
+        PosId pi;
+
+        pi = cRm.GetRandomPos(num);
+
+        return pi;
+    }
 
 
     /// <summary>スタート関数</summary>
@@ -174,7 +263,7 @@ public class MapManager : MonoBehaviour
     {
         Debug.Log($"{this.name}スタート");
 
-        if(isStart) { Init(); }
+        //if(isStart) { Init(); }
     }
 
     public void Update() 

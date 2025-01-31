@@ -4,16 +4,16 @@ using System.Collections.Generic;
 using System.Drawing;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using static UnityEditor.PlayerSettings;
 
 
 namespace Common
 {
-    //4隅列挙
+    /// <summary>4隅列挙</summary>
     public enum Value
     {
         LEFT, RIGHT, TOP, BOTTOM
     }
-
     /// <summary>四隅のマス目を持つもの</summary>
     public struct Lurd
     {
@@ -90,34 +90,52 @@ namespace Common
     /// <summary>部屋と廊下の接続部分情報</summary>
     public struct RoomJoint
     {
-        private Point pos;
-        private int RoomId;
-        private int AisleId;
+        /// <summary>接続部の座標</summary>
+        private Point jPos;
+        /// <summary>接続部隣の部屋の座標</summary>
+        private Point rPos;
+        /// <summary>接続部隣の廊下の座標</summary>
+        private Point aPos;
+        /// <summary>部屋番号</summary>
+        private int rId;
+        /// <summary>廊下番号</summary>
+        private int aId;
 
-        public void Set(Point tpos, int troom, int taisle)
+        public void Set(Point tjPos, Point trPos, Point taPos, int trId)
         {
-            pos = tpos;
-            RoomId = troom;
-            AisleId = taisle;
+            jPos = tjPos;
+            rPos = trPos;
+            aPos = taPos;
+            rId = trId;
+            //aId = taId;
         }
 
-        public RoomJoint(Point tpos, int troom,int taisle)
+        public void SetAisleId(int taId)
         {
-            pos = tpos;
-            RoomId = troom;
-            AisleId = taisle;
+            aId = taId;
         }
 
-        public Point GetPos() { return pos; }
+        public RoomJoint(Point tjPos, Point trPos, Point taPos, int trId,int taId)
+        {
+            jPos = tjPos;
+            rPos = trPos;
+            aPos = taPos;
+            rId = trId;
+            aId = taId;
+        }
+
+        public Point GetJointPos() { return jPos; }
+        public Point GetRoomPos() { return rPos; }
+        public Point GetAislePos() { return aPos; }
 
         public int GetId(RoomAisle tra)
         {
             switch (tra)
             {
                 case RoomAisle.ROOM:
-                    return RoomId;
+                    return rId;
                 case RoomAisle.AISLE:
-                    return AisleId;
+                    return aId;
                 case RoomAisle.NONE:
                     break;
                 default:
@@ -126,12 +144,12 @@ namespace Common
             return 0;
         }
     }
-
     /// <summary>どの場所にいるかの情報</summary>
     public enum RoomAisle
     {
         ROOM,
         AISLE,
+        JOINT,
         NONE,
     }
 
