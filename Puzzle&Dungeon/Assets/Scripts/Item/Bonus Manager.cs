@@ -67,7 +67,7 @@ public class BonusManager : MonoBehaviour
 
     void Update()
     {
-            PerformLottery();
+            //PerformLottery();
 
         // 時間が経過したら抽選を行う
         //最後の抽選から経過した時間を管理するための変数です。毎フレーム加算され、設定された間隔を超えた場合に抽選を行います。
