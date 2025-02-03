@@ -8,28 +8,27 @@ using UnityEngine;
 public class BonusManager : MonoBehaviour
 {
     [SerializeField]
-    GameObject[] Buff;
+    GameObject[] Buff;//バフのオブジェクトを格納する配列です。
 
     [SerializeField]
-    GameObject[] DeBuff;
+    GameObject[] DeBuff;//デバフのオブジェクトを格納する配列です。
 
     [SerializeField]
-    Text[] BuffNumbertext;
+    Text[] BuffNumbertext;//バフのカウントを表示するための Text コンポーネントの配列です。
+    [SerializeField]
+    Text[] DeBuffNumbertext;//デバフのカウントを表示するための Text コンポーネントの配列です。
 
     [SerializeField]
-    Text[] DeBuffNumbertext;
-
-    [SerializeField]
-    Text[] FiveTurntext; //5ターン減少する数値
+    Text[] FiveTurntext; //5ターン減少する数値、5ターンの制限がある効果（バフやデバフ）の残りターン数を表示するための Text コンポーネントの配列です。例えば、特定の効果が5ターンだけ有効で、そのカウントダウンを表示します。
 
     // 抽選を行う間隔（秒）
-    public float lotteryInterval = 5f; // 例: 秒ごとに抽選
-    private float timeSinceLastLottery = 0f; // 最後の抽選から経過した時間
+    public float lotteryInterval = 5f; //抽選を行う間隔（秒）です。ここでは、5秒ごとに抽選が行われます。
+    private float timeSinceLastLottery = 0f; // 最後の抽選から経過した時間　最後の抽選から経過した時間を管理するための変数です。毎フレーム加算され、設定された間隔を超えた場合に抽選を行います。
 
 
     // バフとデバフのカウント
-    private int[] buffCounts;
-    private int[] debuffCounts;
+    private int[] buffCounts;//バフのカウント
+    private int[] debuffCounts;//デバフのカウント
     private int[] fiveCounts; //5ターン最高で1ターンずつマイナスになる最低0
    
 
@@ -66,12 +65,12 @@ public class BonusManager : MonoBehaviour
        
     }
 
-
     void Update()
     {
             PerformLottery();
 
         // 時間が経過したら抽選を行う
+        //最後の抽選から経過した時間を管理するための変数です。毎フレーム加算され、設定された間隔を超えた場合に抽選を行います。
         timeSinceLastLottery += Time.deltaTime; // 経過時間を加算
 
         if (timeSinceLastLottery >= lotteryInterval)
@@ -121,7 +120,7 @@ public class BonusManager : MonoBehaviour
     private void PerformLottery()
     {
         // 複数回抽選を行いたい場合、forループで回す
-        for (int i = 0; i < 3; i++) // 例えば3回抽選を行いたい
+        for (int i = 0; i < 3; i++) // 3回抽選を行う
         {
             BuffOrDebuff(); // バフかデバフを選び、その後に詳細を決定
             //Debug.Log("抽選結果: " + buffCounts[0] + " " + debuffCounts[0]);
@@ -156,26 +155,26 @@ public class BonusManager : MonoBehaviour
         switch (num)
         {
             case int n when (n < 11):
-                bonus = AllBonus.ALLHEEL;
+                bonus = AllBonus.ALLHEEL;//全回復
                 Debug.Log("ライフ全回復");
                 break;
-            case int n when (n >= 11 && n < 22):
+            case int n when (n >= 11 && n < 22)://回復の上限+1
                 bonus = AllBonus.HEELUP;
                 Debug.Log("ライフ上限+1");
                 break;
-            case int n when (n >= 22 && n < 33):
+            case int n when (n >= 22 && n < 33)://攻撃力アップ
                 bonus = AllBonus.ATTACK1UP;
                 Debug.Log("攻撃力+1");
                 break;
-            case int n when (n >= 33 && n < 44):
+            case int n when (n >= 33 && n < 44)://一回敵からの攻撃を無効
                 bonus = AllBonus.GUARD;
                 Debug.Log("ダメージ1回無効");
                 break;
-            case int n when (n >= 44 && n < 55):
+            case int n when (n >= 44 && n < 55)://次のターンで敵に攻撃を一撃入れる
                 bonus = AllBonus.ONEHITATTACK;
                 Debug.Log("次の攻撃一撃");
                 break;
-            case int n when (n >= 55 && n < 65):
+            case int n when (n >= 55 && n < 65)://５ターンの間マップ全体が見れる
                 bonus = AllBonus.FLOORCLEAR;
                 Debug.Log("5ターンの間フロア全体が見える");
                 break;
@@ -263,6 +262,7 @@ public class BonusManager : MonoBehaviour
             case AllBonus.HEELUP:
                 Buff[1].SetActive(true);
                 buffCounts[0]++;  // カウントを増加
+                //バフの効果がいくつ適用されているかをカウントする配列です。各バフに対して適用回数を記録します。
                 BuffNumbertext[0].text = buffCounts[1].ToString();  // テキストを更新
                 Buff[0].gameObject.GetComponent<Image>().color = new Color(1.0f, 1.0f, 1.0f, 0.5f);
                 //DeBuff[0].gameObject.GetComponent<Image>().color = new Color(1.0f, 1.0f, 1.0f, 0.1f);
@@ -397,8 +397,8 @@ public class BonusManager : MonoBehaviour
     {
         BuffOrDebuff(); // バフかデバフを選び、その後に詳細を決定
         print(bonus); // 選ばれたボーナスの種類を表示
-        print(BuffNumbertext);
-        print(DeBuffNumbertext);
+        print(BuffNumbertext);//バフ
+        print(DeBuffNumbertext);//デバフ
        
     }
 }
