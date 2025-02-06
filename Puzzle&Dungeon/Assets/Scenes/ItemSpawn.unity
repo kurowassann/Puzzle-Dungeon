@@ -215,6 +215,17 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &975154802 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 809033646361890414, guid: bb09c9ebbab16e746821065a9530e31b, type: 3}
+  m_PrefabInstance: {fileID: 2046693040}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8de675286b2c21c42a4589c55feafe59, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &2046693040
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -303,13 +314,25 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 809033646361890414, guid: bb09c9ebbab16e746821065a9530e31b, type: 3}
+      propertyPath: oItem
+      value: 
+      objectReference: {fileID: 6061466452482193258, guid: e541770bc0d2e9043ac4209110a05c5f, type: 3}
     - target: {fileID: 2391331450065884601, guid: bb09c9ebbab16e746821065a9530e31b, type: 3}
       propertyPath: m_Name
       value: CanvasMain
       objectReference: {fileID: 0}
     - target: {fileID: 3891584565062987361, guid: bb09c9ebbab16e746821065a9530e31b, type: 3}
-      propertyPath: isEnemy
+      propertyPath: cBm
+      value: 
+      objectReference: {fileID: 975154802}
+    - target: {fileID: 3891584565062987361, guid: bb09c9ebbab16e746821065a9530e31b, type: 3}
+      propertyPath: isItem
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3891584565062987361, guid: bb09c9ebbab16e746821065a9530e31b, type: 3}
+      propertyPath: isEnemy
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3891584565062987361, guid: bb09c9ebbab16e746821065a9530e31b, type: 3}
       propertyPath: isPlayer

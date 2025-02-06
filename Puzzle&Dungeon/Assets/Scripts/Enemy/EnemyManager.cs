@@ -369,7 +369,7 @@ public class EnemyManager : MonoBehaviour
     public void EnemyActionSelect()
     {
 
-        print("aaa");
+        //print("aaa");
         isAction = false;
 
 		//s“®‡®—

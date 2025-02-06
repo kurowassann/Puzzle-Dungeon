@@ -217,8 +217,8 @@ public class CharacterBace : MonoBehaviour
 		if(cName == "p")
 		{
 			mPosId.Set(cMm.ChangeId(mPosId));
-
 		}
+		cGm.ItemCheck(mPosId.GetPos());
         mStartPos = transform.position;
         mSpeed = mGoalPos - mStartPos;
         mVec = mSpeed.normalized;
