@@ -164,13 +164,30 @@ public class UIManager : MonoBehaviour
         playerHPList = new List<Transform>();
         playerHPPrefab = Resources.Load<GameObject>("Prefabs/HPImagePrefab");
         playerHPParent = GameObject.Find("PlayerHPParent").transform;
-        for (int i = 0; i < _maxHP; i++)
+        print($"{_maxHP} - {playerHPList.Count}ŒÂ¶¬");
+        for (int i = 0; i < _maxHP - playerHPList.Count; i++)
         {
             var obj = Instantiate(playerHPPrefab, playerHPParent);
             playerHPList.Add(obj.transform);
         }
     }
+    //ãŒÀ@ˆø”‚Ì”‘‚â‚·
+    public void HpUp(int num)
+    {
+        for(int i = 0;i< num;i++)
+        {
+            var obj = Instantiate(playerHPPrefab, playerHPParent);
+            playerHPList.Add(obj.transform);
+        }
+    }
+    //
+    public void HpDown(int num)
+    {
+        for(int i = 0;i< num; i++)
+        {
 
+        }
+    }
 
 
     /// <summary>

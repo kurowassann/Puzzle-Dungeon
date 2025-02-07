@@ -16,8 +16,6 @@ public class Player : CharacterBace
     private InputAction inputMover;
     [Tooltip("スティック"), SerializeField]
     private InputActionAsset inputActions;
-    /// <summary>UI表示連携用</summary>
-	//private UIManager um;
     [Tooltip("アニメーターコンポーネント")]
     Animator animator;
 
@@ -117,6 +115,7 @@ public class Player : CharacterBace
                     //("攻撃します:" + point);
                     var triggerName = Common.Common.CHARA_ANIMS_ATTACK_DIR[(int)vec];
                     animator.SetTrigger(triggerName);
+                    um.AddLog("敵を攻撃！");
                 }
             }
 
@@ -130,8 +129,6 @@ public class Player : CharacterBace
     {
         base.Init(tgm, tmm, tposId, thp, tstr);
 
-        //um = GameObject.Find("UIManager").GetComponent<UIManager>();
-        //um.GeneratePlayerHP(mHp);
 
         //Debug.Log("プレイヤ初期化");
         //SetCam();
@@ -166,6 +163,20 @@ public class Player : CharacterBace
         um.AddLog("プレイヤーのHPが回復");
         */
     }    
+    //体力上限UP
+    public void HpUp()
+    {
+        um.AddLog("HP上限があがった！");
+        print("上限UP");
+        mHp++;
+        um.HpUp(1);
+    }
+    //体力上限Down
+    public void HpDown()
+    {
+        mHp--;
+        um.HpDown(1);
+    }
 
 
     //protected

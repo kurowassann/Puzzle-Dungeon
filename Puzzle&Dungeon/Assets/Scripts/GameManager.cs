@@ -15,6 +15,8 @@ public class GameManager : MonoBehaviour
     private bool isPlayer;
     [Tooltip("敵確認フラグ"), SerializeField]
     private bool isEnemy;
+    [Tooltip("アイテム確認用フラグ"), SerializeField]
+    private bool isItem;
 
     //定数
     [Tooltip("マップの管理オブジェクト"),SerializeField]
@@ -23,6 +25,10 @@ public class GameManager : MonoBehaviour
     private Player cPlayer;
     [Tooltip("敵管理オブジェクト"), SerializeField]
     private EnemyManager cEm;
+    [Tooltip("アイテム管理オブジェクト"), SerializeField]
+    private BonusManager cBm;
+    [Tooltip("アイテムオブジェクト"), SerializeField]
+    private GameObject oItem;
     
 
     //メンバ変数
@@ -32,6 +38,11 @@ public class GameManager : MonoBehaviour
     private GameStatus mStatus;
     /// <summary>ターン終了用タイマー</summary>
     private float mEndTimer;
+    //
+    private GameObject mItem;
+    /// <summary>アイテムの座標リスト</summary>
+    private Point mItemPos;
+
     
 
     //メンバ関数
@@ -102,6 +113,20 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    /// <summary>アイテムの生成</summary>
+    private void ItemSpawn(int num)
+    {
+        mItem.SetActive(true);
+
+        Point pos = cMm.GetPosId(num).GetPos();
+
+        mItemPos = pos;
+
+        Vector3 vec = cMm.GetTilePos(pos);
+
+        mItem.transform.position = vec;
+    }
+
 
     /// <summary>ターンの終わりを確認</summary>
     private bool TurnCheck()
@@ -145,7 +170,35 @@ public class GameManager : MonoBehaviour
     /// <summary>部屋が生成される</summary>
     public void RoomOpen(int num)
     {
-        cEm.Spawn(num);
+        if(isEnemy)
+        {
+            cEm.Spawn(num);
+        }
+
+        if(isItem)
+        {
+            ItemSpawn(num);
+        }
+    }
+    //
+    public void ItemCheck(Point tpos)
+    {
+        if (mItemPos == tpos)//移動場所にアイテムがあった
+        {
+            switch( cBm.BuffOrDebuff())
+            {
+                case AllBonus.HEELUP:
+                    cPlayer.HpUp();
+                    break;
+            }
+
+
+
+            //アイテム消去
+                mItemPos = new Point(0, 0);
+            mItem.SetActive(false);
+        }
+        
     }
 
     //Set関数
@@ -174,6 +227,12 @@ public class GameManager : MonoBehaviour
         mStatus = new GameStatus();
         SetStatus(GameStatus.STAY);
         mEndTimer = 0;
+
+        //アイテムを生成しておく
+        var clone = Instantiate(oItem, this.transform);
+        mItem = clone;
+        mItem.SetActive(false);
+        mItemPos = new Point(0,0);
 
         //マップの生成
         cMm.Init(this);

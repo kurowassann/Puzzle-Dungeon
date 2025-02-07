@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine.UI;
 using UnityEngine;
+using System.Drawing;
 
 public class BonusManager : MonoBehaviour
 {
@@ -33,6 +34,8 @@ public class BonusManager : MonoBehaviour
    
 
     AllBonus bonus = AllBonus.ENEMYROOM;
+
+
 
     void Start()
     {
@@ -67,7 +70,8 @@ public class BonusManager : MonoBehaviour
 
     void Update()
     {
-            PerformLottery();
+        /*
+            //PerformLottery();
 
         // 時間が経過したら抽選を行う
         //最後の抽選から経過した時間を管理するための変数です。毎フレーム加算され、設定された間隔を超えた場合に抽選を行います。
@@ -92,7 +96,7 @@ public class BonusManager : MonoBehaviour
                 if (fiveCounts[0] == 0)
                 {
                     FiveTurntext[0].gameObject.SetActive(true); // 0になったら非表示
-                    Buff[5].gameObject.GetComponent<Image>().color = new Color(1.0f, 1.0f, 1.0f, 0.1f);
+                    Buff[5].gameObject.GetComponent<Image>().color = new UnityEngine.Color(1.0f, 1.0f, 1.0f, 0.1f);
                 }
             }
 
@@ -109,11 +113,11 @@ public class BonusManager : MonoBehaviour
                 {
                     FiveTurntext[1].gameObject.SetActive(true); // 0になったら非表示
 
-                    DeBuff[6].gameObject.GetComponent<Image>().color = new Color(1.0f, 1.0f, 1.0f, 0.1f);
+                    DeBuff[6].gameObject.GetComponent<Image>().color = new UnityEngine.Color(1.0f, 1.0f, 1.0f, 0.1f);
                 }
             }
         }
-
+        */
     }
 
     // 抽選を行うメソッド
@@ -128,7 +132,7 @@ public class BonusManager : MonoBehaviour
     }
 
     // 関数1: バフかデバフをランダムで選択させる
-    public void BuffOrDebuff()
+    public AllBonus BuffOrDebuff()
     {
         int num = UnityEngine.Random.Range(0, 100); // 0～99のランダム数値
 
@@ -145,6 +149,8 @@ public class BonusManager : MonoBehaviour
 
         // ボーナスに対応するオブジェクトを表示する
         //ShowBonusObject(bonus);
+
+        return bonus;
     }
 
     // 関数2: バフの詳細を決定
@@ -158,7 +164,7 @@ public class BonusManager : MonoBehaviour
                 bonus = AllBonus.ALLHEEL;//全回復
                 Debug.Log("ライフ全回復");
                 break;
-            case int n when (n >= 11 && n < 22)://回復の上限+1
+            case int n when (n >= 11 && n < 70)://回復の上限+1
                 bonus = AllBonus.HEELUP;
                 Debug.Log("ライフ上限+1");
                 break;
@@ -260,18 +266,18 @@ public class BonusManager : MonoBehaviour
 
                 break;*/
             case AllBonus.HEELUP:
-                Buff[1].SetActive(true);
+                Buff[0].SetActive(true);
                 buffCounts[0]++;  // カウントを増加
                 //バフの効果がいくつ適用されているかをカウントする配列です。各バフに対して適用回数を記録します。
-                BuffNumbertext[0].text = buffCounts[1].ToString();  // テキストを更新
-                Buff[0].gameObject.GetComponent<Image>().color = new Color(1.0f, 1.0f, 1.0f, 0.5f);
+                BuffNumbertext[0].text = buffCounts[0].ToString();  // テキストを更新
+                Buff[0].gameObject.GetComponent<Image>().color = new UnityEngine.Color(1.0f, 1.0f, 1.0f, 0.5f);
                 //DeBuff[0].gameObject.GetComponent<Image>().color = new Color(1.0f, 1.0f, 1.0f, 0.1f);
                 break;
             case AllBonus.ATTACK1UP:
                 Buff[1].SetActive(true);
                 buffCounts[1]++;  // カウントを増加
-                BuffNumbertext[1].text = buffCounts[2].ToString();  // テキストを更新
-                Buff[1].gameObject.GetComponent<Image>().color = new Color(1.0f, 1.0f, 1.0f, 0.5f);
+                BuffNumbertext[1].text = buffCounts[1].ToString();  // テキストを更新
+                Buff[1].gameObject.GetComponent<Image>().color = new UnityEngine.Color(1.0f, 1.0f, 1.0f, 0.5f);
                 //DeBuff[1].gameObject.GetComponent<Image>().color = new Color(1.0f, 1.0f, 1.0f, 0.1f);
                 break;
            case AllBonus.GUARD:
@@ -280,7 +286,7 @@ public class BonusManager : MonoBehaviour
                 {
                     buffCounts[2]++;  // カウントを増加
                 }
-                Buff[2].gameObject.GetComponent<Image>().color = new Color(1.0f, 1.0f, 1.0f, 0.5f);
+                Buff[2].gameObject.GetComponent<Image>().color = new UnityEngine.Color(1.0f, 1.0f, 1.0f, 0.5f);
                 BuffNumbertext[2].text = buffCounts[2].ToString();  // テキストを更新
                 break;
             case AllBonus.ONEHITATTACK:
@@ -289,7 +295,7 @@ public class BonusManager : MonoBehaviour
                 {
                     buffCounts[4]++;  // カウントを増加
                 }
-                Buff[3].gameObject.GetComponent<Image>().color = new Color(1.0f, 1.0f, 1.0f, 0.5f);
+                Buff[3].gameObject.GetComponent<Image>().color = new UnityEngine.Color(1.0f, 1.0f, 1.0f, 0.5f);
                 BuffNumbertext[3].text = buffCounts[4].ToString();  // テキストを更新
                 break;
             case AllBonus.FLOORCLEAR:
@@ -298,8 +304,8 @@ public class BonusManager : MonoBehaviour
                 FiveTurntext[0].gameObject.SetActive(true);
                 fiveCounts[0] = 5; // 5ターンに設定
                 FiveTurntext[0].text = fiveCounts[0].ToString();
-                Buff[4].gameObject.GetComponent<Image>().color = new Color(1.0f, 1.0f, 1.0f, 0.5f);
-                DeBuff[4].gameObject.GetComponent<Image>().color = new Color(1.0f, 1.0f, 1.0f, 0.1f);
+                Buff[4].gameObject.GetComponent<Image>().color = new UnityEngine.Color(1.0f, 1.0f, 1.0f, 0.5f);
+                DeBuff[4].gameObject.GetComponent<Image>().color = new UnityEngine.Color(1.0f, 1.0f, 1.0f, 0.1f);
                 break;
             /*case AllBonus.ALLENEMYATTACK:
                 //Buff[6].SetActive(true);
@@ -314,26 +320,26 @@ public class BonusManager : MonoBehaviour
                 DeBuff[0].SetActive(true);
                 debuffCounts[0]++;
                 DeBuffNumbertext[0].text = debuffCounts[0].ToString();
-                DeBuff[0].gameObject.GetComponent<Image>().color = new Color(1.0f, 1.0f, 1.0f, 0.5f);
+                DeBuff[0].gameObject.GetComponent<Image>().color = new UnityEngine.Color(1.0f, 1.0f, 1.0f, 0.5f);
                 break;
             case AllBonus.ATTACK1DOWN://プレイヤーの攻撃力down
                 DeBuff[1].SetActive(true);
                 debuffCounts[1]++;
                 DeBuffNumbertext[1].text = debuffCounts[1].ToString();
-                DeBuff[1].gameObject.GetComponent<Image>().color = new Color(1.0f, 1.0f, 1.0f, 0.5f);
+                DeBuff[1].gameObject.GetComponent<Image>().color = new UnityEngine.Color(1.0f, 1.0f, 1.0f, 0.5f);
                 break;
             case AllBonus.EHEEL1UP://敵のHPup
                 DeBuff[2].SetActive(true);
                 debuffCounts[2]++;
                 DeBuffNumbertext[2].text = debuffCounts[2].ToString();
-                DeBuff[2].gameObject.GetComponent<Image>().color = new Color(1.0f, 1.0f, 1.0f, 0.5f);
+                DeBuff[2].gameObject.GetComponent<Image>().color = new UnityEngine.Color(1.0f, 1.0f, 1.0f, 0.5f);
                 break;
            
             case AllBonus.EATTACK1UP://敵の攻撃力up
                 DeBuff[3].SetActive(true);
                 debuffCounts[3]++;
                 DeBuffNumbertext[3].text = debuffCounts[3].ToString();
-                DeBuff[3].gameObject.GetComponent<Image>().color = new Color(1.0f, 1.0f, 1.0f, 0.5f);
+                DeBuff[3].gameObject.GetComponent<Image>().color = new UnityEngine.Color(1.0f, 1.0f, 1.0f, 0.5f);
                 break;
             //case AllBonus.EHEEL1UP:
             //    DeBuff[4].SetActive(true);
@@ -355,8 +361,8 @@ public class BonusManager : MonoBehaviour
                 FiveTurntext[1].gameObject.SetActive(true);
                 fiveCounts[1] = 5; // 5ターンに設定
                 FiveTurntext[1].text = fiveCounts[1].ToString();
-                DeBuff[4].gameObject.GetComponent<Image>().color = new Color(1.0f, 1.0f, 1.0f, 0.5f);
-                Buff[4].gameObject.GetComponent<Image>().color = new Color(1.0f, 1.0f, 1.0f, 0.1f);
+                DeBuff[4].gameObject.GetComponent<Image>().color = new UnityEngine.Color(1.0f, 1.0f, 1.0f, 0.5f);
+                Buff[4].gameObject.GetComponent<Image>().color = new UnityEngine.Color(1.0f, 1.0f, 1.0f, 0.1f);
                 break;
             default:
                 break;
