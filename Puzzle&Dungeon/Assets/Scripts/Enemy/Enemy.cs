@@ -173,11 +173,20 @@ public class Enemy : CharacterBace
 
         return triggerName;
     }
+    //
+    protected override void Attack()
+    {
+        if(isStatusChange) 
+        {
+            um.AddLog("“G‚©‚ç‚ÌUŒ‚I");
+        }
+        base.Attack();
+    }
     /// <summary>UŒ‚I—¹ˆ—</summary>
     protected override void AttackEnd()
     {
         base.AttackEnd();
-        //cEm.EnemyAttack();
+        cEm.EnemyAttack();
         
         var animationName = animator.GetCurrentAnimatorClipInfo(0)[0].clip.name;
         string triggerName = "";

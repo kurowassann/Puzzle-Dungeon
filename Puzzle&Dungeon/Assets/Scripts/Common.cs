@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.Drawing;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using static UnityEditor.PlayerSettings;
 
 
 namespace Common

@@ -252,7 +252,7 @@ public class TitleManager : MonoBehaviour
     {
         print("ƒV[ƒ“‘JˆÚ");
         //
-        Common.Common.LoadScene(Common.Common.SCENE_SELECT);
+        Common.Common.LoadScene("ItemSpawn");
     }
 
 

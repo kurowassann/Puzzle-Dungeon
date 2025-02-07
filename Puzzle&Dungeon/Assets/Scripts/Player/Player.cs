@@ -128,6 +128,7 @@ public class Player : CharacterBace
     public override void Init(GameManager tgm, MapManager tmm, PosId tposId, int thp, string tstr)
     {
         base.Init(tgm, tmm, tposId, thp, tstr);
+        um.GeneratePlayerHP(mMaxHp);
 
 
         //Debug.Log("プレイヤ初期化");
@@ -140,14 +141,14 @@ public class Player : CharacterBace
     public override bool Damage()
 	{
 		bool ret = base.Damage();
-        /*
+        
 		um.DisplayPlayerHP(mHp);
 		um.AddLog("プレイヤにダメージ！！");
 		if(ret == true) 
 		{
 			um.AddLog("やられました");
 		}
-        */
+        
 		return ret;
 	}   
     /// <summary>体力回復</summary>
@@ -167,9 +168,10 @@ public class Player : CharacterBace
     public void HpUp()
     {
         um.AddLog("HP上限があがった！");
-        print("上限UP");
+        mMaxHp++;
         mHp++;
         um.HpUp(1);
+        um.DisplayPlayerHP(mHp);
     }
     //体力上限Down
     public void HpDown()
@@ -241,7 +243,7 @@ public class Player : CharacterBace
         cGm.PlayerActionEnd();
 
 
-        Heal();
+        //Heal();
     }
 
 

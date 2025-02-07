@@ -453,13 +453,13 @@ public class EnemyManager : MonoBehaviour
 		SetStatus(Status.MOVE);
 
 	}
-    /*
+    
 	/// <summary>プレイヤの攻撃する</summary>
 	public void EnemyAttack()
 	{
-		master.EnemyAttack();
+		cGm.EnemyAttack();
 	}
-    */
+    
 	/// <summary>引数の座標の敵にダメージを与える</summary>
 	public void Damege(Point tpos)
 	{

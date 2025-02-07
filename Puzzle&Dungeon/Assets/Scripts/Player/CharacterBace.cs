@@ -26,9 +26,11 @@ public class CharacterBace : MonoBehaviour
 	/// <summary>ステート管理</summary>
     protected Status mStatus;
 	/// <summary>ステートが変わったときに一度だけ処理を行う</summary>
-	private bool isStatusChange;
+	protected bool isStatusChange;
     /// <summary>自分のマス目</summary>
     protected PosId mPosId;
+	//最大体力
+	protected int mMaxHp;
 	//体力
 	protected int mHp;
 	//移動開始位置
@@ -48,7 +50,6 @@ public class CharacterBace : MonoBehaviour
     virtual public void Init(GameManager tgm, MapManager tmm, PosId tposId, int thp, string tstr)
     {
         um = GameObject.Find("UIManager").GetComponent<UIManager>();
-        um.GeneratePlayerHP(mHp);
 
 
         cName = tstr;
@@ -57,6 +58,7 @@ public class CharacterBace : MonoBehaviour
 		SetStatus(Status.STAY);
         SetPos(tposId.GetPos());
         transform.position = mGoalPos;
+		mMaxHp = thp;
 		mHp = thp;
 		isActive = true;
 		isAction = false;
@@ -114,7 +116,7 @@ public class CharacterBace : MonoBehaviour
 		SetStatus(Status.REAR_GAP);
     }
 	/// <summary>攻撃を行う</summary>
-	protected void Attack()
+	protected virtual void Attack()
 	{
 		if (isStatusChange)
 		{

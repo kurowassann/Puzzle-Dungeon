@@ -154,7 +154,7 @@ public class BonusManager : MonoBehaviour
     }
 
     // 関数2: バフの詳細を決定
-    public void LotNextBonus1()
+    public AllBonus LotNextBonus1()
     {
         int num = UnityEngine.Random.Range(0, 70); // 0～69のランダム数値
 
@@ -194,6 +194,8 @@ public class BonusManager : MonoBehaviour
 
         // ボーナスに対応するオブジェクトを表示する
         ShowBonusObject(bonus);
+
+        return bonus;
     }
 
     // 関数3: デバフの詳細を決定

@@ -2,7 +2,6 @@ using Common;
 using System.Collections;
 using System.Collections.Generic;
 using System.Drawing;
-using UnityEditor.ShaderKeywordFilter;
 using UnityEngine;
 
 /// <summary>ゲームを動かす</summary>
@@ -157,6 +156,11 @@ public class GameManager : MonoBehaviour
     {
         cEm.Damege(tpos);
     }
+    //
+    public void EnemyAttack()
+    {
+        cPlayer.Damage();
+    }
     /// <summary>プレイヤの行動の完了を受け取る</summary>
    public void PlayerActionEnd()
     {
@@ -185,7 +189,7 @@ public class GameManager : MonoBehaviour
     {
         if (mItemPos == tpos)//移動場所にアイテムがあった
         {
-            switch( cBm.BuffOrDebuff())
+            switch( cBm.LotNextBonus1())
             {
                 case AllBonus.HEELUP:
                     cPlayer.HpUp();
