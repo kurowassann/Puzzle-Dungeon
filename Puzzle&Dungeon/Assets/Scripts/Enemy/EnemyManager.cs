@@ -14,6 +14,8 @@ public class EnemyManager : MonoBehaviour
     private GameManager cGm;
     /// <summary>マップ管理元</summary>
     private MapManager cMm;
+    /// <summary>uiマネージャ</summary>
+    private UIManager cUm;
     /// <summary>敵管理用配列</summary>
     private List<Enemy> cEnemys;
     /// <summary>エネミー生成用オブジェクト</summary>
@@ -155,6 +157,9 @@ public class EnemyManager : MonoBehaviour
     {
         //初期値設定
         {
+            cUm = GameObject.Find("UIManager").GetComponent<UIManager>();
+
+
             //mGameData = tgameData;
             cGm = tgm;
             cMm = tmm;
@@ -463,6 +468,8 @@ public class EnemyManager : MonoBehaviour
 			if (cEnemys[i].GetPos() == tpos && cEnemys[i].GetActive())
 			{
 				cEnemys[i].Damage();
+               
+
 			}
 		}
 	}

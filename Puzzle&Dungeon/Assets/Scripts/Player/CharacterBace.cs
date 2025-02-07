@@ -12,6 +12,9 @@ public class CharacterBace : MonoBehaviour
 	protected MapManager cMm;
     /// <summary>敵かプレイヤか</summary>
     protected string cName;
+    /// <summary>UI表示連携用</summary>
+    protected UIManager um;
+
 
 
 
@@ -43,7 +46,11 @@ public class CharacterBace : MonoBehaviour
 	//メンバ関数
     /// <summary>初期化処理</summary>
     virtual public void Init(GameManager tgm, MapManager tmm, PosId tposId, int thp, string tstr)
-    {   
+    {
+        um = GameObject.Find("UIManager").GetComponent<UIManager>();
+        um.GeneratePlayerHP(mHp);
+
+
         cName = tstr;
 		cGm = tgm;
 		cMm = tmm;
@@ -133,7 +140,7 @@ public class CharacterBace : MonoBehaviour
 		mAttackTimer = 0;
 	}
 	/// <summary>攻撃を受ける</summary>
-	public virtual bool Damage()
+	virtual public bool Damage()
 	{
 		mHp--;
 		Debug.Log($"ダメージをうけた！{cName}の残りHPは:{mHp}");

@@ -132,7 +132,7 @@ public class BonusManager : MonoBehaviour
     }
 
     // 関数1: バフかデバフをランダムで選択させる
-    public void BuffOrDebuff()
+    public AllBonus BuffOrDebuff()
     {
         int num = UnityEngine.Random.Range(0, 100); // 0～99のランダム数値
 
@@ -149,6 +149,8 @@ public class BonusManager : MonoBehaviour
 
         // ボーナスに対応するオブジェクトを表示する
         //ShowBonusObject(bonus);
+
+        return bonus;
     }
 
     // 関数2: バフの詳細を決定
@@ -162,7 +164,7 @@ public class BonusManager : MonoBehaviour
                 bonus = AllBonus.ALLHEEL;//全回復
                 Debug.Log("ライフ全回復");
                 break;
-            case int n when (n >= 11 && n < 22)://回復の上限+1
+            case int n when (n >= 11 && n < 70)://回復の上限+1
                 bonus = AllBonus.HEELUP;
                 Debug.Log("ライフ上限+1");
                 break;

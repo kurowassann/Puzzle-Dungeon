@@ -276,6 +276,20 @@ public class Enemy : CharacterBace
         }
     }
 
+    //
+    public override bool Damage()
+    {
+        bool flg= base.Damage();
+      
+        if (flg)
+        {
+            um.AddLog("“G‚ğ“|‚µ‚½I");
+        }
+
+        return flg;
+
+    }
+
     //SetŠÖ”
     /// <summary>Œˆ’è‚µ‚½s“®‚ğ—\–ñ</summary>
     public void SetAction(Status tstatus)

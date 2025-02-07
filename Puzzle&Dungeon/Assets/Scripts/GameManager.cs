@@ -183,14 +183,21 @@ public class GameManager : MonoBehaviour
     //
     public void ItemCheck(Point tpos)
     {
-            if (mItemPos == tpos)//移動場所にアイテムがあった
+        if (mItemPos == tpos)//移動場所にアイテムがあった
+        {
+            switch( cBm.BuffOrDebuff())
             {
-                cBm.BuffOrDebuff();
+                case AllBonus.HEELUP:
+                    cPlayer.HpUp();
+                    break;
+            }
+
+
 
             //アイテム消去
                 mItemPos = new Point(0, 0);
             mItem.SetActive(false);
-            }
+        }
         
     }
 
