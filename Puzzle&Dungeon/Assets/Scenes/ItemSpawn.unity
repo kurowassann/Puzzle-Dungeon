@@ -739,11 +739,11 @@ PrefabInstance:
       objectReference: {fileID: 975154802}
     - target: {fileID: 3891584565062987361, guid: bb09c9ebbab16e746821065a9530e31b, type: 3}
       propertyPath: isItem
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 3891584565062987361, guid: bb09c9ebbab16e746821065a9530e31b, type: 3}
       propertyPath: isEnemy
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 3891584565062987361, guid: bb09c9ebbab16e746821065a9530e31b, type: 3}
       propertyPath: isPlayer
